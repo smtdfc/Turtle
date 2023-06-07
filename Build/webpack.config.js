@@ -6,7 +6,7 @@ module.exports = [
 		mode: "production",
 		output: {
 			path: path.resolve(__dirname, '../dist'),
-			filename: 'core.turtle.js',
+			filename: 'turtle.min.js',
 			globalObject: 'this',
 			library: {
 				name: 'Turtle',
