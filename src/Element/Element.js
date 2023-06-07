@@ -101,14 +101,12 @@ export class TurtleListElement{
   }
   
   index(idx){
-    return new TurtleElement(this.elements[idx])
+    return new TurtleElement(this.elements.item(idx))
   }
   
   each(callback){
-  	
-    for (var element of this.elements) {
-      callback(this.elements[element])
-    }
+  	for (var i = 0; i < this.length; i++) {
+  		callback(new TurtleElement(this.elements.item(i)))
+  	}
   }
-
 }
