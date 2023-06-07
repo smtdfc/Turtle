@@ -105,6 +105,7 @@ export class TurtleListElement{
   }
   
   each(callback){
+  	
     for (var element of this.elements) {
       callback(this.elements[element])
     }
