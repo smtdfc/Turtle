@@ -1,7 +1,7 @@
 import { TurtleElement, TurtleListElement } from "./Element/Element.js"
 import { TurtleListAttribute } from "./Element/ListAttr.js"
 import { TurtleSelector } from "./Selector.js"
-import { component, TurtleComponent } from "./Component/Component.js"
+import { create,define,TurtleComponent } from "./Component/Component.js"
 import { TurtleRequest, TurtleResponse } from "./HTTP.js"
 import { TurtleStorage } from "./Storage.js"
 import {ClientInfo} from "./Client.js"
@@ -15,6 +15,7 @@ export const ListElement = TurtleListElement
 export const ListAttribute = TurtleListAttribute
 export const Selector = TurtleSelector
 export const createComponent = component
+export const registerComponent = define
 export const Component = TurtleComponent
 export const Request = TurtleRequest
 export const Response = TurtleResponse

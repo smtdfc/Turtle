@@ -1,4 +1,23 @@
-import { TurtleElement } from "../Element/Element.js"
+function matches(content) {
+	return /{{(.*?)}}/g.test(content)
+}
+
+function update(context, nodes = [], attrs = []) {
+	nodes.forEach((node, idx) => {
+		if (node.root.isConnected) {
+			updateContent(node.node, node.content, context)
+		} else {
+			delete nodes[idx]
+		}
+	})
+	attrs.forEach((attr, idx) => {
+		if (attr.node.isConnected) {
+			updateAttr(attr.node, attr.name, attr.value, context)
+		} else {
+			delete attrs[idx]
+		}
+	})
+}
 
 function updateContent(node, template, data) {
 	node.textContent = template.replace(/{{(.*?)}}/g, (match) => {
@@ -11,7 +30,6 @@ function updateContent(node, template, data) {
 				<h5 style="color:red">Error when render content of  component  : "..  {{${expr}}}.."</h5>
 				<pre style="color:red ; overflow-x:scroll; max-width:98%;">${err.stack}</pre>
 			`
-
 				throw "err"
 			}
 			return "?"
@@ -20,7 +38,6 @@ function updateContent(node, template, data) {
 }
 
 function updateAttr(node, attrName, template, data) {
-
 	node.setAttribute(attrName, template.replace(/{{(.*?)}}/g, (match) => {
 		let expr = match.split(/{{|}}/)[1]
 		try {
@@ -38,24 +55,12 @@ function updateAttr(node, attrName, template, data) {
 	}))
 }
 
-
-function matches(content) {
-	return /{{(.*?)}}/g.test(content)
-}
-
-function check(nodes, root = document.createElement("div")) {
-	let refNode = []
+function parseNode(nodes, t) {
+	let refTextNode = []
 	let refAttr = []
-	let refEle = {}
-	Array.from(nodes).forEach(node => {
-		if (node.nodeType == Node.TEXT_NODE && matches(node.textContent)) {
-			refNode.push({
-				node: node,
-				root: root,
-				content: node.textContent
-			})
-			//render(node, node.textContent, {})
-		} else if (node.nodeType == Node.ELEMENT_NODE) {
+	let refNode = {}
+	Array.from(nodes.childNodes).forEach((node => {
+		if (node.nodeType == Node.ELEMENT_NODE) {
 			Array.from(node.attributes).forEach((attr) => {
 				if (matches(attr.value)) {
 					refAttr.push({
@@ -64,116 +69,115 @@ function check(nodes, root = document.createElement("div")) {
 						value: attr.value
 					})
 				}
-				if(attr.localName == "ref"){
-					refEle[attr.value] = node
+				if (attr.localName == "ref") {
+					refNode[attr.value] = node
 				}
 			})
-			let res = check(node.childNodes, node)
-			refNode.push(...res[0])
-			refAttr.push(...res[1])
-			refEle = {
-				...refEle, 
-				...res[2]
-			}
+			let ref = parseNode(node)
+			refAttr = [...refAttr, ...ref.refAttr]
+			refNode = { ...refNode, ...ref.refNode }
+			refTextNode = [...refTextNode, ...ref.refTextNode]
+		} else if (node.nodeType == Node.TEXT_NODE && matches(node.textContent)) {
+			refTextNode.push({
+				node: node,
+				content: node.textContent
+			})
 		}
-	})
-
-	return [refNode, refAttr,refEle]
-}
-
-function update(context, nodes = [], attrs = []) {
-	nodes.forEach((node, idx) => {
-
-		if (node.root.isConnected) {
-			updateContent(node.node, node.content, context)
-		} else {
-			delete nodes[idx]
-		}
-	})
-
-	attrs.forEach((attr, idx) => {
-		if (attr.node.isConnected) {
-			updateAttr(attr.node, attr.name, attr.value, context)
-		} else {
-			delete attrs[idx]
-		}
-	})
-
+	}))
+	return {
+		refTextNode,
+		refAttr,
+		refNode
+	}
 }
 
 export class TurtleComponent extends HTMLElement {
 	constructor() {
 		super()
-		this._refTextNodes = []
-		this._refAttributes = []
-		this._refElements = {}
+		this.ref = {}
 		this.isRendered = false
-		this._states = {}
-		this.dependentState = null
-	}
-	prop(name){
-		return this.getAttribute(name)
-	}
-	render() {}
-	onMount() {}
-	beforeRender() {}
-	onRender(){}
-	onUnmount() {}
-	ref(name){
-		return new TurtleElement(this._refElements[name])
-	}
-	onChangeState(...args) {}
-	 async requestRender() {
-		this.beforeRender()
-		if (!this.isRendered) {
-			this.virtualDOM = document.createElement("template")
-			this.virtualDOM.innerHTML = this.render()
-			let res = check(this.virtualDOM.content.childNodes, this.virtualDOM.content)
-			this._refTextNodes = res[0]
-			this._refAttributes = res[1]
-			this._refElements = res[2]
-			this.isRendered = true
-			this.after(this.virtualDOM.content)
-			this.remove()
-		}
-		
-		requestAnimationFrame(()=>{
-			update(this,this._refTextNodes, this._refAttributes)
-			this.onRender()
-		})
+		this.isTurtleComponent = true
+		this.states = {}
+		this.dependentState = []
 	}
 
 	setState(name, value) {
-		let old = this._states[name]
-		this._states[name] = value
-		this.onChangeState(name, old, value)
-		if (this.dependentState == null || this.dependentState.includes(name)) {
+		let old = this.states[name]
+		this.states[name] = value
+		if (this.dependentState == null || this.dependentState.include(name)) {
 			this.requestRender()
+		}
+		this.onStateChange(name, old, value)
+	}
+
+	props(name) {
+		return this.getAttribute(name)
+	}
+
+	getRef(name) {
+		return this.reference.refNode[name]
+	}
+
+	requestRender() {
+		this.beforeRender()
+		if (!this.isRendered) {
+			this.vdom = document.createElement("template")
+			this.vdom.innerHTML = this.render()
+			this.reference = parseNode(this.vdom.content, this.k)
+			this.after(this.vdom.content)
+			this.remove()
+			requestAnimationFrame(() => {
+				update(
+					this,
+					this.reference.refTextNode,
+					this.reference.refAttr
+				)
+				this.onFirstRender()
+				this.onRender()
+			})
+		} else {
+			requestAnimationFrame(() => {
+				update(
+					this,
+					this.reference.refTextNode,
+					this.reference.refAttr
+				)
+				this.onRerender()
+				this.onRender()
+			})
 		}
 	}
 
+	onFirstRender() {}
+	onRerender() {}
+	onRender() {}
+	onStateChange() {}
+	onReady() {}
+	beforeRender() {}
 	connectedCallback() {
-		this.onMount()
 		this.requestRender()
+		this.onReady()
 	}
-	
-	disconnectCallback(){
-		this.onUnmount()
-	}
-	
-
 }
-export function component(name, options) {
+
+export function define(name, component) {
+	component.componentName = name
+	try {
+		window.customElements.define(name, component)
+	} catch (e) {
+		throw `Unable to initialize component : ${name} !`
+	}
+	return component
+}
+
+export function create(name, options) {
 	const COMPONENT = class extends TurtleComponent {
 		constructor() {
 			super()
 			if (options.shadow) this.shadow = options.shadow
 		}
-		onMount() {
-			if (options.onMount) options.onMount.apply(this)
-		}
-		onUnmount() {
-			if (options.onUnmount) options.onUnmount.apply(this)
+		onReady() {
+			if (options.onReady) options.onReady.apply(this)
 		}
 		beforeRender() {
 			if (options.beforeRender) options.beforeRender.apply(this)
@@ -188,10 +192,11 @@ export function component(name, options) {
 			return (options.render ?? new Function()).apply(this)
 		}
 	}
-
+	COMPONENT.componentName = name
 	try {
 		window.customElements.define(name, COMPONENT)
 	} catch (e) {
 		throw `Unable to initialize component : ${name} !`
 	}
+	return COMPONENT
 }

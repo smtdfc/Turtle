@@ -1,66 +1,152 @@
 export class TurtleRequest {
-	constructor(url, method, options = {}) {
-		this.url = url
-		this.method = method
-		this.options = options
-		this.headers = {}
-		this.timeout = 500
-		this.controller = new AbortController()
-		this.signal = this.controller.signal
+	constructor(configs) {
+		this.xhr = new XMLHttpRequest()
+		this.URL = new URL(configs.url)
+		this.method = configs.method
+		this.data = configs.data
+		this.body = configs.body
+		this.timeout = configs.timeout
+		this.headers = configs.headers ?? {}
+		this.withCredentials = configs.withCredentials ?? false
+		this.responseType = configs.responseType
+		this.sended = false
+		this.events = {
+			abort: new Function(),
+			done: new Function(),
+			timeout:new Function(),
+			error:new Function()
+		}
+		if (configs.auth) {
+			this.auth = {
+				username: configs.auth.username,
+				password: configs.auth.password
+			}
+		} else {
+			this.auth = null
+		}
 	}
+
+	setHeader(name, value) {
+		this.headers[name] = value
+	}
+
+	getHeader(name){
+		return this.headers[name]
+	}
+	
+	deleteHeader(name){
+		delete this.headers[name]
+	}
+	
+	setParam(name, value) {
+		this.URL.searchParams.set(name, value)
+	}
+
+	deleteParam(name) {
+		this.URL.searchParams.delete(name)
+	}
+
+	getParam(name) {
+		this.URL.searchParams.get(name)
+	}
+
 	cancel() {
-		this.controller.abort()
+		if (!this.sended) {
+			throw "Cannot cancel request!"
+		} else {
+			this.xhr.abort()
+			this.events.abort()
+		}
 	}
+
 	send() {
 		return new Promise((resolve, reject) => {
-			let options = {
-				method: this.method,
-				headers: this.headers,
-				signal: this.signal
+			if (this.auth != null) {
+				this.xhr.open(this.method, this.URL.href, true, this.auth.username, this.auth.password)
+			} else {
+				this.xhr.open(this.method, this.URL.href, true)
 			}
-			fetch(this.url, options).then((res)=> {
-				resolve(new TurtleResponse(res))
-			})
-			if (this.timeout) {
-				let a = setTimeout(() => {
-					this.cancel()
-					reject({
-						msg: "Failed to fetch ! Request timeout",
+			this.xhr.timeout = this.timeout
+			if (this.headers) {
+				Object.keys(this.headers).forEach(header => {
+					this.xhr.setRequestHeader(header, this.headers[header])
+				})
+			}
+			
+			this.xhr.responseType = this.responseType
+			this.xhr.withCredentials = this.withCredentials
+			if (this.data) {
+				this.xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+				this.xhr.send(JSON.stringify(this.data))
+			} else {
+				this.xhr.send(this.body)
+			}
+			let ctx = this
+			this.xhr.onerror = function(err) {
+				ctx.events.error()
+				reject(err)
+			}
+			this.xhr.onabort = function() {
+				ctx.events.abort()
+				resolve({
+					abort: true
+				})
+			}
+			
+			this.xhr.ontimeout = function() {
+				ctx.events.timeout()
+				resolve({
+					timeouted: true
+				})
+			}
+			
+			this.xhr.onload = function() {
+				if (ctx.xhr.readyState == 4) {
+					console.log(ctx.xhr)
+					let res = new TurtleResponse(ctx)
+					ctx.events.done(res)
+					resolve({
+						response: res,
+						timeouted: false
 					})
-					clearTimeout(a)
-				}, this.timeout)
-			}
+				}
+			};
 		})
-	}
-	setHeader(name,
-		value) {
-		this.headers[name] = value
 	}
 }
 
+
 export class TurtleResponse {
-	constructor(response) {
-		this.response = response
+	constructor(req) {
+		this.req = req
+		this.xhr = this.req.xhr
+		this.status = this.xhr.status
+		this.statusText = this.xhr.statusText
+		this.URL = this.xhr.responseURL
+		this.type = this.xhr.responseType
 	}
-	get status () {
-		return this.response.status
+
+	getHeader(name) {
+		return this.xhr.getResponseHeader(name)
 	}
-	get success() {
-		return this.response.ok == true
+	
+	getAllHeaders(){
+		return this.xhr.getAllResponseHeaders()
 	}
-	async text() {
-		return await this.response.text()
+
+	text() {
+		return this.xhr.responseText
 	}
-	async json() {
-		return await this.response.json()
+
+	json() {
+		try {
+			return JSON.parse(this.xhr.response)
+		} catch (err) {
+			throw "Cannot parse JSON from response"
+		}
 	}
-	async blob() {
-		return await this.response.blob()
-	}
-	get URL() {
-		return this.response.url
-	}
-	get headers() {
-		return this.response.headers
+
+	raw() {
+		return this.xhr.response
 	}
 }
