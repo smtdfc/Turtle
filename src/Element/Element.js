@@ -110,3 +110,7 @@ export class TurtleListElement{
   	}
   }
 }
+
+export function createElement(name){
+	return new TurtleElement(document.createElement(name))
+}

@@ -21,3 +21,12 @@ export const Request = TurtleRequest
 export const Response = TurtleResponse
 export const Storage = TurtleStorage
 export const info = ClientInfo
+export function render(element,html){
+	if(element instanceof HTMLElement){
+		element.innerHTML = html
+	}else if(element instanceof TurtleElement){
+		element.HTML = html
+	}else{
+		throw "Invalid element !"
+	}
+}
