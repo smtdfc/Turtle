@@ -1,3 +1,5 @@
+window.TURTLE_COMPONENTS = {}
+
 function matches(content) {
 	return /{{(.*?)}}/g.test(content)
 }
@@ -99,6 +101,7 @@ export class TurtleComponent extends HTMLElement {
 		this.isTurtleComponent = true
 		this.states = {}
 		this.dependentState = []
+		this.data = {}
 	}
 
 	setState(name, value) {
@@ -126,25 +129,28 @@ export class TurtleComponent extends HTMLElement {
 			this.reference = parseNode(this.vdom.content, this.k)
 			this.after(this.vdom.content)
 			this.remove()
+			this.onFirstRender()
 			requestAnimationFrame(() => {
 				update(
 					this,
 					this.reference.refTextNode,
 					this.reference.refAttr
 				)
-				this.onFirstRender()
+
 				this.onRender()
 			})
 		} else {
-			requestAnimationFrame(() => {
-				update(
-					this,
-					this.reference.refTextNode,
-					this.reference.refAttr
-				)
-				this.onRerender()
-				this.onRender()
-			})
+			if (this.isRendered) {
+				requestAnimationFrame(() => {
+					update(
+						this,
+						this.reference.refTextNode,
+						this.reference.refAttr
+					)
+					this.onRerender()
+					this.onRender()
+				})
+			}
 		}
 	}
 
@@ -164,6 +170,7 @@ export function define(name, component) {
 	component.componentName = name
 	try {
 		window.customElements.define(name, component)
+		window.TURTLE_COMPONENTS[name] = true
 	} catch (e) {
 		throw `Unable to initialize component : ${name} !`
 	}
@@ -195,6 +202,7 @@ export function create(name, options) {
 	COMPONENT.componentName = name
 	try {
 		window.customElements.define(name, COMPONENT)
+		window.TURTLE_COMPONENTS[name] = true
 	} catch (e) {
 		throw `Unable to initialize component : ${name} !`
 	}

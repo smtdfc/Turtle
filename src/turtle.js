@@ -5,7 +5,7 @@ import { create,define,TurtleComponent } from "./Component/Component.js"
 import { TurtleRequest, TurtleResponse } from "./HTTP.js"
 import { TurtleStorage } from "./Storage.js"
 import {ClientInfo} from "./Client.js"
-
+import {initRouter,redirect,setRouterEventListener} from "./Router/index.js"
 const VERSION = "0.0.1"
 const DEV = true
 window.TURTLE_DEV = DEV
@@ -21,6 +21,11 @@ export const Request = TurtleRequest
 export const Response = TurtleResponse
 export const Storage = TurtleStorage
 export const info = ClientInfo
+export const Router ={
+	init:initRouter,
+	redirect:redirect,
+	on:setRouterEventListener
+}
 export function render(element,html){
 	if(element instanceof HTMLElement){
 		element.innerHTML = html
