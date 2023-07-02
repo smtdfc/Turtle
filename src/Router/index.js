@@ -88,6 +88,11 @@ async function renderContentOfRoute(matched) {
 					Router.element.innerHTML = result.content
 					return
 				}
+				
+				if(result.replaceComponent){
+					route.component = result.replaceComponent
+				}
+				
 				if (result.redirect) {
 					redirect(result.redirect)
 					return
@@ -96,7 +101,7 @@ async function renderContentOfRoute(matched) {
 					return {
 						nextRoute: true
 					}
-				}
+				} 
 			}
 		}
 		if (route.component && window.TURTLE_COMPONENTS[route.component]) {
@@ -109,6 +114,7 @@ async function renderContentOfRoute(matched) {
 }
 
 function resolveRoute(url) {
+	
 	url = encodeURI(url)
 	url = new URL(url, window.location.origin)
 	let query = url.searchParams
@@ -146,11 +152,8 @@ function resolveRoute(url) {
 window.addEventListener("hashchange", function(e) {
 	if (Router.type == "hash") {
 		let hash = window.location.hash
-		if (hash.length == 0) {
-			if (Router.defaultRoute) resolveRoute(Router.defaultRoute)
-		} else {
-			resolveRoute(hash.slice(1))
-		}
+		
+		resolveRoute(hash.slice(1))
 	}
 })
 
@@ -163,7 +166,7 @@ window.addEventListener("popstate", function(e) {
 
 export function redirect(path) {
 	if (Router.type == "hash" && Router.init) {
-		window.location.hash = "#${path}"
+		window.location.hash = `#${path}`
 	}
 	if (Router.type == "history") {
 		window.history.pushState(null, null, path)
@@ -203,15 +206,16 @@ createComponent("link-to", {
 		if (!Router.init) {
 			throw "Router has not been initialized !"
 		}
-		
+		this.data.link = this.getAttribute("link")
 		return `
-			<a ref="a" href="${Router.type=="hash"? "#" : ""}${this.getAttribute("link")}">${this.textContent}</a>
+			<a ref="a" href="#">${this.textContent}</a>
 		`
 	},
 	onRender:function(){
+		let ctx = this
 		this.getRef("a").addEventListener("click",function(e){
 			e.preventDefault()
-			let link = e.target.href
+			let link = ctx.data.link
 			redirect(link)
 		})
 	}
