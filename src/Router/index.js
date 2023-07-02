@@ -187,17 +187,7 @@ export function initRouter(configs) {
 		notFound: new Function()
 	}
 	
-
-	window.addEventListener("load", function(e) {
-		if (Router.type == "hash") {
-			let hash = window.location.hash
-			resolveRoute(hash.slice(1))
-
-		} else {
-			let path = window.location.pathname
-			resolveRoute(path)
-		}
-	})
+	
 }
 
 createComponent("link-to", {
@@ -220,4 +210,16 @@ createComponent("link-to", {
 
 export function setRouterEventListener(name,callback){
 	Router.events[name] = callback
+}
+
+export function startRouter(){
+	if (Router.type == "hash") {
+		let hash = window.location.hash
+		resolveRoute(hash.slice(1))
+	
+	} else {
+		let path = window.location.pathname
+		resolveRoute(path)
+	}
+	
 }
