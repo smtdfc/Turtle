@@ -158,14 +158,14 @@ window.addEventListener("hashchange", function(e) {
 })
 
 window.addEventListener("popstate", function(e) {
-	if (Router.type == "history" && Router.init) {
+	if (Router.type == "history") {
 		let url = window.location.pathname
 		resolveRoute(url)
 	}
 })
 
 export function redirect(path) {
-	if (Router.type == "hash" && Router.init) {
+	if (Router.type == "hash") {
 		window.location.hash = `#${path}`
 	}
 	if (Router.type == "history") {
@@ -198,14 +198,11 @@ export function initRouter(configs) {
 			resolveRoute(path)
 		}
 	})
-	Router.init = true
 }
 
 createComponent("link-to", {
 	render: function() {
-		if (!Router.init) {
-			throw "Router has not been initialized !"
-		}
+		
 		this.data.link = this.getAttribute("link")
 		return `
 			<a ref="a" href="#">${this.textContent}</a>
