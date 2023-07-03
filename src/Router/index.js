@@ -7,7 +7,8 @@ const Router = {
 	routes: [],
 	type: null,
 	handleErr: {
-		notFound: new Function()
+		notFound: new Function(),
+		notAllow:new Function(),
 	},
 	events: {
 		loadcontent: new Function(),
@@ -69,7 +70,8 @@ async function renderContentOfRoute(matched) {
 		let res = await route.protect()
 		if(!res){
 			return {
-				routeBlocked:true
+				routeBlocked:true,
+				value:res
 			}
 		}
 	}
@@ -88,7 +90,7 @@ async function renderContentOfRoute(matched) {
 					Router.element.innerHTML = result.content
 					return
 				}
-				
+
 				if(result.replaceComponent){
 					route.component = result.replaceComponent
 				}
@@ -136,7 +138,7 @@ function resolveRoute(url) {
 		matched.query = query
 		let res = renderContentOfRoute(matched)
 		if(res.routeBlocked){
-			Router.handleErr.routeBlocked({ url,params:matched.params, query }, Router.element)
+			Router.handleErr.notAllow({ url,params:matched.params, query, }, Router.element,res.value)
 		}
 		if (res.nextRoute) {
 			continue
