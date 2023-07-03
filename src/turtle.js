@@ -5,6 +5,7 @@ import { create,define,TurtleComponent } from "./Component/Component.js"
 import { TurtleRequest, TurtleResponse } from "./HTTP.js"
 import { TurtleStorage } from "./Storage.js"
 import {ClientInfo} from "./Client.js"
+import {createEvent,createEventListener,deleteEventListener,deleteAllEventListener} from "./Event.js"
 import {initRouter,redirect,setRouterEventListener,startRouter} from "./Router/index.js"
 const VERSION = "0.0.1"
 const DEV = true
@@ -27,6 +28,14 @@ export const Router ={
 	on:setRouterEventListener,
 	start:startRouter
 }
+
+export const Event ={
+	emit:createEvent,
+	on:createEventListener,
+	delete:deleteEventListener,
+	deleteAll:deleteAllEventListener
+}
+
 export function render(element,html){
 	if(element instanceof HTMLElement){
 		element.innerHTML = html

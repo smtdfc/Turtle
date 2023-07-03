@@ -116,7 +116,6 @@ async function renderContentOfRoute(matched) {
 }
 
 function resolveRoute(url) {
-	
 	url = encodeURI(url)
 	url = new URL(url, window.location.origin)
 	let query = url.searchParams
@@ -166,12 +165,16 @@ window.addEventListener("popstate", function(e) {
 	}
 })
 
-export function redirect(path) {
+export function redirect(path,replace=false) {
 	if (Router.type == "hash") {
 		window.location.hash = `#${path}`
 	}
 	if (Router.type == "history") {
-		window.history.pushState(null, null, path)
+		if(!replace){
+			window.history.pushState(null, null, path)
+		}else{
+			window.history.replaceState(null,null,path)
+		}
 		let url = window.location.pathname
 		resolveRoute(url)
 	}
