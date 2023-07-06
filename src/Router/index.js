@@ -178,6 +178,7 @@ export function redirect(path,replace=false) {
 			window.history.replaceState(null,null,url.toString())
 			let hash = window.location.hash
 			resolveRoute(hash.slice(1))
+			return
 		}
 		window.location.hash = `#${path}`
 	}
