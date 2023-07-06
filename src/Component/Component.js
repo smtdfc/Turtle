@@ -156,7 +156,6 @@ export class TurtleComponent extends HTMLElement {
 			this.innerText = ""
 			this.after(this.nodes)
 			this.remove()
-			this.onFirstRender()
 			requestAnimationFrame(() => {
 				update(
 					this,
