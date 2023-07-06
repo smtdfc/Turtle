@@ -172,6 +172,13 @@ window.addEventListener("popstate", function(e) {
 
 export function redirect(path,replace=false) {
 	if (Router.type == "hash") {
+		if(replace){
+			let url = new URL(window.location.href)
+			url.hash = `#${path}`
+			window.history.replaceState(null,null,url.toString())
+			let hash = window.location.hash
+			resolveRoute(hash.slice(1))
+		}
 		window.location.hash = `#${path}`
 	}
 	if (Router.type == "history") {
