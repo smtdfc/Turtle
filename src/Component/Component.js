@@ -13,16 +13,16 @@ function update(context, nodes = [], attrs = []) {
 	attrs.forEach((attr, idx) => {
 		if (attr.node) {
 			updateAttr(attr.node, attr.name, attr.value, context)
-		} 
+		}
 	})
 }
 
 function updateContent(node, template, data) {
-	
+
 	node.textContent = template.replace(/{{(.*?)}}/g, (match) => {
 		let expr = match.split(/{{|}}/)[1]
 		try {
-			
+
 			let value = (new Function(`return ${expr}`).apply(data))
 			return value
 		} catch (err) {
@@ -61,7 +61,9 @@ function parseNode(nodes, t) {
 	let refTextNode = []
 	let refAttr = []
 	let refNode = {}
+	let refAllNode = []
 	Array.from(nodes.childNodes).forEach((node => {
+		if (!t) refAllNode.push(node)
 		if (node.nodeType == Node.ELEMENT_NODE) {
 			Array.from(node.attributes).forEach((attr) => {
 				if (matches(attr.value)) {
@@ -75,46 +77,65 @@ function parseNode(nodes, t) {
 					refNode[attr.value] = node
 				}
 			})
-			let ref = parseNode(node)
+
+			let ref = parseNode(node, true)
 			refAttr = [...refAttr, ...ref.refAttr]
 			refNode = { ...refNode, ...ref.refNode }
 			refTextNode = [...refTextNode, ...ref.refTextNode]
 		} else if (node.nodeType == Node.TEXT_NODE && matches(node.textContent)) {
 			refTextNode.push({
-				root:node,
+				root: node,
 				node: node,
 				content: node.textContent
 			})
 		}
 	}))
 	return {
+		refAllNode,
 		refTextNode,
 		refAttr,
 		refNode
 	}
 }
 
+class TurtleComponentState {
+	constructor(component, value) {
+		this.component = component
+		this.stateId = Math.round(Math.random() * Date.now())
+		this.value = value
+	}
+
+	async set(value) {
+		this.value = value
+		this.component.onChangeState(this, value)
+		if (this.component.renderDependentState == null || this.component.renderDependentState.filter(object => object === this).length > 0) {
+			this.component.requestRender()
+		}
+	}
+
+	get() {
+		return this.value
+	}
+}
+
 export class TurtleComponent extends HTMLElement {
 	constructor() {
 		super()
+		this.componentId = Math.round(Math.random() * Date.now())
 		this.ref = {}
 		this.shouldRerender = true
 		this.isRendered = false
 		this.isTurtleComponent = true
 		this.states = {}
-		this.stateManagers ={}
-		this.dependentState = null
+		this.renderDependentState = null
 		this.data = {}
+		if (!window.TURTLE_COMPONENTS[this.tagName]) window.TURTLE_COMPONENTS[this.tagName] = {}
+		window.TURTLE_COMPONENTS[this.tagName][this.componentId] = this
 	}
 
-	setState(name, value) {
-		let old = this.states[name]
-		this.states[name] = value
-		if (this.dependentState == null || this.dependentState.includes(name)) {
-			this.requestRender()
-		}
-		if(this.stateManagers[name]) this.stateManagers[name].events.stateChange(old, value)
-		this.onStateChange(name, old, value)
+	createState(name, value) {
+		this.states[name] = new TurtleComponentState(this, value)
+		return this.states[name]
 	}
 
 	props(name) {
@@ -128,11 +149,12 @@ export class TurtleComponent extends HTMLElement {
 	requestRender() {
 		this.beforeRender()
 		if (!this.isRendered) {
-			
 			this.vdom = document.createElement("template")
 			this.vdom.innerHTML = this.render()
-			this.reference = parseNode(this.vdom.content, this.k)
-			this.after(this.vdom.content)
+			this.nodes = this.vdom.content.cloneNode(true)
+			this.reference = parseNode(this.nodes, false)
+			this.innerText = ""
+			this.after(this.nodes)
 			this.remove()
 			this.onFirstRender()
 			requestAnimationFrame(() => {
@@ -142,6 +164,7 @@ export class TurtleComponent extends HTMLElement {
 					this.reference.refAttr
 				)
 				this.isRendered = true
+				this.onFirstRender()
 				this.onRender()
 			})
 		} else {
@@ -152,17 +175,14 @@ export class TurtleComponent extends HTMLElement {
 					this.reference.refAttr
 				)
 				requestAnimationFrame(() => {
-					
 					this.onRerender()
 					this.onRender()
 				})
 			}
 		}
 	}
-	addStateManager(stateName,stateManager){
-		this.stateManagers[stateName] = stateManager
-		stateManager.bind(this)
-	}
+	
+	onRouteChange(){}
 	onFirstRender() {}
 	onRerender() {}
 	onRender() {}
@@ -173,6 +193,7 @@ export class TurtleComponent extends HTMLElement {
 		this.requestRender()
 		this.onReady()
 	}
+
 }
 
 export function define(name, component) {
@@ -201,8 +222,17 @@ export function create(name, options) {
 		onRender() {
 			if (options.onRender) options.onRender.apply(this)
 		}
+		onFirstRender() {
+			if (options.onFirstRender) options.onFirstRender.apply(this)
+		}
+		onRerender() {
+			if (options.onRerender) options.onRerender.apply(this)
+		}
 		onChangeState(...args) {
 			if (options.onChangeState) options.onChangeState.apply(this, ...args)
+		}
+		onRouteChange(){
+			if (options.onRouteChange) options.onRouteChange.apply(this,)
 		}
 		render() {
 			return (options.render ?? new Function()).apply(this)

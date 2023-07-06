@@ -26,6 +26,7 @@ function parseURL(url) {
 
 function checkMatchedRoute(urlParsed) {
 	let matched = []
+	
 	Router.routes.forEach(route => {
 		let path = parseURL(route.path)
 		if (path.length != urlParsed.length) {
@@ -58,6 +59,7 @@ function renderComponent(element, component, data) {
 	element.textContent = ``
 	let $component = document.createElement(component)
 	$component.data.routerData = data
+	Router.currentRouteComponent = $component
 	element.appendChild($component)
 }
 
@@ -121,6 +123,9 @@ function resolveRoute(url) {
 	let query = url.searchParams
 	let urlParsed = parseURL(url.pathname)
 	let matchedRoutes = checkMatchedRoute(urlParsed)
+	if(Router.currentRouteComponent){
+		Router.currentRouteComponent.onRouteChange()
+	}
 	Router.events.loadcontent({
 		url,query
 	},Router.element)
@@ -130,6 +135,7 @@ function resolveRoute(url) {
 			url,query
 		},Router.element)
 	}
+	
 	for (let idx in matchedRoutes) {
 		let matched = matchedRoutes[idx]
 		if (matched.route.path == Router.currentRoute) return
@@ -153,7 +159,6 @@ function resolveRoute(url) {
 window.addEventListener("hashchange", function(e) {
 	if (Router.type == "hash") {
 		let hash = window.location.hash
-		
 		resolveRoute(hash.slice(1))
 	}
 })
