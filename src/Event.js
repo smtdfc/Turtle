@@ -1,6 +1,6 @@
 window.TURTLE_EVENTS = {}
 
-class TurtleEvent {
+export class TurtleEvent {
 	constructor(name, data) {
 		this.name = name
 		this.data = data
@@ -13,7 +13,7 @@ class TurtleEvent {
 		}
 
 		for (var idx in listeners) {
-			listeners[idx](this.data)
+			listeners[idx].callback.bind(listeners[idx].context)(this.data)
 		}
 	}
 }
@@ -24,15 +24,19 @@ export function createEvent(name, data) {
 
 export function createEventListener(name, callback, context = this) {
 	if (!window.TURTLE_EVENTS[name]) window.TURTLE_EVENTS[name] = []
-	window.TURTLE_EVENTS[name].push(callback.bind(context))
+	window.TURTLE_EVENTS[name].push({
+		callback:callback,
+		context:context
+	})
+		
 }
 
 export function deleteEventListener(name, callback) {
 	if (!window.TURTLE_EVENTS[name]) window.TURTLE_EVENTS[name] = []
-	let listeners = window.TURTLE_EVENTS[this.name]
+	let listeners = window.TURTLE_EVENTS[name]
 	for (var idx in listeners) {
-		if(listeners[idx] == callback){
-			window.TURTLE_EVENTS[this.name].splice(idx,1)
+		if(listeners[idx].callback === callback){
+			window.TURTLE_EVENTS[name].splice(idx,1)
 		}
 	}
 }

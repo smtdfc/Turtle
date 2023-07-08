@@ -1,248 +1,129 @@
+import {TurtleElement} from "../Element/Element.js"
+import { processDOM } from "./DOMProcess.js"
+import { updateDOM } from "./DOMUpdate.js"
+import { generateKey } from "../utils.js"
+
 window.TURTLE_COMPONENTS = {}
-
-function matches(content) {
-	return /{{(.*?)}}/g.test(content)
-}
-
-function update(context, nodes = [], attrs = []) {
-	nodes.forEach((node, idx) => {
-		if (node) {
-			updateContent(node.node, node.content, context)
-		}
-	})
-	attrs.forEach((attr, idx) => {
-		if (attr.node) {
-			updateAttr(attr.node, attr.name, attr.value, context)
-		}
-	})
-}
-
-function updateContent(node, template, data) {
-
-	node.textContent = template.replace(/{{(.*?)}}/g, (match) => {
-		let expr = match.split(/{{|}}/)[1]
-		try {
-
-			let value = (new Function(`return ${expr}`).apply(data))
-			return value
-		} catch (err) {
-			if (window.TURTLE_DEV) {
-				document.body.innerHTML = `
-				<h5 style="color:red">Error when render content of  component  : "..  {{${expr}}}.."</h5>
-				<pre style="color:red ; overflow-x:scroll; max-width:98%;">${err.stack}</pre>
-			`
-				throw "err"
-			}
-			return "?"
-		}
-	})
-
-}
-
-function updateAttr(node, attrName, template, data) {
-	node.setAttribute(attrName, template.replace(/{{(.*?)}}/g, (match) => {
-		let expr = match.split(/{{|}}/)[1]
-		try {
-			return (new Function(`return ${expr}`)).apply(data)
-		} catch (err) {
-			if (window.TURTLE_DEV) {
-				document.body.innerHTML = `
-				<h5 style="color:red">Error in expression  : "..  {{${expr}}}.."</h5>
-				<pre style="color:red; overflow-x:scroll ; max-width:98%;">${err.stack}</pre>
-			`
-				throw "err"
-			}
-			return "?"
-		}
-	}))
-}
-
-function parseNode(nodes, t) {
-	let refTextNode = []
-	let refAttr = []
-	let refNode = {}
-	let refAllNode = []
-	Array.from(nodes.childNodes).forEach((node => {
-		if (!t) refAllNode.push(node)
-		if (node.nodeType == Node.ELEMENT_NODE) {
-			Array.from(node.attributes).forEach((attr) => {
-				if (matches(attr.value)) {
-					refAttr.push({
-						node: node,
-						name: attr.localName,
-						value: attr.value
-					})
-				}
-				if (attr.localName == "ref") {
-					refNode[attr.value] = node
-				}
-			})
-
-			let ref = parseNode(node, true)
-			refAttr = [...refAttr, ...ref.refAttr]
-			refNode = { ...refNode, ...ref.refNode }
-			refTextNode = [...refTextNode, ...ref.refTextNode]
-		} else if (node.nodeType == Node.TEXT_NODE && matches(node.textContent)) {
-			refTextNode.push({
-				root: node,
-				node: node,
-				content: node.textContent
-			})
-		}
-	}))
-	return {
-		refAllNode,
-		refTextNode,
-		refAttr,
-		refNode
-	}
-}
-
-class TurtleComponentState {
-	constructor(component, value) {
-		this.component = component
-		this.stateId = Math.round(Math.random() * Date.now())
-		this.value = value
-	}
-
-	async set(value) {
-		this.value = value
-		this.component.onChangeState(this, value)
-		if (this.component.renderDependentState == null || this.component.renderDependentState.filter(object => object === this).length > 0) {
-			this.component.requestRender()
-		}
-	}
-
-	get() {
-		return this.value
-	}
-}
-
 export class TurtleComponent extends HTMLElement {
+	#refs
 	constructor() {
 		super()
-		this.componentId = Math.round(Math.random() * Date.now())
-		this.ref = {}
-		this.shouldRerender = true
-		this.isRendered = false
-		this.isTurtleComponent = true
-		this.states = {}
-		this.renderDependentState = null
+		this.componentId = generateKey()
+		window.TURTLE_COMPONENTS[this.componentId] = this
 		this.data = {}
-		if (!window.TURTLE_COMPONENTS[this.tagName]) window.TURTLE_COMPONENTS[this.tagName] = {}
-		window.TURTLE_COMPONENTS[this.tagName][this.componentId] = this
-	}
-
-	createState(name, value) {
-		this.states[name] = new TurtleComponentState(this, value)
-		return this.states[name]
-	}
-
-	props(name) {
-		return this.getAttribute(name)
-	}
-
-	getRef(name) {
-		return this.reference.refNode[name]
-	}
-
-	requestRender() {
-		this.beforeRender()
-		if (!this.isRendered) {
-			this.vdom = document.createElement("template")
-			this.vdom.innerHTML = this.render()
-			this.nodes = this.vdom.content.cloneNode(true)
-			this.reference = parseNode(this.nodes, false)
-			this.innerText = ""
-			this.after(this.nodes)
-			this.remove()
-			requestAnimationFrame(() => {
-				update(
-					this,
-					this.reference.refTextNode,
-					this.reference.refAttr
-				)
-				this.isRendered = true
-				this.onFirstRender()
-				this.onRender()
-			})
-		} else {
-			if (this.isRendered && this.shouldRerender == true) {
-				update(
-					this,
-					this.reference.refTextNode,
-					this.reference.refAttr
-				)
-				requestAnimationFrame(() => {
-					this.onRerender()
-					this.onRender()
-				})
-			}
+		this.isRendered = false
+		this.shouldRerender = true
+		this.renderDependents = null
+		this.states = {}
+		this.#refs = {
+			textNodes: [],
+			attrs: [],
+			nodes: []
 		}
 	}
 	
-	onRouteChange(){}
+	set useShadowRoot(s){
+		if(s) this.attachShadow({mode:"open"})
+	}
+	
+	ref(name){
+		return new TurtleElement(this.#refs.refElementNodes[name])
+	}
+	
+	setState(name, value) {
+		this.states[name] = value
+		this.onStateChange(name,value)
+		
+		if(this.shouldRerender){
+			if(this.renderDependents == null || this.renderDependents.includes(name)){
+				this.requestRender()
+			}
+		}
+	}
+
+	async requestRender() {
+		if (!this.isRendered) {
+			this.isRendered = true
+			this.dom = document.createElement("template")
+			this.dom.innerHTML = await this.render()
+			this.contents = this.dom.content
+			this.#refs = processDOM(this.contents, false)
+			let rctx = this.usingShadowDOM ? this.shadowRoot : this
+			rctx.appendChild(this.contents)
+			this.beforeRender()
+			requestAnimationFrame(() => {
+				updateDOM(this.#refs, this)
+				Promise.all([
+					this.onFirstRender(),
+					this.onRender()
+				])
+			})
+		} else {
+			this.beforeRender()
+			requestAnimationFrame(() => {
+				updateDOM(this.#refs, this)
+				Promise.all([
+					this.onRerender(),
+					this.onRender()
+				])
+			})
+		}
+	}
+
+	onCreate() {}
+	onDestroy() {}
+	onStateChange() {}
+	beforeRender() {}
 	onFirstRender() {}
 	onRerender() {}
 	onRender() {}
-	onStateChange() {}
-	onReady() {}
-	beforeRender() {}
+	render() {}
+
 	connectedCallback() {
+
+		this.onCreate()
 		this.requestRender()
-		this.onReady()
 	}
-
+	onRemove(){}
 }
 
-export function define(name, component) {
-	component.componentName = name
-	try {
-		window.customElements.define(name, component)
-		window.TURTLE_COMPONENTS[name] = true
-	} catch (e) {
-		throw `Unable to initialize component : ${name} !`
-	}
-	return component
-}
-
-export function create(name, options) {
-	const COMPONENT = class extends TurtleComponent {
-		constructor() {
-			super()
-			if (options.shadow) this.shadow = options.shadow
-		}
-		onReady() {
-			if (options.onReady) options.onReady.apply(this)
+export function createComponent(name, options) {
+	
+	const $Component = class extends TurtleComponent {
+		render() {
+			return (options.render ?? new Function()).bind(this)()
 		}
 		beforeRender() {
-			if (options.beforeRender) options.beforeRender.apply(this)
+			return (options.beforeRender ?? new Function()).bind(this)()
 		}
 		onRender() {
-			if (options.onRender) options.onRender.apply(this)
-		}
-		onFirstRender() {
-			if (options.onFirstRender) options.onFirstRender.apply(this)
+			return (options.onRender ?? new Function()).bind(this)()
 		}
 		onRerender() {
-			if (options.onRerender) options.onRerender.apply(this)
+			return (options.onRerender ?? new Function()).bind(this)()
 		}
-		onChangeState(...args) {
-			if (options.onChangeState) options.onChangeState.apply(this, ...args)
+		onFirstRender() {
+			return (options.onFirstRender ?? new Function()).bind(this)()
 		}
-		onRouteChange(){
-			if (options.onRouteChange) options.onRouteChange.apply(this,)
+		onCreate() {
+			return (options.onCreate ?? new Function()).bind(this)()
 		}
-		render() {
-			return (options.render ?? new Function()).apply(this)
+		onStateChange(...args) {
+			return (options.onStateChange ?? new Function()).bind(this)(...args)
+		}
+		
+		onRouteChange(...args) {
+			return (options.onRouteChange ?? new Function()).bind(this)(...args)
+		}
+		onRemove(...args) {
+			return (options.onRemove ?? new Function()).bind(this)(...args)
 		}
 	}
-	COMPONENT.componentName = name
+
+
 	try {
-		window.customElements.define(name, COMPONENT)
-		window.TURTLE_COMPONENTS[name] = true
+		window.customElements.define(name, $Component)
 	} catch (e) {
-		throw `Unable to initialize component : ${name} !`
+		throw `Cannot create component : ${name}`
 	}
-	return COMPONENT
 }
