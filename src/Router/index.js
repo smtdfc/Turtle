@@ -1,4 +1,4 @@
-import { create as createComponent } from "../Component/Component.js"
+import {  createComponent } from "../Component/Component.js"
 const Router = {
 	init: false,
 	element: document.createElement("div"),
@@ -58,7 +58,8 @@ function checkMatchedRoute(urlParsed) {
 function renderComponent(element, component, data) {
 	element.textContent = ``
 	let $component = document.createElement(component)
-	$component.data.routerData = data
+	if($component.componentId)
+		$component.data.routerData = data
 	Router.currentRouteComponent = $component
 	element.appendChild($component)
 }
@@ -67,6 +68,7 @@ async function renderContentOfRoute(matched) {
 	let route = matched.route
 	let params = matched.params
 	let query = matched.query
+	
 	if (route.callback) route.callback(route, params)
 	if(route.protect){
 		let res = await route.protect()
@@ -77,53 +79,46 @@ async function renderContentOfRoute(matched) {
 			}
 		}
 	}
-	if (route.component && window.TURTLE_COMPONENTS[route.component]) {
+	if (route.resolver) {
+		let result = await route.resolver(params, query)
+		if (result) {
+			if (result.content) {
+				Router.element.innerHTML = result.content
+				return
+			}
+	
+			if (result.replaceComponent) {
+				route.component = result.replaceComponent
+			}
+	
+			if (result.redirect) {
+				redirect(result.redirect)
+				return
+			}
+			if (result.nextRoute) {
+				return {
+					nextRoute: true
+				}
+			}
+		}
+	}
+	if (route.component) {
+		
 		renderComponent(Router.element, route.component, {
 			params: params,
 			query: query
 		})
 		return
-	} else {
-
-		if (route.resolver) {
-			let result = await route.resolver(params, query)
-			if (result) {
-				if (result.content) {
-					Router.element.innerHTML = result.content
-					return
-				}
-
-				if(result.replaceComponent){
-					route.component = result.replaceComponent
-				}
-				
-				if (result.redirect) {
-					redirect(result.redirect)
-					return
-				}
-				if (result.nextRoute) {
-					return {
-						nextRoute: true
-					}
-				} 
-			}
-		}
-		if (route.component && window.TURTLE_COMPONENTS[route.component]) {
-			renderComponent(Router.element, route.component, {
-				params: params,
-				query: query
-			})
-		}
-	}
+	} 
 }
 
-function resolveRoute(url) {
+async function resolveRoute(url) {
 	url = encodeURI(url)
 	url = new URL(url, window.location.origin)
 	let query = url.searchParams
 	let urlParsed = parseURL(url.pathname)
 	let matchedRoutes = checkMatchedRoute(urlParsed)
-	if(Router.currentRouteComponent){
+	if(Router.currentRouteComponent && Router.currentRouteComponent.componentId){
 		Router.currentRouteComponent.onRouteChange()
 	}
 	Router.events.loadcontent({
@@ -138,10 +133,13 @@ function resolveRoute(url) {
 	
 	for (let idx in matchedRoutes) {
 		let matched = matchedRoutes[idx]
+		
 		if (matched.route.path == Router.currentRoute) return
-		Router.currentRoute = matched.route.path
+		Router.currentRoute =  matched.route.path
+		
 		matched.query = query
-		let res = renderContentOfRoute(matched)
+		let res = await renderContentOfRoute(matched)
+		if(!res) break
 		if(res.routeBlocked){
 			Router.handleErr.notAllow({ url,params:matched.params, query, }, Router.element,res.value)
 		}
@@ -158,6 +156,7 @@ function resolveRoute(url) {
 
 window.addEventListener("hashchange", function(e) {
 	if (Router.type == "hash") {
+		
 		let hash = window.location.hash
 		resolveRoute(hash.slice(1))
 	}
@@ -172,6 +171,7 @@ window.addEventListener("popstate", function(e) {
 
 export function redirect(path,replace=false) {
 	if (Router.type == "hash") {
+	
 		if(replace){
 			let url = new URL(window.location.href)
 			url.hash = `#${path}`
@@ -210,7 +210,6 @@ export function initRouter(configs) {
 
 createComponent("link-to", {
 	render: function() {
-		
 		this.data.link = this.getAttribute("link")
 		return `
 			<a ref="a" href="#">${this.textContent}</a>
@@ -218,7 +217,7 @@ createComponent("link-to", {
 	},
 	onRender:function(){
 		let ctx = this
-		this.getRef("a").addEventListener("click",function(e){
+		this.ref("a").on("click",function(e){
 			e.preventDefault()
 			let link = ctx.data.link
 			redirect(link)

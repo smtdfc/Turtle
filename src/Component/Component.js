@@ -11,6 +11,7 @@ export class TurtleComponent extends HTMLElement {
 		this.componentId = generateKey()
 		window.TURTLE_COMPONENTS[this.componentId] = this
 		this.data = {}
+		this.isTurtleComponent = true
 		this.isRendered = false
 		this.shouldRerender = true
 		this.renderDependents = null
@@ -49,6 +50,7 @@ export class TurtleComponent extends HTMLElement {
 			this.contents = this.dom.content
 			this.#refs = processDOM(this.contents, false)
 			let rctx = this.usingShadowDOM ? this.shadowRoot : this
+			rctx.textContent = ""
 			rctx.appendChild(this.contents)
 			this.beforeRender()
 			requestAnimationFrame(() => {
@@ -123,6 +125,7 @@ export function createComponent(name, options) {
 
 	try {
 		window.customElements.define(name, $Component)
+	
 	} catch (e) {
 		throw `Cannot create component : ${name}`
 	}
