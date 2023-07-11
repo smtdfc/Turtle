@@ -113,8 +113,8 @@ export class TurtleElement {
 
 	selectAll(query) {
 		try {
-			let elements = this.HTMLElement.querySelector(query)
-			return elements
+			let elements = this.HTMLElement.querySelectorAll(query)
+			return new TurtleListElement(elements)
 		} catch (e) {
 			generateError("Selector Error", `Cannot select all element by query ${query} !`)
 		}
