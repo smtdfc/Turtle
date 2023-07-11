@@ -28,6 +28,7 @@ export class TurtleComponent extends HTMLElement {
 	}
 	
 	ref(name){
+		
 		return new TurtleElement(this.#refs.refElementNodes[name])
 	}
 	

@@ -4,7 +4,7 @@ function matches(content) {
 
 export function processDOM(dom,child=false){
 	let refTextNodes =[]
-	let refElementNodes = []
+	let refElementNodes = {}
 	let refAttrs = []
 	let nodes = Array.from(dom.childNodes)
 	for (let i in nodes) {
@@ -40,11 +40,11 @@ export function processDOM(dom,child=false){
 				let refs = processDOM(node,true)
 				refTextNodes.push(...refs.refTextNodes)
 				refAttrs.push(...refs.refAttrs)
-				refElementNodes.push(...refs.refElementNodes)
+				let en = refs.refElementNodes
+				refElementNodes={...refElementNodes,...en}
 			}
 		}
 	}
-	
 	return {
 		refTextNodes,
 		refAttrs,

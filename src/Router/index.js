@@ -133,10 +133,8 @@ async function resolveRoute(url) {
 	
 	for (let idx in matchedRoutes) {
 		let matched = matchedRoutes[idx]
-		
 		if (matched.route.path == Router.currentRoute) return
 		Router.currentRoute =  matched.route.path
-		
 		matched.query = query
 		let res = await renderContentOfRoute(matched)
 		if(!res) break
@@ -156,7 +154,6 @@ async function resolveRoute(url) {
 
 window.addEventListener("hashchange", function(e) {
 	if (Router.type == "hash") {
-		
 		let hash = window.location.hash
 		resolveRoute(hash.slice(1))
 	}
