@@ -68,9 +68,8 @@ async function renderContentOfRoute(matched) {
 	let route = matched.route
 	let params = matched.params
 	let query = matched.query
-	
-	if (route.callback) route.callback(route, params)
-	if(route.protect){
+		if(route.callback) route.callback(route,params)
+		if(route.protect){
 		let res = await route.protect()
 		if(!res){
 			return {
@@ -79,6 +78,7 @@ async function renderContentOfRoute(matched) {
 			}
 		}
 	}
+	if (route.loadResource) route.loadResource(route, params)
 	if (route.resolver) {
 		let result = await route.resolver(params, query)
 		if (result) {
@@ -103,7 +103,6 @@ async function renderContentOfRoute(matched) {
 		}
 	}
 	if (route.component) {
-		
 		renderComponent(Router.element, route.component, {
 			params: params,
 			query: query
@@ -200,6 +199,7 @@ export function initRouter(configs) {
 	Router.defaultRoute = configs.routes ?? "/"
 	Router.handleErr = configs.handleErr ?? {
 		notFound: new Function()
+		
 	}
 	
 	
