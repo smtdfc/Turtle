@@ -68,7 +68,8 @@ async function renderContentOfRoute(matched) {
 	let route = matched.route
 	let params = matched.params
 	let query = matched.query
-		if(route.callback) route.callback(route,params)
+	let componentDefined = window.customElements.get(route.component) != undefined
+			if(route.callback) route.callback(route,params)
 		if(route.protect){
 		let res = await route.protect()
 		if(!res){
@@ -78,13 +79,12 @@ async function renderContentOfRoute(matched) {
 			}
 		}
 	}
-	if (route.loadResource) route.loadResource(route, params)
 	if (route.resolver) {
 		let result = await route.resolver(params, query)
 		if (result) {
 			if (result.content) {
 				Router.element.innerHTML = result.content
-				return
+			return
 			}
 	
 			if (result.replaceComponent) {
@@ -102,6 +102,7 @@ async function renderContentOfRoute(matched) {
 			}
 		}
 	}
+	if (route.loadComponent && !componentDefined) route.loadComponent(route, params)
 	if (route.component) {
 		renderComponent(Router.element, route.component, {
 			params: params,
