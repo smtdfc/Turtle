@@ -206,23 +206,30 @@ export function initRouter(configs) {
 	
 }
 
-createComponent("link-to", {
-	render: function() {
-		this.data.link = this.getAttribute("link")
-		return `
-			<a ref="a" href="#">${this.textContent}</a>
-		`
-	},
-	onRender:function(){
-		let ctx = this
-		this.ref("a").on("click",function(e){
+class LinkComponent extends HTMLElement{
+	constructor(){
+		super()
+	}
+	
+	connectedCallback(){
+		let a = document.createElement("a")
+		a.data = {
+			replace:this.getAttribute("replace") || false
+		}
+		a.href = this.getAttribute("to") || ""
+		a.innerHTML = this.innerHTML
+		a.style = this.getAttribute("style") || ""
+		a.className = this.getAttribute("class") || ""
+		this.after(a)
+		this.remove()
+		a.addEventListener("click",function(e){
 			e.preventDefault()
-			let link = ctx.data.link
-			redirect(link)
+			redirect(e.target.href)
 		})
 	}
-})
+}
 
+window.customElements.define("link-to",LinkComponent)
 export function setRouterEventListener(name,callback){
 	Router.events[name] = callback
 }
