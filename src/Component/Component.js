@@ -4,6 +4,7 @@ import { updateDOM } from "./DOMUpdate.js"
 import { generateKey } from "../utils.js"
 
 window.TURTLE_COMPONENTS = {}
+window.TURTLE_COMPONENTS_PROPS = {}
 export class TurtleComponent extends HTMLElement {
 	#refs
 	constructor() {
@@ -21,6 +22,9 @@ export class TurtleComponent extends HTMLElement {
 			attrs: [],
 			nodes: []
 		}
+		this.props = window.TURTLE_COMPONENTS_PROPS[this.getAttribute("props")]
+		delete window.TURTLE_COMPONENTS_PROPS[this.getAttribute("props")]
+		this.removeAttribute("props")
 	}
 	
 	set useShadowRoot(s){
@@ -129,4 +133,10 @@ export function createComponent(name, options) {
 	} catch (e) {
 		throw `Cannot create component : ${name}`
 	}
+}
+
+export function props(data){
+  let propKey = generateKey()
+  window.TURTLE_COMPONENTS_PROPS[propKey] = data
+  return propKey
 }

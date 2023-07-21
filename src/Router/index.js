@@ -69,7 +69,7 @@ async function renderContentOfRoute(matched) {
 	let params = matched.params
 	let query = matched.query
 	let componentDefined = window.customElements.get(route.component) != undefined
-			if(route.callback) route.callback(route,params)
+		if(route.callback) route.callback(route,params)
 		if(route.protect){
 		let res = await route.protect()
 		if(!res){
