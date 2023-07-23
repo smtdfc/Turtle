@@ -90,6 +90,9 @@ export class TurtleComponent extends HTMLElement {
 		this.onCreate()
 		this.requestRender()
 	}
+	disconnectedCallback(){
+	  this.onRemove()
+	}
 	onRemove(){}
 }
 
