@@ -133,7 +133,7 @@ async function resolveRoute(url) {
 	
 	for (let idx in matchedRoutes) {
 		let matched = matchedRoutes[idx]
-		if (matched.route.path == Router.currentRoute) return
+		//if (matched.route.path == Router.currentRoute) return
 		Router.currentRoute =  matched.route.path
 		matched.query = query
 		let res = await renderContentOfRoute(matched)
@@ -202,8 +202,6 @@ export function initRouter(configs) {
 		notFound: new Function()
 		
 	}
-	
-	
 }
 
 class LinkComponent extends HTMLElement{
