@@ -2,7 +2,7 @@ function matches(content) {
 	return /{{(.*?)}}/g.test(content)
 }
 
-export function processDOM(dom,child=false){
+export function processDOM(dom,child=false,freeze=false){
 	let refTextNodes =[]
 	let refElementNodes = {}
 	let refAttrs = []
@@ -10,7 +10,7 @@ export function processDOM(dom,child=false){
 	for (let i in nodes) {
 		let node = nodes[i]
 		let parent = node.parentNode
-		if(node.nodeType === Node.TEXT_NODE){
+		if(node.nodeType === Node.TEXT_NODE && !freeze){
 			if(matches(node.textContent)){
 				refTextNodes.push({
 					node:node,
@@ -21,8 +21,9 @@ export function processDOM(dom,child=false){
 		}
 		
 		if(node.nodeType == Node.ELEMENT_NODE){
+		 
 			Array.from(node.attributes).forEach((attr) => {
-				if (matches(attr.value)) {
+				if (!freeze && matches(attr.value)) {
 					refAttrs.push({
 						node: node,
 						name: attr.localName,
@@ -31,14 +32,13 @@ export function processDOM(dom,child=false){
 						parent:parent
 					})
 				}
-				
 				if (attr.localName == "ref") {
 				  node.removeAttribute("ref")
 					refElementNodes[attr.value] = node
 				}
 			})
 			if(node.childNodes.length>0){
-				let refs = processDOM(node,true)
+				let refs = processDOM(node,true,freeze)
 				refTextNodes.push(...refs.refTextNodes)
 				refAttrs.push(...refs.refAttrs)
 				let en = refs.refElementNodes

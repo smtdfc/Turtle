@@ -53,7 +53,7 @@ export class TurtleComponent extends HTMLElement {
       this.dom = document.createElement("template")
       this.dom.innerHTML = await this.render()
       this.contents = this.dom.content
-      this.#refs = processDOM(this.contents, false)
+      this.#refs = processDOM(this.contents, false,this.freeze)
       
       
       if(!this.freeze){
