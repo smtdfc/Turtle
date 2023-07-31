@@ -33,6 +33,7 @@ export function processDOM(dom,child=false){
 				}
 				
 				if (attr.localName == "ref") {
+				  node.removeAttribute("ref")
 					refElementNodes[attr.value] = node
 				}
 			})

@@ -108,8 +108,10 @@ async function renderContentOfRoute(matched) {
 			params: params,
 			query: query
 		})
-		return
-	} 
+	}
+	if(route.onload){
+	  route.onload()
+	}
 }
 
 async function resolveRoute(url) {
