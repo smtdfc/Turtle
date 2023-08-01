@@ -97,7 +97,6 @@ export class TurtleComponent extends HTMLElement {
   onRerender() {}
   onRender() {}
   render() {}
-
   connectedCallback() {
 
     this.onCreate()
@@ -107,6 +106,38 @@ export class TurtleComponent extends HTMLElement {
     this.onRemove()
   }
   onRemove() {}
+}
+
+export class TurtleStaticComponent extends HTMLElement{
+  constructor(){
+    super()
+    this.componentId = generateKey()
+    window.TURTLE_COMPONENTS[this.componentId] = this
+    this.data = {}
+    this.freeze = false
+    this.isTurtleComponent = true
+    this.props = window.TURTLE_COMPONENTS_PROPS[this.getAttribute("props")]
+    delete window.TURTLE_COMPONENTS_PROPS[this.getAttribute("props")]
+    this.removeAttribute("props")
+  }
+  async requestRender(){
+    this.beforeRender()
+    this.dom = document.createElement("template")
+    this.dom.innerHTML = await this.render()
+    this.contents = this.dom.content
+    this.after(this.contents)
+    this.remove()
+    this.onRender()
+  }
+  
+  connectedCallback() {
+    this.onCreate()
+    this.requestRender()
+  }
+  render(){}
+  onCreate(){}
+  beforeRender(){}
+  onRender(){}
 }
 
 export function createComponent(name, options) {
@@ -141,11 +172,34 @@ export function createComponent(name, options) {
       return (options.onRemove ?? new Function()).bind(this)(...args)
     }
   }
-
-
   try {
     window.customElements.define(name, $Component)
 
+  } catch (e) {
+    throw `Cannot create component : ${name}`
+  }
+}
+export function createStaticComponent(name, options) {
+
+  const $Component = class extends TurtleStaticComponent {
+    render() {
+      return (options.render ?? new Function()).bind(this)()
+    }
+    beforeRender() {
+      return (options.beforeRender ?? new Function()).bind(this)()
+    }
+    onRender() {
+      return (options.onRender ?? new Function()).bind(this)()
+    }
+    
+    onCreate() {
+      return (options.onCreate ?? new Function()).bind(this)()
+    }
+    
+  }
+
+  try {
+    window.customElements.define(name, $Component)
   } catch (e) {
     throw `Cannot create component : ${name}`
   }
