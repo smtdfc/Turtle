@@ -168,7 +168,7 @@ window.addEventListener("popstate", function(e) {
 	}
 })
 
-export function redirect(path,replace=false) {
+ function redirect(path,replace=false) {
 	if (Router.type == "hash") {
 	
 		if(replace){
@@ -192,7 +192,7 @@ export function redirect(path,replace=false) {
 	}
 }
 
-export function initRouter(configs) {
+ function initRouter(configs) {
 	Router.element = configs.element ? document.querySelector(configs.element) : document.createElement("div")
 	if (!Router.element) {
 		throw `Invalid element ${configs.element}`
@@ -230,11 +230,11 @@ class LinkComponent extends HTMLElement{
 }
 
 window.customElements.define("link-to",LinkComponent)
-export function setRouterEventListener(name,callback){
+ function setRouterEventListener(name,callback){
 	Router.events[name] = callback
 }
 
-export function startRouter(){
+ function startRouter(){
 	if (Router.type == "hash") {
 		let hash = window.location.hash
 		resolveRoute(hash.slice(1))
@@ -244,4 +244,11 @@ export function startRouter(){
 		resolveRoute(path)
 	}
 	
+}
+
+export const RouterControl = {
+  init:initRouter,
+  start:startRouter,
+  redirect:redirect,
+  on:setRouterEventListener,
 }
