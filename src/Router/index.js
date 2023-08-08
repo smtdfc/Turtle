@@ -254,4 +254,5 @@ export const RouterControl = {
   start: startRouter,
   redirect: redirect,
   on: setRouterEventListener,
+  routeInfo:Router.routeInfo
 }
