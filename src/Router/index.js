@@ -58,8 +58,7 @@ function checkMatchedRoute(urlParsed) {
 function renderComponent(element, component, data) {
   element.textContent = ``
   let $component = document.createElement(component)
-  if ($component.componentId)
-    $component.data.routerData = data
+  $component.data.routerData = data
   Router.currentRouteComponent = $component
   element.appendChild($component)
 }
