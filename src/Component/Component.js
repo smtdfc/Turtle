@@ -2,206 +2,156 @@ import { TurtleElement } from "../Element/Element.js"
 import { processDOM } from "./DOMProcess.js"
 import { updateDOM } from "./DOMUpdate.js"
 import { generateKey } from "../utils.js"
-
+import { ComponentController } from "./Controller.js"
 window.TURTLE_COMPONENTS = {}
 window.TURTLE_COMPONENTS_PROPS = {}
+
 export class TurtleComponent extends HTMLElement {
-  #refs
+  #refNodes
   constructor() {
     super()
-    this.componentId = generateKey()
-    window.TURTLE_COMPONENTS[this.componentId] = this
-    this.data = {}
-    this.freeze = false
-    this.isTurtleComponent = true
-    this.isRendered = false
-    this.shouldRerender = true
-    this.renderDependents = null
+    this.componentID = generateKey()
     this.states = {}
-    this.#refs = {
-      textNodes: [],
-      attrs: [],
-      nodes: []
+    this.props = {}
+    this.data = {}
+    this.shouldRerender = true
+    this.rerenderDependentStates = null
+    this.usingShadowDOM = false
+    this.template = document.createElement("template")
+    let propsKey = this.getAttribute("props")
+    if (propsKey) {
+      this.props = window.TURTLE_COMPONENTS_PROPS[propsKey]
+      delete window.TURTLE_COMPONENTS_PROPS[propsKey]
+      this.removeAttribute("props")
     }
-    this.props = window.TURTLE_COMPONENTS_PROPS[this.getAttribute("props")]
-    delete window.TURTLE_COMPONENTS_PROPS[this.getAttribute("props")]
-    this.removeAttribute("props")
+    this.isRendered = false
+    this.refNodes = {}
+    this.controller = new ComponentController(this)
   }
 
-  set useShadowRoot(s) {
-    if (s) this.attachShadow({ mode: "open" })
-  }
 
   ref(name) {
-    return new TurtleElement(this.#refs.refElementNodes[name])
+    return new TurtleElement(this.#refNodes.refElementNodes[name])
   }
 
-  setState(name, value) {
-    this.states[name] = value
-    this.onStateChange(name, value)
 
-    if (this.shouldRerender) {
-      if (this.renderDependents == null || this.renderDependents.includes(name)) {
-        if(!this.freeze) this.requestRender()
-      }
-    }
-  }
 
   async requestRender() {
     if (!this.isRendered) {
       this.isRendered = true
-      this.dom = document.createElement("template")
-      this.dom.innerHTML = await this.render()
-      this.contents = this.dom.content
-      this.#refs = processDOM(this.contents, false,this.freeze)
-      
-      
-      if(!this.freeze){
+      this.contents = this.template.content
+      this.#refNodes = processDOM(this.contents, false, this.freeze)
+
+      if (!this.freeze) {
         let rctx = this.usingShadowDOM ? this.shadowRoot : this
         rctx.textContent = ""
         rctx.appendChild(this.contents)
-      }else{
+      } else {
         this.after(this.contents)
         this.remove()
       }
-      
-      this.beforeRender()
+
+      await this.controller.beforeRender()
       requestAnimationFrame(() => {
-        updateDOM(this.#refs, this)
+        updateDOM(this.#refNodes, this)
+
         Promise.all([
-					this.onFirstRender(),
-					this.onRender()
+					this.controller.onFirstRender(),
+					this.controller.onRender()
 				])
       })
     } else {
-      
       if (this.freeze) {
         throw "Cannot re-render this component"
       }
-      this.beforeRender()
+      await this.controller.beforeRender()
       requestAnimationFrame(() => {
-        updateDOM(this.#refs, this)
+        updateDOM(this.#refNodes, this)
         Promise.all([
-					this.onRerender(),
-					this.onRender()
+					this.controller.onRerender(),
+					this.controller.onRender()
 				])
       })
     }
   }
 
-  onCreate() {}
-  onDestroy() {}
-  onStateChange() {}
-  beforeRender() {}
-  onFirstRender() {}
-  onRerender() {}
-  onRender() {}
-  render() {}
-  connectedCallback() {
+  async connectedCallback() {
+    this.template.innerHTML = await this.start.bind(this.controller)(this.controller)
+    await this.controller.onCreate()
+    await this.requestRender()
+  }
 
-    this.onCreate()
-    this.requestRender()
+  async disconnectedCallback() {
+    await this.controller.onRemove()
   }
-  disconnectedCallback() {
-    this.onRemove()
-  }
-  onRemove() {}
 }
 
-export class TurtleStaticComponent extends HTMLElement{
-  constructor(){
+export class TurtleStaticComponent extends HTMLElement {
+  #refNodes
+  constructor() {
     super()
-    this.componentId = generateKey()
-    window.TURTLE_COMPONENTS[this.componentId] = this
+    this.componentID = generateKey()
+    this.states = {}
+    this.props = {}
     this.data = {}
-    this.freeze = false
-    this.isTurtleComponent = true
-    this.props = window.TURTLE_COMPONENTS_PROPS[this.getAttribute("props")]
-    delete window.TURTLE_COMPONENTS_PROPS[this.getAttribute("props")]
-    this.removeAttribute("props")
+    this.template = document.createElement("template")
+    let propsKey = this.getAttribute("props")
+    if (propsKey) {
+      this.props = window.TURTLE_COMPONENTS_PROPS[propsKey]
+      delete window.TURTLE_COMPONENTS_PROPS[propsKey]
+      this.removeAttribute("props")
+    }
+
+    this.isStaticComponent = true
+    this.controller = new ComponentController(this)
   }
-  async requestRender(){
-    this.beforeRender()
-    this.dom = document.createElement("template")
-    this.dom.innerHTML = await this.render()
-    this.contents = this.dom.content
+  ref(name) {
+    return new TurtleElement(this.#refNodes.refElementNodes[name])
+  }
+
+  async requestRender() {
+    await this.controller.beforeRender()
+    this.contents = this.template.content
+    this.#refNodes = processDOM(this.contents, false, this.freeze)
     this.after(this.contents)
+    await this.controller.beforeRender()
+    requestAnimationFrame(() => {
+      updateDOM(this.#refNodes, this)
+      Promise.all([
+    	  this.controller.onFirstRender(),
+    		this.controller.onRender()
+    	])
+    })
     this.remove()
-    this.onRender()
   }
-  
-  connectedCallback() {
-    this.onCreate()
-    this.requestRender()
-  }
-  render(){}
-  onCreate(){}
-  beforeRender(){}
-  onRender(){}
-}
 
-export function createComponent(name, options) {
-
-  const $Component = class extends TurtleComponent {
-    render() {
-      return (options.render ?? new Function()).bind(this)()
-    }
-    beforeRender() {
-      return (options.beforeRender ?? new Function()).bind(this)()
-    }
-    onRender() {
-      return (options.onRender ?? new Function()).bind(this)()
-    }
-    onRerender() {
-      return (options.onRerender ?? new Function()).bind(this)()
-    }
-    onFirstRender() {
-      return (options.onFirstRender ?? new Function()).bind(this)()
-    }
-    onCreate() {
-      return (options.onCreate ?? new Function()).bind(this)()
-    }
-    onStateChange(...args) {
-      return (options.onStateChange ?? new Function()).bind(this)(...args)
-    }
-
-    onRouteChange(...args) {
-      return (options.onRouteChange ?? new Function()).bind(this)(...args)
-    }
-    onRemove(...args) {
-      return (options.onRemove ?? new Function()).bind(this)(...args)
-    }
-  }
-  try {
-    window.customElements.define(name, $Component)
-
-  } catch (e) {
-    throw `Cannot create component : ${name}`
+  async connectedCallback() {
+    this.template.innerHTML = await this.start.bind(this.controller)(this.controller)
+    await this.controller.onCreate()
+    await this.requestRender()
   }
 }
-export function createStaticComponent(name, options) {
 
-  const $Component = class extends TurtleStaticComponent {
-    render() {
-      return (options.render ?? new Function()).bind(this)()
-    }
-    beforeRender() {
-      return (options.beforeRender ?? new Function()).bind(this)()
-    }
-    onRender() {
-      return (options.onRender ?? new Function()).bind(this)()
-    }
-    
-    onCreate() {
-      return (options.onCreate ?? new Function()).bind(this)()
-    }
-    
-  }
-
+export function createComponent(name, callback) {
+  const COMPONENT = class extends TurtleComponent {}
+  COMPONENT.prototype.start = callback
   try {
-    window.customElements.define(name, $Component)
-  } catch (e) {
-    throw `Cannot create component : ${name}`
+    window.customElements.define(name, COMPONENT)
+  } catch (err) {
+    throw "Cannot create new Turtle Component !"
+  }
+}
+
+
+export function createStaticComponent(name, callback) {
+  const COMPONENT = class extends TurtleStaticComponent {
+
+  }
+  COMPONENT.prototype.start = callback
+  try {
+    window.customElements.define(name, COMPONENT)
+  } catch (err) {
+    throw "Cannot create new Turtle Component !"
   }
 }
 

@@ -1,4 +1,4 @@
-import { createComponent } from "../Component/Component.js"
+//import { createComponent } from "../Component/Component.js"
 const Router = {
   init: false,
   element: document.createElement("div"),
