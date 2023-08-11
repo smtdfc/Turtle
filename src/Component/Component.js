@@ -52,8 +52,11 @@ export class TurtleComponent extends HTMLElement {
       }
 
       await this.controller.beforeRender()
+
+      
       requestAnimationFrame(() => {
-        updateDOM(this.#refNodes, this)
+
+        updateDOM(this.#refNodes, this.controller)
 
         Promise.all([
 					this.controller.onFirstRender(),
@@ -66,7 +69,7 @@ export class TurtleComponent extends HTMLElement {
       }
       await this.controller.beforeRender()
       requestAnimationFrame(() => {
-        updateDOM(this.#refNodes, this)
+        updateDOM(this.#refNodes, this.controller)
         Promise.all([
 					this.controller.onRerender(),
 					this.controller.onRender()
@@ -105,6 +108,7 @@ export class TurtleStaticComponent extends HTMLElement {
     this.isStaticComponent = true
     this.controller = new ComponentController(this)
   }
+
   ref(name) {
     return new TurtleElement(this.#refNodes.refElementNodes[name])
   }
@@ -116,7 +120,7 @@ export class TurtleStaticComponent extends HTMLElement {
     this.after(this.contents)
     await this.controller.beforeRender()
     requestAnimationFrame(() => {
-      updateDOM(this.#refNodes, this)
+      updateDOM(this.#refNodes, this.controller)
       Promise.all([
     	  this.controller.onFirstRender(),
     		this.controller.onRender()

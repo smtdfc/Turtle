@@ -2,9 +2,9 @@ export class ComponentController {
   constructor(component) {
     this.component = component
   }
+
   setState(name, value) {
     this.component.states[name] = value
-
     this.onStateChange(name, value)
     if (!this.component.isStatic) {
       if (this.component.shouldRerender == true && (this.component.rerenderDependentStates == null || this.component.rerenderDependentStates.includes(name))) {
@@ -12,26 +12,53 @@ export class ComponentController {
       }
     }
   }
-  set useShadowDOM(s) {
-    if (!this.component.isStatic) {
-      if (s) {
-        this.component.attackShadow({
-          mode: "open"
-        })
-        this.useShadowDOM = true
-      } else {
-        this.useShadowDOM = false
+
+  createReducer(state, callback) {
+    let context = this
+    return function(value) {
+      if (state) {
+        context.setState(state, callback(value,context.states[state]))
       }
+
     }
   }
+  
+  
   get states() {
     return this.component.states
   }
-  ref(name) {
-    
-      return this.component.ref(name)
-    
+
+  get props() {
+    return this.component.props
   }
+
+  get data() {
+    return this.component.data
+  }
+
+  set useShadowDOM(s) {
+    if (!this.component.isStatic) {
+      if (s) {
+        this.component.attachShadow({
+          mode: "open"
+        })
+        this.component.usingShadowDOM = true
+      } else {
+        this.component.usingShadowDOM = false
+      }
+    }
+  }
+
+  requestRender() {
+    this.component.requestRender()
+  }
+
+
+
+  ref(name) {
+    return this.component.ref(name)
+  }
+
   onStateChange(stateName, value) {}
   onCreate() {}
   onRemove() {}
