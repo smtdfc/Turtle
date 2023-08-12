@@ -107,6 +107,7 @@ export const RouterModule = {
   load: function(app) {
     this.app = app
     this.app.router = this
+    return this
   },
 
   init: function(config) {
@@ -124,6 +125,7 @@ export const RouterModule = {
       onRouteMatched: [],
       onRouteChange: []
     }
+    
   },
 
   redirect: function(path, replace = false) {
@@ -159,6 +161,15 @@ export const RouterModule = {
       resolveRoute(context, new URL("",window.location.href))
     }
     
+    window.addEventListener("click",function(e){
+      let target = e.target
+      if(target.dataset["tlink"]){
+        e.preventDefault()
+        let link = target.dataset["tlink"]
+        context.redirect(link,target.dataset["treplace"]?true:false)
+      }
+    })
+    
     if (this.type == "hash") {
       window.addEventListener("hashchange", function(e) {
         let path = window.location.hash.slice(1)
@@ -171,5 +182,4 @@ export const RouterModule = {
       })
     }
   }
-
 }
