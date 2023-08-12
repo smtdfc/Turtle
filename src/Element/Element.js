@@ -87,7 +87,7 @@ export class TurtleElement {
 		this.HTMLElement.addEventListener(name, callback, true)
 	}
 
-	removeListener(name, callback) {
+	off(name, callback) {
 		this.HTMLElement.removeEventListener(name, callback, true)
 	}
 

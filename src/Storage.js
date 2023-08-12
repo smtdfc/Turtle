@@ -41,3 +41,15 @@ export class TurtleStorage {
     return await this.instance.keys()
   }
 }
+
+export const TurtleStorageModule = {
+  list:{},
+  load: function (app){
+    this.app = app
+    this.app.storage = this
+  },
+  
+  addStore:function(store_name){
+    this.list[store_name]=new TurtleStorage(store_name)
+  },
+}

@@ -23,6 +23,12 @@ export class ComponentController {
     }
   }
   
+  get scopes(){
+    if(this.component.app)
+     return this.component.app.scopes || {}
+    else
+      return {}
+  }
   
   get states() {
     return this.component.states

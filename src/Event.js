@@ -44,3 +44,4 @@ export function deleteEventListener(name, callback) {
 export function deleteAllEventListener(name){
 	window.TURTLE_EVENTS[name] = []
 }
+

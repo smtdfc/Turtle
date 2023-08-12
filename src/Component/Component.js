@@ -3,7 +3,7 @@ import { processDOM } from "./DOMProcess.js"
 import { updateDOM } from "./DOMUpdate.js"
 import { generateKey } from "../utils.js"
 import { ComponentController } from "./Controller.js"
-window.TURTLE_COMPONENTS = {}
+
 window.TURTLE_COMPONENTS_PROPS = {}
 
 export class TurtleComponent extends HTMLElement {
@@ -11,6 +11,9 @@ export class TurtleComponent extends HTMLElement {
   constructor() {
     super()
     this.componentID = generateKey()
+    if(this.app){
+      this.app.components[this.componentID] = this
+    } 
     this.states = {}
     this.props = {}
     this.data = {}
@@ -94,6 +97,9 @@ export class TurtleStaticComponent extends HTMLElement {
   constructor() {
     super()
     this.componentID = generateKey()
+    if (this.app) {
+      this.app.components[this.componentID] = this
+    }
     this.states = {}
     this.props = {}
     this.data = {}
@@ -136,22 +142,25 @@ export class TurtleStaticComponent extends HTMLElement {
   }
 }
 
-export function createComponent(name, callback) {
+export function createComponent(app,name, callback) {
   const COMPONENT = class extends TurtleComponent {}
   COMPONENT.prototype.start = callback
+  COMPONENT.prototype.app = app
   try {
     window.customElements.define(name, COMPONENT)
+    
   } catch (err) {
     throw "Cannot create new Turtle Component !"
   }
 }
 
 
-export function createStaticComponent(name, callback) {
+export function createStaticComponent(app,name, callback) {
   const COMPONENT = class extends TurtleStaticComponent {
 
   }
   COMPONENT.prototype.start = callback
+  COMPONENT.prototype.app = app
   try {
     window.customElements.define(name, COMPONENT)
   } catch (err) {

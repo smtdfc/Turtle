@@ -5,6 +5,6 @@ export * from "./HTTP.js"
 export * from "./Storage.js"
 export * from "./Selector.js"
 export * from "./Event.js"
-export * from "./Component/Component.js"
-
 export * from "./Router/index.js"
+export {TurtleStaticComponent,TurtleComponent,props} from "./Component/Component.js"
+export * from "./App.js"
