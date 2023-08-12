@@ -22,15 +22,17 @@ export function processDOM(dom, child = false, freeze = false) {
     }
 
     if (node.nodeType == Node.ELEMENT_NODE) {
+      if (node.childNodes.length > 0) {
+      
+        let refs = processDOM(node, true, freeze)
+        refTextNodes.push(...refs.refTextNodes)
+        refAttrs.push(...refs.refAttrs)
+        refEvents.push(...refs.refEvents)
+        let en = refs.refElementNodes
+        refElementNodes = { ...refElementNodes, ...en }
+      }
       Array.from(node.attributes).forEach((attr) => {
-        if (node.childNodes.length > 0) {
-          let refs = processDOM(node, true, freeze)
-          refTextNodes.push(...refs.refTextNodes)
-          refAttrs.push(...refs.refAttrs)
-          refEvents.push(...refs.refEvents)
-          let en = refs.refElementNodes
-          refElementNodes = { ...refElementNodes, ...en }
-        }
+        
 
 
         if (!freeze && matches(attr.value)) {

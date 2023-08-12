@@ -116,6 +116,7 @@ export class TurtleStaticComponent extends HTMLElement {
   }
 
   ref(name) {
+    
     return new TurtleElement(this.#refNodes.refElementNodes[name])
   }
 
