@@ -59,7 +59,7 @@ function resolveRoute(router, url = new URL("/", window.load)) {
     }
 
     if (routeConfig.resolver) {
-      let signal = routerConfig.resolver({ router, info })
+      let signal = routeConfig.resolver({ router, info })
       if (signal) {
         if (signal.redirect) {
           router.redirect(signal.redirect)
