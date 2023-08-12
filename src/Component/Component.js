@@ -164,6 +164,7 @@ export function createStaticComponent(app,name, callback) {
   try {
     window.customElements.define(name, COMPONENT)
   } catch (err) {
+    console.log(err);
     throw "Cannot create new Turtle Component !"
   }
 }

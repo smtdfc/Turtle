@@ -26,7 +26,7 @@ export class TurtleApp {
   }
 
   staticComponent(name,callback){
-    createStaticComponent(name,callback)
+    createStaticComponent(this,name,callback)
   }
 }
 
