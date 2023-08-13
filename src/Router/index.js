@@ -55,6 +55,7 @@ function resolveRoute(router, url = new URL("/", window.load)) {
       let passed = routeConfig.protect({ router, info })
       if (!passed) {
         emitEvent(router, "notallow", { router, info })
+        return 
       }
     }
 
