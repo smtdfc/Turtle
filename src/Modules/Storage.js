@@ -1,8 +1,10 @@
+import {TurtleModule} from "../Module.js"
+
 var localforage = null
 if (window.localforage) {
   localforage = window.localforage
 } else {
-  localforage = require("./Lib/localforage.min.js")
+  localforage = require("../Lib/localforage.min.js")
 }
 
 export class TurtleStorage {
@@ -25,14 +27,14 @@ export class TurtleStorage {
     return await this.instance.removeItem(name)
   }
 
-  async destroyAll(){
+  async destroyAll() {
     return await this.instance.clear()
   }
-  
-  async size(){
+
+  async size() {
     return await this.instance.length()
   }
-  
+
   each(callback) {
     this.instance.iterate(callback)
   }
@@ -42,14 +44,22 @@ export class TurtleStorage {
   }
 }
 
-export const TurtleStorageModule = {
-  list:{},
-  load: function (app){
-    this.app = app
+export class StorageModule extends TurtleModule {
+  constructor(app) {
+    super(app)
+    this.list = {}
+  }
+
+  init() {
     this.app.storage = this
-  },
-  
-  addStore:function(store_name){
-    this.list[store_name]=new TurtleStorage(store_name)
-  },
+    return this
+  }
+
+  store(store_name) {
+    if (!this.list[store_name]) {
+      this.list[store_name] = new TurtleStorage(store_name)
+    }
+    return this.list[store_name]
+  }
+
 }

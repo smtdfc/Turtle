@@ -1,221 +1,143 @@
-import { createEvent, createEventListener, deleteEventListener } from "../Event.js"
-import { generateKey, generateError } from "../utils.js"
-
+import { TurtleListElement } from "./ListElement.js"
+import { generateKey } from "../utils.js"
 export class TurtleElement {
-	constructor(element) {
-		this.key = generateKey()
-		if (element instanceof HTMLElement) {
-			if (!element.turtle_element) {
-				element.turtle_element = {
-					key: this.key
-				}
-			} else {
-				this.key = element.turtle_element.key
-			}
-			this.HTMLElement = element
-		} else if (element instanceof TurtleElement) {
-			element = element.HTMLElement
-			this.HTMLElement = element
-			this.key = element.key
-		} else {
-			generateError("Invalid Element", "The element must be HTMLElement or TurtleElement !")
-		}
+  constructor(element) {
+    if (element instanceof HTMLElement) {
+      element.turtle = element.turtle ?? {}
+      if (!element.turtle.key) {
+        element.turtle.key = generateKey()
+      }
+    } else {
+      element = element.HTMLElement
+    }
+    this.HTMLElement = element
+  }
 
-	}
+  get parent() {
+    return new TurtleElement(this.HTMLElement.parentElement)
+  }
 
-	setStyle(properties, value, priority = "") {
-		this.HTMLElement.style.setProperty(properties, value, priority)
-	}
+  get firstChild() {
+    return new TurtleElement(this.HTMLElement.firstElementChild)
+  }
 
-	getStyle(properties) {
-		return this.HTMLElement.style.getPropertyValue(properties)
-	}
+  get lastChild() {
+    return new TurtleElement(this.HTMLElement.lastElementChild)
+  }
 
-	computedStyle(pseudoElement) {
-		return getComputedStyle(this.HTMLElement, pseudoElement)
-	}
-	
-	set id(ID){
-		this.HTMLElement.id = ID
-	}
-	
-	get id(){
-		return this.HTMLElement.id
-	}
-	
-	get classList(){
-		return this.HTMLElement.classList
-	}
-	
-	set val(v) {
-		this.HTMLElement.value = v
-	}
+  get previousSibling() {
+    return new TurtleElement(this.HTMLElement.previousElementSibling)
+  }
 
-	get val() {
-		return this.HTMLElement.value
-	}
+  get nextSibling() {
+    return new TurtleElement(this.HTMLElement.previousElementSibling)
+  }
 
-	set HTML(html) {
-		this.HTMLElement.innerHTML = html
-	}
+  get id() {
+    return this.HTMLElement.id
+  }
 
-	get HTML() {
-		return this.HTMLElement.innerHTML
-	}
+  set id(ID) {
+    this.HTMLElement.id = ID
+  }
 
-	set text(t) {
-		this.HTMLElement.textContent = t
-	}
+  get classList() {
+    return this.HTMLElement.classList
+  }
 
-	get text() {
-		return this.HTMLElement.textContent
-	}
+  set HTML(html) {
+    this.HTMLElement.innerHTML = html
+  }
 
-	get attr() {
-		return new TurtleAttrElement(this)
-	}
+  get HTML() {
+    return this.HTMLElement.innerHTML
+  }
 
-	set checked(state) {
-		this.HTMLElement.checked = state
-	}
+  set text(t) {
+    this.HTMLElement.textContent = t
+  }
 
-	get checked() {
-		return this.HTMLElement.checked
-	}
+  get text() {
+    return this.HTMLElement.textContent
+  }
 
-	on(name, callback) {
-		this.HTMLElement.addEventListener(name, callback, true)
-	}
+  set val(value) {
+    this.HTMLElement.value = value
+  }
 
-	off(name, callback) {
-		this.HTMLElement.removeEventListener(name, callback, true)
-	}
+  get val() {
+    return this.HTMLElement.value
+  }
 
-	get childs() {
-		return new TurtleListElement(this, this.HTMLElement.children)
-	}
+  set checked(state) {
+    this.HTMLElement.checked = state
+  }
 
-	get nodes() {
-		return this.HTMLElement.childNodes
-	}
+  get checked() {
+    return this.HTMLElement.checked
+  }
 
-	select(query) {
-		try {
-			let element = this.HTMLElement.querySelector(query)
-			if (element == null) {
-				generateError("Invalid Element", `Element not found ${query}`)
-			}
-			return new TurtleElement(element)
-		} catch (e) {
-			generateError("Selector Error", `Cannot select element by query ${query} !`)
-		}
-	}
+  set disabled(state) {
+    this.HTMLElement.disabled = state
+  }
 
-	selectAll(query) {
-		try {
-			let elements = this.HTMLElement.querySelectorAll(query)
-			return new TurtleListElement(this,elements)
-		} catch (e) {
-			generateError("Selector Error", `Cannot select all element by query ${query} !`)
-		}
-	}
+  get disabled() {
+    return this.HTMLElement.disabled
+  }
 
-	focus() {
-		this.HTMLElement.focus()
-	}
+  get attrs() {
+    return this.HTMLElement.attibutes
+  }
 
-	click() {
-		this.HTMLElement.click()
-	}
-	addChild(child){
-		if(child instanceof HTMLElement){
-			this.HTMLElement.appendChild(child)
-		}else if(child instanceof TurtleElement){
-			this.HTMLElement.appendChild(child.HTMLElement)
-		}
-	}
-}
+  get styles() {
+    return this.HTMLElement.style
+  }
 
-export class TurtleAttrElement {
-	constructor(element) {
-		if (element instanceof TurtleElement) {
-			this.turtle_element = element
-		} else {
-			generateError("Invalid Element", "The element must be HTMLElement or TurtleElement !")
-		}
-		let ctx = this
-		this.listenerInited = false
-	}
+  get childNodes() {
+    return this.HTMLElement.childNodes
+  }
 
-	get(name) {
-		this.turtle_element.HTMLElement.getAttribute(name)
-	}
+  computedStyle(pseudoElement) {
+    return getComputedStyle(this.HTMLElement, pseudoElement)
+  }
 
-	set(name, value) {
-		this.turtle_element.HTMLElement.setAttribute(name, value)
-	}
+  click() {
+    this.HTMLElement.click()
+  }
 
-	addListener(callback, context = this) {
-		let ctx = this
-		if (!this.listenerInited) {
-			this.observer = new MutationObserver(function(mutations) {
-				mutations.forEach(function(mutation) {
-					if (mutation.type === "attributes") {
-						createEvent(`turtle_event_${ctx.turtle_element.key}_ac`, {
-							attr: mutation.attributeName,
-							newVal: mutation.target.getAttribute(mutation.attributeName)
-						}).emit()
-					}
-				});
-			});
+  focus() {
+    this.HTMLElement.focus()
+  }
 
-			this.observer.observe(this.turtle_element.HTMLElement, {
-				attributes: true
-			});
-			this.listenerInited = true
-		}
-		createEventListener(`turtle_event_${ctx.turtle_element.key}_ac`, callback, context)
-	}
+  remove() {
+    this.HTMLElement.remove()
+  }
 
-	removeListener(callback) {
-		let ctx = this
-		deleteEventListener(`turtle_event_${ctx.turtle_element.key}_ac`, callback)
-	}
-}
+  addChild(child) {
+    if (child instanceof HTMLElement) {
+      child = new TurtleElement(child)
+    }
+    this.HTMLElement.appendChild(child.HTMLElement)
+  }
 
-export class TurtleListElement {
-	constructor(parent, list) {
-		this.parent = parent
-		this.list = list
-	}
+  select(query) {
+    let result = this.HTMLElement.querySelector(query)
+    if (!result) {
+      throw `Invaild HTMLElement by query : ${query}`
+    }
+  }
 
-	each(callback, context) {
-		for (const child of this.list) {
-			callback.bind(context)(new TurtleElement(child))
-		}
-	}
+  selectAll(query) {
+    let result = this.HTMLElement.querySelectorAll(query)
+    return new TurtleListElement(this, result)
+  }
 
-	get length() {
-		return this.list.length
-	}
+  on(event, callback) {
+    this.HTMLElement.addEventListener(event, callback)
+  }
 
-	remove(idx) {
-		try {
-			this.list[idx].remove()
-		} catch (e) {
-			generateError("Element Error", `Cannot remove element by index : ${idx}`)
-		}
-	}
-
-	get(idx) {
-		try {
-			return new TurtleElement(this.list[idx])
-		} catch (e) {
-			generateError("Element Error", `Cannot get element by index : ${idx}`)
-		}
-	}
-}
-
-export function createElement(name) {
-	return new TurtleElement(document.createElement(name))
+  off(event, callback) {
+    this.HTMLElement.removeEventListener(event, callback)
+  }
+  
 }

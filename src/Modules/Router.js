@@ -1,4 +1,4 @@
-import { createComponent } from "../Component/Component.js"
+import {TurtleModule} from "../Module.js"
 
 
 function matches(list = {}, route) {
@@ -84,7 +84,7 @@ function resolveRoute(router, url = new URL("/", window.load)) {
     if (routeConfig.callback) routeConfig.callback({ router, info })
     if (routeConfig.title) document.title = routeConfig.title
     if (component) {
-      if (!router.app.components[component]) {
+      if (!window.TURTLE.TURTLE_COMPONENTS[component.toUpperCase()]) {
         if (routeConfig.loader) routeConfig.loader({ router, info })
       }
       let $component = document.createElement(component)
@@ -102,16 +102,18 @@ function resolveRoute(router, url = new URL("/", window.load)) {
   }
 }
 
+export class RouterModule extends TurtleModule{
 
-export const RouterModule = {
+  constructor(app) {
+    super(app)
+  }
 
-  load: function(app) {
-    this.app = app
-    this.app.router = this
-    return this
-  },
+init(app){
+  this.app.router = this
+  return this
+}
 
-  init: function(config) {
+  define(config) {
 
     if (config.element) {
       this.element = document.querySelector(config.element)
@@ -127,9 +129,9 @@ export const RouterModule = {
       onRouteChange: []
     }
     
-  },
+  }
 
-  redirect: function(path, replace = false) {
+  redirect(path, replace = false) {
     if (this.type == "hash") {
       if (!replace)
         window.location.hash = path
@@ -145,12 +147,12 @@ export const RouterModule = {
       else
         window.history.replaceState(null, null, `${path}`)
     }
-  },
-  on: function(name, callback) {
+  }
+  on(name, callback) {
     if (!this.events[name]) this.events[name] = []
     this.events[name].push(callback)
-  },
-  start: function() {
+  }
+  start() {
     let context = this
     if (this.type == "hash") {
       let path = window.location.hash.slice(1)

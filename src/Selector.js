@@ -42,6 +42,4 @@ export class TurtleSelector{
     let result = document.querySelectorAll(query)[idx]
     return wrap(this, "Query", query, result)
   }
-  
-  
 }

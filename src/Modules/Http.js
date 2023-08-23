@@ -1,3 +1,5 @@
+import {TurtleModule} from "../Module.js"
+
 export class TurtleRequest {
 	constructor(configs) {
 		this.xhr = new XMLHttpRequest()
@@ -149,4 +151,21 @@ export class TurtleResponse {
 	raw() {
 		return this.xhr.response
 	}
+}
+
+export class HttpModule extends TurtleModule{
+  constructor(app){
+    super(app)
+  }
+  
+  init(){
+    this.app.http = this
+    return this
+  }
+  
+  send(configs){
+    let req = new TurtleRequest(configs)
+    return req.send()
+  }
+  
 }

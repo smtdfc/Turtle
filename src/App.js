@@ -1,35 +1,21 @@
-import { TurtleElement } from "./Element/Element.js"
-import {createComponent,createStaticComponent} from "./Component/Component.js"
+import {TurtleElement} from "./Element/Element.js"
 export class TurtleApp {
   constructor(element) {
+    if(element instanceof HTMLElement) element = new TurtleElement(element)
     this.element = element
-    this.scopes = {}
     this.modules = []
-    this.components = {}
+    this.data = {}
+  }
+
+  use(module) {
+    let m = new module(this).init(this)
+    this.modules.push(m)
+    return m
   }
   
-  use(module){
-    if(!module.load) throw "Cannot load module !"
-    this.modules.push(module.load(this))
+  render(html){
+    this.element.HTML = html
   }
   
-  render(content) {
-    if (this.element instanceof HTMLElement) {
-      this.element.innerHTML = content
-    } else if (this.element instanceof TurtleElement) {
-      this.element.HTML = content
-    }
-  }
-
-  component(name, callback){
-    createComponent(this,name,callback)
-  }
-
-  staticComponent(name,callback){
-    createStaticComponent(this,name,callback)
-  }
-}
-
-export function initApp(element){
-  return new TurtleApp(element)
+  
 }
