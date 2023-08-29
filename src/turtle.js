@@ -3,7 +3,9 @@ window.TURTLE = {
   TURTLE_DEV:true,
   TURTLE_COMPONENTS :{},
   TURTLE_EVENTS :{},
-  TURTLE_PROPS :{}
+  TURTLE_PROPS :{},
+  TURTLE_CONTEXT:{},
+  TURTLE_STORES:{}
 }
 
 export * from "./App.js"
