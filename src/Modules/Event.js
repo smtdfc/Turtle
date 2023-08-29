@@ -26,7 +26,7 @@ export class EventModule extends TurtleModule {
   }
 
   init(app) {
-    this.app.router = this
+    this.app.event = this
     return this
   }
   
