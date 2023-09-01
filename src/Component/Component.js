@@ -18,6 +18,12 @@ export class TurtleComponent extends HTMLElement {
     this.component_data = {}
     this.usingShadowDOM = false
     this.template = document.createElement("template")
+    if(this.getAttribute("t-props")){
+      this.props = window.TURTLE.TURTLE_PROPS[this.getAttribute("t-props")]
+      delete window.TURTLE.TURTLE_PROPS[this.getAttribute("t-props")]
+      this.removeAttribute("t-props")
+    }
+      
   }
   
   setState(name,value){
@@ -83,8 +89,8 @@ export class TurtleComponent extends HTMLElement {
 
 export function component(name, callback) {
   let $Component = class extends TurtleComponent {
-    start() {
-      this.template.innerHTML = callback.bind(this)(this)
+    async start() {
+      this.template.innerHTML = await callback.bind(this)(this)
     }
   }
 
