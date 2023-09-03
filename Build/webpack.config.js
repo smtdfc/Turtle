@@ -8,8 +8,10 @@ module.exports = [
       path: path.resolve(__dirname, '../dist'),
       filename: 'turtle.min.js',
       globalObject: 'this',
-      library: 'Turtle',
-      libraryTarget: 'umd',
+      library:{
+        name:"Turtle",
+        type:["umd","cjs","module"]
+      },
     }
 	}
 ]
