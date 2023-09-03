@@ -9,7 +9,8 @@ export default  {
     },
     {
       file: './dist/turtle.min.js',
-      format: 'umd'
+      format: 'umd',
+      outputName:"Turtle"
     },
         {
           file: './dist/turtle.min.mjs',
