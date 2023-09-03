@@ -1,6 +1,7 @@
+import path from "path"
 import terser from '@rollup/plugin-terser';
 export default  {
-  input: '../src/turtle.js',
+  input: path.join(__dirname,"../src/turtle.js"),
   output: [
     {
       file: '../dist/turtle.cjs.js',
