@@ -1,7 +1,6 @@
-
 import terser from '@rollup/plugin-terser';
-export default  {
-  input:"./src/turtle.js" ,
+export default {
+  input: "./src/turtle.js",
   output: [
     {
       file: './dist/turtle.min.cjs',
@@ -10,12 +9,12 @@ export default  {
     {
       file: './dist/turtle.min.js',
       format: 'umd',
-      name:"Turtle"
+      name: "Turtle"
     },
-        {
-          file: './dist/turtle.min.mjs',
-          format: 'esm'
-        },
+    {
+      file: './dist/turtle.min.mjs',
+      format: 'esm'
+    },
   ],
-  plugins:[terser()]
+  plugins: [terser()]
 };

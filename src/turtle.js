@@ -17,7 +17,3 @@ export * from "./Component/directives.js"
 export * from "./Modules/Router.js"
 export * from "./Modules/Http.js"
 export * from "./Modules/Event.js"
-
-window.Turtle ={
-  
-}
