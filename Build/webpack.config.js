@@ -10,7 +10,7 @@ module.exports = [
       globalObject: 'this',
       library:{
         name:"Turtle",
-        type:["umd","cjs","module"]
+        type"umd"
       },
     }
 	}
