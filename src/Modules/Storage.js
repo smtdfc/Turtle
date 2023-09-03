@@ -1,3 +1,4 @@
+import "../Lib/localforage.min.js"
 import {TurtleModule} from "../Module.js"
 
 var localforage = null
