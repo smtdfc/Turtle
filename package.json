@@ -12,7 +12,7 @@
 	"author": "smtdfc",
 	"license": "MIT",
 	"scripts": {
-		"build": "rollup -c ./Build/rollup.config.js",
+		"build": "rollup -c ./Build/rollup.config.mjs",
 		"turtle-des": "node ./Core/Deployment/build.js",
 		"turtle-cli": "node ./CLI/main.js"
 	},
