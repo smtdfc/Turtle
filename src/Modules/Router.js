@@ -100,6 +100,8 @@ function resolveRoute(router, url = new URL("/", window.load)) {
   } else {
     emitEvent(router, "notfound", { router, info })
   }
+  
+  emitEvent(router,"routeloaded",{router,info})
 }
 
 export class RouterModule extends TurtleModule{
