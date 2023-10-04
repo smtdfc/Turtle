@@ -1,4 +1,4 @@
-import {TurtleModule} from "../Module.js"
+import { TurtleModule } from "../Module.js"
 
 
 function matches(list = {}, route) {
@@ -55,7 +55,7 @@ function resolveRoute(router, url = new URL("/", window.load)) {
       let passed = routeConfig.protect({ router, info })
       if (!passed) {
         emitEvent(router, "notallow", { router, info })
-        return 
+        return
       }
     }
 
@@ -100,20 +100,20 @@ function resolveRoute(router, url = new URL("/", window.load)) {
   } else {
     emitEvent(router, "notfound", { router, info })
   }
-  
-  emitEvent(router,"routeloaded",{router,info})
+
+  emitEvent(router, "routeloaded", { router, info })
 }
 
-export class RouterModule extends TurtleModule{
+export class RouterModule extends TurtleModule {
 
   constructor(app) {
     super(app)
   }
 
-init(app){
-  this.app.router = this
-  return this
-}
+  init(app) {
+    this.app.router = this
+    return this
+  }
 
   define(config) {
 
@@ -130,22 +130,22 @@ init(app){
       onRouteMatched: [],
       onRouteChange: []
     }
-    
+
   }
 
   redirect(path, replace = false) {
     if (this.type == "hash") {
       if (!replace)
         window.location.hash = path
-      else{
+      else {
         window.history.replaceState(null, null, `#${path}`)
         path = window.location.hash.slice(1)
         let url = new URL(path, window.location.origin)
         resolveRoute(this, url)
       }
-    }else{
-      if(!replace)
-        window.history.pushState(null,null,`${path}`)
+    } else {
+      if (!replace)
+        window.history.pushState(null, null, `${path}`)
       else
         window.history.replaceState(null, null, `${path}`)
     }
@@ -163,18 +163,18 @@ init(app){
     }
 
     if (this.type == "history") {
-      resolveRoute(context, new URL("",window.location.href))
+      resolveRoute(context, new URL("", window.location.href))
     }
-    
-    window.addEventListener("click",function(e){
+
+    window.addEventListener("click", function(e) {
       let target = e.target
-      if(target.dataset["tlink"]){
+      if (target.dataset["tlink"]) {
         e.preventDefault()
         let link = target.dataset["tlink"]
-        context.redirect(link,target.dataset["treplace"]?true:false)
+        context.redirect(link, target.dataset["treplace"] ? true : false)
       }
     })
-    
+
     if (this.type == "hash") {
       window.addEventListener("hashchange", function(e) {
         let path = window.location.hash.slice(1)
@@ -183,7 +183,7 @@ init(app){
       })
     } else {
       window.addEventListener("popstate", function(e) {
-        resolveRoute(context, new URL("",window.location.href))
+        resolveRoute(context, new URL("", window.location.href))
       })
     }
   }

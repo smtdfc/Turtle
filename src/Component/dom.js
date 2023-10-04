@@ -1,3 +1,4 @@
+import {TurtleElement} from "../Element/Element.js"
 function matches(content) {
   return /{{(.*?)}}/g.test(content)
 }
@@ -18,7 +19,7 @@ export function processDOM(nodes) {
     } else if (node.nodeType == Node.ELEMENT_NODE) {
       Array.from(node.attributes).forEach((attr) => {
         if (attr.localName == "t-ref") {
-          refs[attr.value] = node
+          refs[attr.value] = new TurtleElement(node)
           node.removeAttribute("t-ref")
           return
         }

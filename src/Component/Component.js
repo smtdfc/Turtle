@@ -72,7 +72,6 @@ export class TurtleComponent extends HTMLElement {
         this.onRender()
       })
     }
-    
   }
 
   async connectedCallback() {
