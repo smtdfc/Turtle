@@ -86,6 +86,20 @@ export class TurtleComponent extends HTMLElement {
 
 }
 
+export function generateComponent(element,name,props){
+	let component = document.createElement(name)
+	if(component instanceof HTMLUnknownElement){
+		throw "Invalid component name"
+	}
+	
+	if(!(component instanceof TurtleComponent)){
+		throw "Invalid component "
+	}
+	
+	component.props = props ?? {}
+	
+}
+
 export function component(name, callback) {
   let $Component = class extends TurtleComponent {
     async start() {
