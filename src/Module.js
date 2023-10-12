@@ -5,12 +5,5 @@ export class TurtleModule{
     this.app = app
     this.data = {}
     this.id = generateKey()
-    this.modules = []
-  }
-  
-  use(module){
-    let m = new module(this).init(this)
-    this.modules.push(m)
-    return m
   }
 }

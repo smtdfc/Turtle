@@ -89,7 +89,7 @@ export class TurtleComponent extends HTMLElement {
 export function component(name, callback) {
   let $Component = class extends TurtleComponent {
     async start() {
-      this.template.innerHTML = await callback.bind(this)(this)
+      this.template.innerHTML = await callback.bind(this)(this,this.props)
     }
   }
 
