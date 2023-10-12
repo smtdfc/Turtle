@@ -1,3 +1,4 @@
+import {TurtleElement} from "../Element/Element.js"
 import { generateKey ,measureTime} from "../utils.js"
 import { processDOM } from "./dom.js"
 import {update} from "./update.js"
@@ -97,7 +98,10 @@ export function generateComponent(element,name,props){
 	}
 	
 	component.props = props ?? {}
-	
+	if(element instanceof HTMLElement) element.appendChild(component)
+	else if(element instanceof TurtleElement) element.addChild(component)
+	else throw "Invalid element"
+	return component
 }
 
 export function component(name, callback) {
