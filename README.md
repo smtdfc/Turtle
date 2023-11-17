@@ -1,5 +1,5 @@
 # Turtle Framework
-[![Build Turtle](https://github.com/smtdfcrepo/Turtle/actions/workflows/webpack.yml/badge.svg)](https://github.com/smtdfcrepo/Turtle/actions/workflows/webpack.yml)
+[![Build Turtle](https://github.com/smtdfc/Turtle/actions/workflows/webpack.yml/badge.svg)](https://github.com/smtdfc/Turtle/actions/workflows/webpack.yml)
 
 *Simple framework for build UI*
 ***
