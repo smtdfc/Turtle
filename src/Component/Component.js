@@ -18,6 +18,10 @@ export class TurtleComponent extends HTMLElement {
     this.isRendered = false
     this.component_data = {}
     this.usingShadowDOM = false
+    this.wrapping = null 
+    let t = document.createElement("template")
+    t.innerHTML = this.innerHTML 
+    this.wrapping = t.content
     this.template = document.createElement("template")
     if(this.getAttribute("t-props")){
       this.props = window.TURTLE.TURTLE_PROPS[this.getAttribute("t-props")]
