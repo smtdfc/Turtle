@@ -84,9 +84,17 @@ function resolveRoute(router, url = new URL("/", window.load)) {
     if (routeConfig.callback) routeConfig.callback({ router, info })
     if (routeConfig.title) document.title = routeConfig.title
     if (component) {
-      if (!window.TURTLE.TURTLE_COMPONENTS[component.toUpperCase()]) {
+      if(router.currentComponent){
+        window.customElements.define(component,class extends HTMLElement{},{})
+      }
+      if (!router.alwayLoadContent) {
+        if (!window.TURTLE.TURTLE_COMPONENTS[component.toUpperCase()]) {
+          if (routeConfig.loader) routeConfig.loader({ router, info })
+        }
+      } else {
         if (routeConfig.loader) routeConfig.loader({ router, info })
       }
+      router.currentComponent = component
       let $component = document.createElement(component)
       $component.router = {}
       $component.router = {
@@ -116,13 +124,12 @@ export class RouterModule extends TurtleModule {
   }
 
   define(config) {
-
     if (config.element) {
       this.element = document.querySelector(config.element)
     } else {
       throw "Invalid element !"
     }
-
+    this.currentComponent = null
     this.type = config.type || "hash"
     this.info = {}
     this.routes = config.routes ?? {}
@@ -130,7 +137,7 @@ export class RouterModule extends TurtleModule {
       onRouteMatched: [],
       onRouteChange: []
     }
-
+    this.alwayLoadContent = config.alwayLoadContent ?? true
   }
 
   redirect(path, replace = false) {
