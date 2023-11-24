@@ -85,7 +85,7 @@ function resolveRoute(router, url = new URL("/", window.load)) {
     if (routeConfig.title) document.title = routeConfig.title
     if (component) {
       if(router.currentComponent){
-        window.customElements.upgrade(component,class extends HTMLElement{},{})
+        //window.customElements.upgrade(component,class extends HTMLElement{},{})
       }
       if (!router.alwayLoadContent) {
         if (!window.TURTLE.TURTLE_COMPONENTS[component.toUpperCase()]) {
