@@ -28,7 +28,6 @@ export class TurtleComponent extends HTMLElement {
       delete window.TURTLE.TURTLE_PROPS[this.getAttribute("t-props")]
       this.removeAttribute("t-props")
     }
-      
   }
   
   setState(name,value){

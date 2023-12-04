@@ -5,7 +5,8 @@ window.TURTLE = {
   TURTLE_EVENTS :{},
   TURTLE_PROPS :{},
   TURTLE_CONTEXT:{},
-  TURTLE_STORES:{}
+  TURTLE_STORES:{},
+  TURTLE_ATTRS:{},
 }
 
 export * from "./App.js"
@@ -17,3 +18,4 @@ export * from "./Component/directives.js"
 export * from "./Modules/Router.js"
 export * from "./Modules/Http.js"
 export * from "./Modules/Event.js"
+export * from "./Modules/States.js"

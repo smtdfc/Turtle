@@ -1,4 +1,5 @@
-import {TurtleElement} from "../Element/Element.js"
+import { TurtleElement } from "../Element/Element.js"
+
 function matches(content) {
   return /{{(.*?)}}/g.test(content)
 }
@@ -23,7 +24,15 @@ export function processDOM(nodes) {
           node.removeAttribute("t-ref")
           return
         }
+        if (attr.localName = "t-attrs") {
+          let attrs = window.TURTLE.TURTLE_ATTRS[attr.value]
+          Object.keys(attrs).forEach(name => {
+            node[name] = attrs[name]
+          })
+          node.removeAttribute("t-attrs")
+          return
 
+        }
         if (attr.localName == "t-event") {
           events.push({
             node: node,
@@ -45,7 +54,7 @@ export function processDOM(nodes) {
       let child = processDOM(node.childNodes)
       mem.push(...child.mem)
       let r = child.refs
-      refs = { ...refs,...r }
+      refs = { ...refs, ...r }
       events.push(...child.events)
     }
   }
