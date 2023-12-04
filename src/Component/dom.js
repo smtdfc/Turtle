@@ -24,7 +24,7 @@ export function processDOM(nodes) {
           node.removeAttribute("t-ref")
           return
         }
-        if (attr.localName = "t-attrs") {
+        if (attr.localName == "t-attrs") {
           let attrs = window.TURTLE.TURTLE_ATTRS[attr.value]
           Object.keys(attrs).forEach(name => {
             node[name] = attrs[name]
