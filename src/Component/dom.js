@@ -24,6 +24,7 @@ export function processDOM(nodes) {
           node.removeAttribute("t-ref")
           return
         }
+        
         if (attr.localName == "t-attrs") {
           let attrs = window.TURTLE.TURTLE_ATTRS[attr.value]
           Object.keys(attrs).forEach(name => {
@@ -31,8 +32,8 @@ export function processDOM(nodes) {
           })
           node.removeAttribute("t-attrs")
           return
-
         }
+        
         if (attr.localName == "t-event") {
           events.push({
             node: node,
@@ -49,6 +50,8 @@ export function processDOM(nodes) {
             temp: attr.value
           })
         }
+        
+        
       })
 
       let child = processDOM(node.childNodes)

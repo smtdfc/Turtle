@@ -13,9 +13,9 @@ export class TurtleComponent extends HTMLElement {
     this.data = {}
     this.refs = {}
     this.states = {}
-    this.rerenderDepenedents = null
-    this.shouldRerender = true
-    this.isRendered = false
+    this.updateDependents = null
+    this.shouldUpdate = true
+    this.isUpdate = false
     this.component_data = {}
     this.usingShadowDOM = false
     this.wrapping = null 
@@ -32,21 +32,21 @@ export class TurtleComponent extends HTMLElement {
   
   setState(name,value){
     this.states[name] = value
-    if(this.shouldRerender){
-      if(this.rerenderDepenedents == null || this.rerenderDepenedents.includes(name)) this.requestRender()
+    if(this.shouldUpdate){
+      if(this.updateDependents == null || this.updateDependents.includes(name)) this.requestRender()
     }
   }
   
   onCreate() {}
   onRemove() {}
-  onFirstRender() {}
-  onRerender() {}
+  onRendered() {}
+  onUpdate() {}
   onRender() {}
-  beforeRender() {}
+  onEffect(){}
   start() {}
 
   async requestRender() {
-    if (!this.isRendered) {
+    if (!this.isUpdate) {
       let result = processDOM(this.template.content.childNodes)
       this.refs = result.refs
       this.mem = result.mem
@@ -58,22 +58,22 @@ export class TurtleComponent extends HTMLElement {
       })
       
       requestAnimationFrame(()=>{
-        this.beforeRender()
         update(this.mem,this)
-        this.isRendered = true 
-        this.onFirstRender()
-        this.onRender()
+        this.isUpdate = true
+        this.onRendered()
+        this.onEffect()
       })
+      
       let r = this.usingShadowDOM ? this.shadowRoot : this
       r.textContent = ""
       r.appendChild(this.template.content)
     }else{
       requestAnimationFrame(() => {
-        this.beforeRender()
+        
         update(this.mem, this)
-        this.isRendered = true
-        this.onRerender()
-        this.onRender()
+        this.isUpdate = true
+        this.onUpdated()
+        this.onEffect()
       })
     }
   }
