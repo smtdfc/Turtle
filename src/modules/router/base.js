@@ -78,7 +78,7 @@ export class TurtleRouterModule {
          ctx.matches(path)
       })
       
-      this.matches("/")
+      this.matches(window.location.hash.slice(1))
    }
 
 }
