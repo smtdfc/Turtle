@@ -43,7 +43,7 @@ export class TurtleRouterModule {
                   return
                }
             }
-            if (route_info.loader) content_fn = await route_info.loader.bind(this)
+            if (route_info.loader) content_fn = await route_info.loader.bind(this)()
             if (route_info.content) content_fn = route_info.content.bind(this)
             if (route_info.onContentLoaded) route_info.onContentLoaded.bind(this)()
             if (route_info.callback) { await route_info.callback.bind(this)() }
