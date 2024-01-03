@@ -20,6 +20,10 @@ export class TurtleRouterModule {
       return new TurtleRouterModule(app, configs)
    }
 
+   redirect(path, replace=false){
+      window.history.replaceState(null,null,`#${path}`)
+   }
+   
    async matches(path) {
       Object.keys(this.routes).forEach(async pattern => {
          let result = matches(pattern, path)
