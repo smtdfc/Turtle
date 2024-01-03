@@ -14,6 +14,7 @@ export class TurtleRouterModule {
       this.app = app
       this.matched = null
       app.router = this
+    
    }
 
    static init(app, configs) {
@@ -76,6 +77,8 @@ export class TurtleRouterModule {
          let path = window.location.hash.slice(1)
          ctx.matches(path)
       })
+      
+      this.matches("/")
    }
 
 }
