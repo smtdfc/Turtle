@@ -4,7 +4,7 @@ function evalInScope(js, contextAsScope) {
 
 export function parseContents(contents) {
    let xmlDoc = new DOMParser().parseFromString(
-      `<root>${contents}</roor>`,
+      `<root>${contents}</root>`,
       "text/xml"
    )
 
