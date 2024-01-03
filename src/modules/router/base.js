@@ -49,6 +49,7 @@ export class TurtleRouterModule {
             if (route_info.callback) { await route_info.callback.bind(this)() }
             let template = await content_fn(this, result)
             template = parseContents(template)
+            this.element.textContent = ""
             process(template, this.element, {
                app: this.app,
                _memories: []
@@ -77,8 +78,9 @@ export class TurtleRouterModule {
          let path = window.location.hash.slice(1)
          ctx.matches(path)
       })
+      let path = window.location.hash.slice(1)
       
-      this.matches(window.location.hash.slice(1))
+      this.matches(path)
    }
 
 }

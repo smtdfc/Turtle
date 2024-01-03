@@ -14,6 +14,7 @@ export class TurtleApp{
    }
    
    render(contents ){
+      this.root.textContent = ""
       contents = parseContents(contents)
       process(contents,this.root,{
          app:this,

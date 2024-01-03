@@ -36,8 +36,8 @@ export function processAttributes(node, root, context = {}) {
 }
 
 
-export function process(contents, root, context) {
-   root.textContent = ""
+export function process(contents, root, context, child=false) {
+   
    for (let i = 0; i < contents.childNodes.length; i++) {
       let node = contents.childNodes[i]
       if (node.nodeType === Node.ELEMENT_NODE) {
