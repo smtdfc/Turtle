@@ -21,8 +21,8 @@ export class TurtleRouterModule {
    }
 
    redirect(path, replace=false){
-      window.location  = `./#${path}`
-      this.matches(path)
+      window.location.hash = path
+      
    }
    
    async matches(path) {
