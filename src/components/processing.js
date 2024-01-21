@@ -30,9 +30,7 @@ export function processAttributes(node, root, context = {}) {
           context.root._memories.push({ type: "text", node: root, expr: attribute.value })
         }
       } else if (attribute.localName == "t-ref") {
-        if (context.root instanceof TurtleComponent) {
           context.root._refs[attribute.value] = root
-        }
       } else if (attribute.localName == "t-html") {
         if (context.root instanceof TurtleComponent) {
           context.root._memories.push({ type: "html", node: root, expr: attribute.value })

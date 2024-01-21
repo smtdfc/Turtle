@@ -31,13 +31,9 @@ export class TurtleRouterModule {
     if (path.length == 0) path = "/"
     for (let i = 0; i < Object.keys(this.routes).length; i++) {
       let pattern = Object.keys(this.routes)[i]
-
       let result = matches(pattern, path)
-
       if (result.matched) {
         matched = true
-
-
         let content_fn = {}
         let route_info = this.routes[pattern]
         if (route_info.beforeLoadContent) route_info.beforeLoadContent.bind(this)()
@@ -61,6 +57,7 @@ export class TurtleRouterModule {
             this.triggerEvent("loadcontentfailed", err)
           }
         }
+        
         if (content_fn.template) {
           const context = {
             app: this.app,
@@ -68,14 +65,18 @@ export class TurtleRouterModule {
             _refs: {},
             get refs() {
               return this._refs
-            }
+            },
+            
           }
-          let template = content_fn.template.bind(this)(context, result)
+          
+          context.html=render.bind(context)
+          let template = content_fn.template.bind(context)(context, result)
           this.element.textContent = ""
           this.element.appendChild(template)
           if (context.onRender) context.onRender()
         }
-        if (route_info.callback) { await route_info.callback.bind(this)() }
+        
+        if (route_info.callback) { route_info.callback.bind(this)() }
         if (content_fn.configs) {
           let configs = content_fn.configs
           document.title = configs.title ?? document.title
