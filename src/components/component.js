@@ -51,6 +51,7 @@ export class TurtleComponent {
 
   start() {
     this.onCreate()
+    this._base._c = this
     this._base.appendChild(this._fn(this,...this._props))
     for (let i = 0; i < this._memories.length; i++) {
       let d = this._memories[i]
