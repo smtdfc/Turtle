@@ -15,6 +15,7 @@ export class TurtleRouterModule {
     this.app = app
     this.matched = null
     app.router = this
+    this.currentContext = null
     this.render = render
     this.render = this.render.bind(this)
   }
@@ -33,6 +34,9 @@ export class TurtleRouterModule {
       let pattern = Object.keys(this.routes)[i]
       let result = matches(pattern, path)
       if (result.matched) {
+        if(this.currentContext){
+          if(this.currentContext.onRouteChange) this.currentContext.onRouteChange()
+        }
         matched = true
         let content_fn = {}
         let route_info = this.routes[pattern]
@@ -70,6 +74,7 @@ export class TurtleRouterModule {
           }
           
           context.html=render.bind(context)
+          this.currentContext = context
           let template = content_fn.template.bind(context)(context, result)
           this.element.textContent = ""
           this.element.appendChild(template)
