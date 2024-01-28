@@ -18,16 +18,18 @@ export function render(str, ...values) {
 
       values[i] = `TurtleComponent_${key}`
     }
-    
-    if (value.instance === TurtleComponent) {
-      let key = (Math.floor(Math.random() * 9999) * Date.now()).toString(16)
-      value = value()
-      data.components[key] = function(base) {
-        value._base = base
-        return value.start()
+
+    if (value) {
+      if (value.instance === TurtleComponent) {
+        let key = (Math.floor(Math.random() * 9999) * Date.now()).toString(16)
+        value = value()
+        data.components[key] = function(base) {
+          value._base = base
+          return value.start()
+        }
+        values[i] = `TurtleComponent_${key}`
+
       }
-      values[i] = `TurtleComponent_${key}`
-    
     }
   }
 
