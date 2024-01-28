@@ -72,8 +72,7 @@ export class TurtleComponent {
     }
     this.onRender()
   }
-  
-  
+ 
 }
 
 export function createComponent(fn) {
