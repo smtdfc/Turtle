@@ -4,7 +4,8 @@ export { render } from "./components/render.js"
 export * from "./modules/router/index.js"
 export * from "./app.js"
 
-export function importScript(d, src, asyncLoad=false,script) {
+export function addScript(src, asyncLoad=false,script) {
+  let d = document
   return new Promise((resolve, reject) => {
     script = d.createElement('script');
     script.type = 'text/javascript';
@@ -12,7 +13,7 @@ export function importScript(d, src, asyncLoad=false,script) {
     script.onload = function() {
       resolve()
     };
-    script.onerr = function() {
+    script.onerror = function() {
       reject()
     }
     script.src = src;
