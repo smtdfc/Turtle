@@ -17,7 +17,7 @@ export function addScript(src, asyncLoad=false,script) {
       reject()
     }
     script.src = src;
-    d.getElementsByTagName('head')[0].appendChild(script)
+    d.getElementsByTagName('body')[0].appendChild(script)
   })
 
 }
