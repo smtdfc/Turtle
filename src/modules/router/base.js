@@ -109,6 +109,27 @@ export class TurtleRouterModule {
       await this.matches(path)
     }
   }
+  
+  forceDisplayPage(content_fn){
+    if (content_fn.template) {
+      const context = {
+        app: this.app,
+        _memories: [],
+        _refs: {},
+        get refs() {
+          return this._refs
+        },
+    
+      }
+    
+      context.html = render.bind(context)
+      this.currentContext = context
+      let template = content_fn.template.bind(context)(context, result)
+      this.element.textContent = ""
+      this.element.appendChild(template)
+      if (context.onRender) context.onRender()
+    }
+  }
 
   triggerEvent(name) {
     this.events[name].forEach(callback => {
