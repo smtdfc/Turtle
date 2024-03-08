@@ -1,32 +1,51 @@
-import { render } from './render.js';
-import {TurtleComponentState} from './state.js';
+import { render } from '../dom/render.js';
+import { createState } from './state.js';
+
 function evalInScope(js, contextAsScope) {
   return new Function(`return ${js}`).call(contextAsScope);
 }
 
-export class TurtleComponent {
+class TurtleComponentElement extends HTMLElement {
+  constructor() {
+    super()
+    this._controller = null
+  }
+
+  connectedCallback() {
+    this._controller.start(this)
+  }
+}
+
+window.customElements.define("turtle-component", TurtleComponentElement)
+
+export class TurtleComponentInstance {
   constructor(fn, props) {
-    this._fn = fn.bind(this)
-    this._props = props
-    this._base = null
+    this.fn = fn
+    this.props = props
+    this.data = {}
+    this._memories = {}
     this._refs = {}
+    this._element = null
     this._reactive = true
-    this._memories = []
     this.html = render.bind(this)
     this.onCreate = new Function()
     this.onRender = new Function()
     this.onUpdate = new Function()
     this.onDestroy = new Function()
   }
-  
-  createState(value){
-    return new TurtleComponentState(this,value)
+
+  initState(value) {
+    let state = createState(value)
+    state.component = this
+    return state
   }
   
-  get refs(){
-    return this._refs
+  addUpdateDependents(dependents) {
+    dependents.forEach(dependent => {
+      dependent.component = this
+    })
   }
-  
+
   forceUpdate() {
     for (let i = 0; i < this._memories.length; i++) {
       let d = this._memories[i]
@@ -45,14 +64,18 @@ export class TurtleComponent {
         d.node.innerHTML = evalInScope(d.expr, this)
       }
     }
-    
+
     this.onUpdate()
   }
 
-  start() {
-    this.onCreate()
-    this._base._c = this
-    this._base.appendChild(this._fn(this,...this._props))
+  start(element) {
+    this._element = element
+    let { root, context } = this.requestRender()
+
+    this._element.appendChild(root)
+    this._memories = context._memories
+    this._refs = context._refs
+
     for (let i = 0; i < this._memories.length; i++) {
       let d = this._memories[i]
       if (d.type == "attr") {
@@ -70,15 +93,22 @@ export class TurtleComponent {
         d.node.innerHTML = evalInScope(d.expr, this)
       }
     }
+
     this.onRender()
+
   }
- 
+
+  requestRender() {
+    return this.fn.bind(this)(this, ...this.props)
+  }
+
 }
 
 export function createComponent(fn) {
   let fn_component = function(...props) {
-    return new TurtleComponent(fn, props)
+    return new TurtleComponentInstance(fn, props)
   }
-  fn_component.instance = TurtleComponent
+
+  fn_component.instance = TurtleComponentInstance
   return fn_component
 }

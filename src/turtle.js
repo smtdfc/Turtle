@@ -1,10 +1,9 @@
-import {} from './components/base.js';
-export * from "./components/component.js"
-export { render } from "./components/render.js"
+export {render as fragment} from './dom/render.js';
+export * from "./component/index.js"
+export * from "./component/state.js"
+export * from "./app/index.js"
 export * from "./modules/router/index.js"
-export * from "./app.js"
-
-export function addScript(src, asyncLoad=false,script) {
+export function addScript(src, asyncLoad = false, script) {
   let d = document
   return new Promise((resolve, reject) => {
     script = d.createElement('script');
