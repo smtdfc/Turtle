@@ -34,12 +34,16 @@ export class TurtleComponentInstance {
     this.onDestroy = new Function()
   }
 
+  get refs() {
+    return this._refs
+  }
+  
   initState(value) {
     let state = createState(value)
     state.component = this
     return state
   }
-  
+
   addUpdateDependents(dependents) {
     dependents.forEach(dependent => {
       dependent.component = this
