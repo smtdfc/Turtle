@@ -33,8 +33,8 @@ export class TurtleRouterModule {
   }
 
   async matches(url) {
-   let u =  new URL(url, window.location.origin)
-   url = u.pathname
+    let u = new URL(url, window.location.origin)
+    url = u.pathname
     for (let j = 0; j < Object.keys(this.routes).length; j++) {
       let route = Object.keys(this.routes)[j]
       let configs = this.routes[route]
@@ -42,27 +42,29 @@ export class TurtleRouterModule {
       let urlSplited = url.split("/")
       let passed = true
       let params = {}
+      if (urlSplited.length != routeSplited.length) {
+        passed = false
+      } else {
+        for (let i = 0; i < routeSplited.length; i++) {
+          if (urlSplited[i] === undefined) {
+            passed = false
 
-      for (let i = 0; i < routeSplited.length; i++) {
+          }
 
-        if (urlSplited[i] === undefined) {
-          passed = false
-          
-        }
+          if (routeSplited[i] == "*") {
+            continue
+          }
 
-        if (routeSplited[i] == "*") {
-          continue
-        }
+          if (routeSplited[i][0] == ":") {
+            let name = routeSplited[i].substring(1, routeSplited[i].length)
+            params[name] = urlSplited[i]
+            continue
+          }
 
-        if (routeSplited[i][0] == ":") {
-          let name = routeSplited[i].substring(1, routeSplited[i].length)
-          params[name] = urlSplited[i]
-          continue
-        }
+          if (routeSplited[i] != urlSplited[i]) {
+            passed = false
 
-        if (routeSplited[i] != urlSplited[i]) {
-          passed = false
-          
+          }
         }
       }
 
@@ -107,7 +109,7 @@ export class TurtleRouterModule {
     } else {
       path = path.slice(2)
     }
-    
+
     window.addEventListener("hashchange", function() {
       if (started) {
         let path = window.location.hash
@@ -118,10 +120,10 @@ export class TurtleRouterModule {
         }
         this.matches(path)
       }
-      
+
     }.bind(this))
-    
-    
+
+
 
     this.matches(path)
     started = true
