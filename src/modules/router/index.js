@@ -100,27 +100,32 @@ export class TurtleRouterModule {
   }
 
   start() {
-    window.addEventListener("hashchange", function() {
-      let path = window.location.hash
-      if (path.length == 0) {
-        window.location.hash = "#!/"
-        path = "/"
-      } else {
-        path = path.slice(2)
-      }
-      this.matches(path)
-    }.bind(this))
-    
+    let started = false
     let path = window.location.hash
-
     if (path.length == 0) {
       window.location.hash = "#!/"
       path = "/"
     } else {
       path = path.slice(2)
     }
+    
+    window.addEventListener("hashchange", function() {
+      if (started) {
+        let path = window.location.hash
+        if (path.length == 0) {
+          path = "/"
+        } else {
+          path = path.slice(2)
+        }
+        this.matches(path)
+      }
+      
+    }.bind(this))
+    
+    
 
     this.matches(path)
+    started = true
   }
 
   redirect(path, replace = false) {
