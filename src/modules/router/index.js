@@ -47,7 +47,7 @@ export class TurtleRouterModule {
 
         if (urlSplited[i] === undefined) {
           passed = false
-          break
+          
         }
 
         if (routeSplited[i] == "*") {
@@ -62,7 +62,7 @@ export class TurtleRouterModule {
 
         if (routeSplited[i] != urlSplited[i]) {
           passed = false
-          break
+          
         }
       }
 
