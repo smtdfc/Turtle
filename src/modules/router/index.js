@@ -103,7 +103,6 @@ export class TurtleRouterModule {
     let started = false
     let path = window.location.hash
     if (path.length == 0) {
-      window.location.hash = "#!/"
       path = "/"
     } else {
       path = path.slice(2)
@@ -130,7 +129,7 @@ export class TurtleRouterModule {
 
   redirect(path, replace = false) {
     if (!replace) {
-      window.location.hash = `#!${path}`
+      window.location.hash = `!${path}`
     } else {
       window.history.replaceState(null, null, `./#!${path}`)
       this.matches(path)
