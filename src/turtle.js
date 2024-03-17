@@ -3,11 +3,12 @@ export * from "./component/index.js"
 export * from "./component/state.js"
 export * from "./app/index.js"
 export * from "./modules/router/index.js"
-export function addScript(src, asyncLoad = false, script) {
+export function addScript(src, asyncLoad = false, module=false,script) {
   let d = document
   return new Promise((resolve, reject) => {
     script = d.createElement('script');
     script.type = 'text/javascript';
+    if(module) script.type = 'module';
     script.async = asyncLoad;
     script.onload = function() {
       resolve()
