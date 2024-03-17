@@ -14,6 +14,10 @@ class TurtleComponentElement extends HTMLElement {
   connectedCallback() {
     this._controller.start(this)
   }
+  
+  disconnectedCallback(){
+    this._controller.onDestroy()
+  }
 }
 
 window.customElements.define("turtle-component", TurtleComponentElement)
@@ -68,14 +72,12 @@ export class TurtleComponentInstance {
         d.node.innerHTML = evalInScope(d.expr, this)
       }
     }
-
     this.onUpdate()
   }
 
   start(element) {
     this._element = element
     let { root, context } = this.requestRender()
-
     this._element.appendChild(root)
     this._memories = context._memories
     this._refs = context._refs
@@ -99,7 +101,6 @@ export class TurtleComponentInstance {
     }
 
     this.onRender()
-
   }
 
   requestRender() {
