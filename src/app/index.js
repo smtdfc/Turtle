@@ -22,6 +22,7 @@ export class TurtleApp {
   }
 
   render(content) {
+    this.root.textContent = ""
     this.root.appendChild(content.root)
   }
 }

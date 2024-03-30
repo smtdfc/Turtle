@@ -108,6 +108,9 @@ export class TurtleComponentInstance {
   }
 
 }
+export class TurtleComponent extends TurtleComponentInstance{
+  
+}
 
 export function createComponent(fn) {
   let fn_component = function(...props) {

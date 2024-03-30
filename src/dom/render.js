@@ -1,7 +1,8 @@
-import { TurtleComponentInstance } from '../component/index.js';
+import { TurtleComponentInstance,TurtleComponent } from '../component/index.js';
 import { TurtleMemorizeContext } from './memorize.js';
 import { parserContent } from './parser.js';
-import {processAttributes} from './attributes.js';
+import { processAttributes } from './attributes.js';
+
 function checkAndExtractId(inputString) {
   const regex = /^TurtleComponent_([a-zA-Z0-9]+)$/;
   const match = inputString.match(regex);
@@ -22,13 +23,13 @@ function processing(root, contents, context, data, scope) {
 
     if (node.nodeType === Node.ELEMENT_NODE) {
       let name = node.tagName
-      
+
       let element = document.createElement(node.tagName)
       if (element instanceof HTMLUnknownElement) {
-        
+
         if (name.indexOf("TurtleComponent_") != -1) {
           let id = checkAndExtractId(name)
-          
+
           if (id) {
             if (data.components[id]) {
               element = document.createElement("turtle-component")
@@ -54,7 +55,7 @@ export function render(str, ...values) {
   let renderData = {
     components: {},
   }
-  
+
   for (let i = 0; i < values.length; i++) {
     let value = values[i]
     let key = (Math.floor(Math.random() * 99999) * Date.now()).toString(16)
@@ -67,21 +68,26 @@ export function render(str, ...values) {
       renderData.components[key] = value
       values[i] = `TurtleComponent_${key}`
     }
+
+    if (value instanceof TurtleComponent) {
+      renderData.components[key] = value
+      values[i] = `TurtleComponent_${key}`
+    }
   }
 
   let root = document.createDocumentFragment()
   let context = new TurtleMemorizeContext(this)
   let content = parserContent(String.raw(str, ...values))
-  processing(root, content, context, renderData,this)
+  processing(root, content, context, renderData, this)
   return {
     root,
     context,
     content,
-    refs:context._refs
+    refs: context._refs
   }
 }
 
-export function attach(element, content){
+export function attach(element, content) {
   element.textContent = null
   element.appendChild(content.root)
 }
