@@ -1,4 +1,5 @@
-import { TurtleComponentInstance,TurtleComponent } from '../component/index.js';
+import { TurtleComponentInstance } from '../component/instance.js';
+import { TurtleComponent } from '../component/index.js';
 import { TurtleMemorizeContext } from './memorize.js';
 import { parserContent } from './parser.js';
 import { processAttributes } from './attributes.js';
