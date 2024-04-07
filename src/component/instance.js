@@ -1,3 +1,5 @@
+import { render } from '../dom/render.js';
+
 export class TurtleComponentInstance {
   constructor(fn, props) {
     this.fn = fn
