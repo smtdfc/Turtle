@@ -1,9 +1,10 @@
-import { attach, render } from '../../dom/render.js';
+import { render } from '../../../dom/render.js';
 
 export class TurtleRouterModule {
   constructor(app, configs) {
-    this.root = configs.root ?? document.createElement("div")
+    this.root = configs.element ?? document.createElement("div")
     this.app = app
+    this.app.modules.push(this)
     this.app.router = this
     this.routes = {}
     this.matched = null
@@ -91,10 +92,15 @@ export class TurtleRouterModule {
           component = configs.component
         }
 
-        attach(this.root, render`
-          <${component(this)}/>
-        `)
-        return
+        function renderContent(raw, ...values) {
+          render(raw, values, {
+            refs: {},
+            bindings: [],
+            type:"page"
+          })
+        }
+        
+        return renderContent`<${component}/>`
       }
     }
 
@@ -122,8 +128,6 @@ export class TurtleRouterModule {
       }
 
     }.bind(this))
-
-
 
     this.matches(path)
     started = true

@@ -18,7 +18,7 @@
 - Create new app
 
   ``` javascript
-  const app = new Turtle.TurtleApp(document.getElementById("root"))
+  const app = new Turtle.createApp(document.getElementById("root"))
   app.render(`
     <h1>Hello world<\h1>
   `)
@@ -27,15 +27,17 @@
 - Create component
 
   ``` javascript
-  const app = new Turtle.TurtleApp(document.getElementById("root"))
-  app.createComponent("Box", function (context){
-    return `
-     <h1>Hello world<\h1>    
-    `
+  const app = new Turtle.createApp(document.getElementById("root"))
+  const Box = app.createComponent(class extends Turtle.TurtleComponent{
+    template(){
+      return this.html`
+         <h1>Hello world<\h1>    
+      `
+    }
   })
   
   app.render(`
-    <Box/>
+    <${Box}/>
   `)
   ```
 

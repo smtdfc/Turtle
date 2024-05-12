@@ -1,7 +1,7 @@
-export function parserContent(content) {
-  content = new DOMParser().parseFromString(
-    `<root>${content}</root>`,
-    "text/xml"
-  ).querySelector("root")
-  return content
+export function parseHTML(content){
+  let parser = new DOMParser()
+  let doc = parser.parseFromString(`<root>${content}</root>`,"text/xml")
+  
+  return doc.getElementsByTagName("root")[0]
 }
+
