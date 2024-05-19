@@ -32,7 +32,7 @@ export function process(root, doc, data, ctx) {
           }
         }
 
-        if (currentNode.childNodes > 0) {
+        if (currentNode.childNodes.length > 0) {
           process(element, currentNode, data, ctx)
         }
 
