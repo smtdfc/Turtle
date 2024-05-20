@@ -20,6 +20,7 @@ export class TurtleApp {
     }
 
     let dom = render(raw, values, ctx)
+    this.root.textContent = ""
     this.root.appendChild(dom)
   }
 }
