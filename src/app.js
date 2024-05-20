@@ -9,7 +9,7 @@ export class TurtleApp {
   }
 
   use(module, opts) {
-    return module.init(app, opts)
+    return module.init(this, opts)
   }
   
   render(raw, ...values) {
