@@ -64,7 +64,6 @@ export class TurtleRouterModule {
 
           if (routeSplited[i] != urlSplited[i]) {
             passed = false
-
           }
         }
       }
@@ -91,15 +90,17 @@ export class TurtleRouterModule {
         if (configs.component) {
           component = configs.component
         }
+        let element = this.root
 
         function renderContent(raw, ...values) {
-          render(raw, values, {
+          element.textContent = ""
+          element.appendChild(render(raw, values, {
             refs: {},
             bindings: [],
-            type:"page"
-          })
+            type: "page"
+          }))
         }
-        
+
         return renderContent`<${component}/>`
       }
     }
