@@ -94,7 +94,7 @@ export class TurtleRouterModule {
 
         function renderContent(raw, ...values) {
           element.textContent = ""
-          console.log(raw, values)
+          
           element.appendChild(render(raw, values, {
             refs: {},
             bindings: [],
