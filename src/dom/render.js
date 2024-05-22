@@ -11,7 +11,7 @@ export function render(raw, values, ctx) {
   for (let i = 0; i < values.length; i++) {
 
     let key = `turtle-component-${(Math.floor(Math.random() * 999999) * Date.now()).toString(16)}`
-    if (values[i] !== undefined) {
+    if (values[i]) {
       if (values[i] instanceof TurtleComponent) {
         data.components[key] = values[i]
         values[i] = key
