@@ -1,4 +1,4 @@
-import { TurtleComponent } from '../component/component.js';
+import { TurtleComponent,TurtleComponentCaller } from '../component/component.js';
 import { parseHTML } from './parser.js';
 import { process } from './processor.js';
 
@@ -12,7 +12,7 @@ export function render(raw, values, ctx) {
 
     let key = `turtle-component-${(Math.floor(Math.random() * 999999) * Date.now()).toString(16)}`
     if (values[i]) {
-      if (values[i] instanceof TurtleComponent) {
+      if (values[i] instanceof TurtleComponentCaller) {
         data.components[key] = values[i]
         values[i] = key
       } else if (values[i].ins === TurtleComponent) {

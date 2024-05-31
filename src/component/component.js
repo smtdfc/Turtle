@@ -77,7 +77,7 @@ export class TurtleComponent {
   }
 }
 
-class TurtleComponentCaller {
+export class TurtleComponentCaller {
   constructor(component, props) {
     this.component = component
     this.props = props
