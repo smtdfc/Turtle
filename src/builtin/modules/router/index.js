@@ -43,6 +43,7 @@ export class TurtleRouterModule {
       let urlSplited = url.split("/")
       let passed = true
       let params = {}
+      console.log(urlSplited,routeSplited)
       if (urlSplited.length != routeSplited.length) {
         passed = false
       } else {
