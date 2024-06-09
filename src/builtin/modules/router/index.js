@@ -126,6 +126,7 @@ export class TurtleRouterModule {
         } else {
           path = path.slice(2)
         }
+        console.log(path)
         this.matches(path)
       }
 
