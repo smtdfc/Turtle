@@ -124,7 +124,7 @@ export class TurtleRouterModule {
         if (path.length == 0) {
           path = "/"
         } else {
-          path = path.slice(1)
+          path = path.slice(2)
         }
         this.matches(path)
       }
