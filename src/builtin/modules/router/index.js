@@ -85,6 +85,7 @@ export class TurtleRouterModule {
 
         if (configs.loader) {
           component = await configs.loader()
+          console.log(component)
         }
 
         if (configs.component) {
@@ -93,15 +94,16 @@ export class TurtleRouterModule {
         let element = this.root
 
         function renderContent(raw, ...values) {
+
           element.textContent = ""
-          
+
           element.appendChild(render(raw, values, {
             refs: {},
             bindings: [],
             type: "page"
           }))
         }
-
+        console.log(passed)
         return renderContent`<${component} />`
       }
     }
