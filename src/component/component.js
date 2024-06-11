@@ -58,7 +58,7 @@ export class TurtleComponent {
   html(raw, ...values) {
     let ctx = {
       type: "component",
-      refs: {},
+      refs: this.refs,
       bindings: []
     }
 

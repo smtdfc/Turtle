@@ -43,7 +43,7 @@ export class TurtleRouterModule {
       let urlSplited = url.split("/")
       let passed = true
       let params = {}
-      console.log(urlSplited,routeSplited)
+      
       if (urlSplited.length != routeSplited.length) {
         passed = false
       } else {
@@ -68,7 +68,7 @@ export class TurtleRouterModule {
           }
         }
       }
-
+      
       if (passed) {
         this.params = params
         this.query = u.searchParams
@@ -86,7 +86,7 @@ export class TurtleRouterModule {
 
         if (configs.loader) {
           component = await configs.loader()
-          console.log(component)
+          
         }
 
         if (configs.component) {
@@ -104,7 +104,7 @@ export class TurtleRouterModule {
             type: "page"
           }))
         }
-        console.log(passed)
+        
         return renderContent`<${component} />`
       }
     }
@@ -129,7 +129,7 @@ export class TurtleRouterModule {
         } else {
           path = path.slice(2)
         }
-        console.log(path)
+        
         this.matches(path)
       }
 
