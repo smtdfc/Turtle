@@ -1,9 +1,10 @@
-import { attach, render } from '../../dom/render.js';
+import { render } from '../../../dom/render.js';
 
 export class TurtleRouterModule {
   constructor(app, configs) {
-    this.root = configs.root ?? document.createElement("div")
+    this.root = configs.element ?? document.createElement("div")
     this.app = app
+    this.app.modules.push(this)
     this.app.router = this
     this.routes = {}
     this.matched = null
@@ -42,6 +43,7 @@ export class TurtleRouterModule {
       let urlSplited = url.split("/")
       let passed = true
       let params = {}
+      
       if (urlSplited.length != routeSplited.length) {
         passed = false
       } else {
@@ -63,11 +65,10 @@ export class TurtleRouterModule {
 
           if (routeSplited[i] != urlSplited[i]) {
             passed = false
-
           }
         }
       }
-
+      
       if (passed) {
         this.params = params
         this.query = u.searchParams
@@ -85,16 +86,26 @@ export class TurtleRouterModule {
 
         if (configs.loader) {
           component = await configs.loader()
+          
         }
 
         if (configs.component) {
           component = configs.component
         }
+        let element = this.root
 
-        attach(this.root, render`
-          <${component(this)}/>
-        `)
-        return
+        function renderContent(raw, ...values) {
+
+          element.textContent = ""
+
+          element.appendChild(render(raw, values, {
+            refs: {},
+            bindings: [],
+            type: "page"
+          }))
+        }
+        
+        return renderContent`<${component} />`
       }
     }
 
@@ -118,12 +129,11 @@ export class TurtleRouterModule {
         } else {
           path = path.slice(2)
         }
+        
         this.matches(path)
       }
 
     }.bind(this))
-
-
 
     this.matches(path)
     started = true

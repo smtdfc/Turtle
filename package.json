@@ -1,27 +1,23 @@
 {
-	"name": "turtle-framework",
-	"version": "0.0.3",
-	"description": "The simple framework for build UI",
-	"keywords": [
+  "name": "turtle",
+  "version": "1.0.1",
+  "description": "The simple library for build UI",
+  "keywords": [
     "turtle",
-    "turtleUI"
+    "turtleUI",
+    "smtdfc"
   ],
-	"bin": {
-		"turtle": "./CLI/main.js"
-	},
-	"author": "smtdfc",
-	"license": "MIT",
-	"scripts": {
-		"build": "rollup -c ./rollup.config.mjs",
-		"turtle-des": "node ./Core/Deployment/build.js",
-		"turtle-cli": "node ./CLI/main.js"
-	},
-	"dependencies": {
-	  "localforage":"^1.10.0",
-    "rollup":"^3.28.1",
-    "@rollup/plugin-terser":"^0.4.3"
-	},
-	"files": [
+  "author": "smtdfc",
+  "license": "MIT",
+  "scripts": {
+    "build": "rollup -c ./rollup.config.mjs"
+  },
+  "dependencies": {
+    "localforage": "^1.10.0",
+    "rollup": "^3.28.1",
+    "@rollup/plugin-terser": "^0.4.3"
+  },
+  "files": [
     "dist"
   ]
 }

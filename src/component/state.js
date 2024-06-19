@@ -1,24 +1,18 @@
-import {TurtleComponentInstance} from './instance.js';
-
-class TurtleComponentState {
-  constructor(component, value) {
+export class TurtleState{
+  constructor(component,value){
     this.component = component
     this._value = value
+    this.key = `${(Math.floor(Math.random() * 999999) * Date.now()).toString(16)}`
   }
-
-  get value() {
+  
+  get val(){
     return this._value
   }
-
-  set value(val) {
+  
+  set value(val){
+    
     this._value = val
-    if (this.component instanceof TurtleComponentInstance) {
-      if (!this.component._reactive) return
-      this.component.forceUpdate()
-    }
+    this.component._update()
   }
-}
-
-export function createState(value) {
-  return new TurtleComponentState(null, value)
+  
 }
