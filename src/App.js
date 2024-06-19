@@ -14,7 +14,8 @@ export class TurtleApp {
   }
   
   render(html){
-    this.element.HTML = html
+    this.element.text = ""
+    this.element.addChild(html.root)
   }
   
   
