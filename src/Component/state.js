@@ -1,4 +1,4 @@
-import { TurtleComponentInstance } from './index.js';
+import {TurtleComponentInstance} from './instance.js';
 
 class TurtleComponentState {
   constructor(component, value) {
