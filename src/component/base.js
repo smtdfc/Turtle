@@ -10,6 +10,10 @@ class TurtleBaseComponent extends HTMLElement {
     this._component.onCreate()
     this._component._render()
   }
+  
+  disconnectedCallback(){
+    this._component.onDestroy()
+  }
 }
 
 window.customElements.define("turtle-component",TurtleBaseComponent)
