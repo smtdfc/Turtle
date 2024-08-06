@@ -16,7 +16,7 @@ export class TurtleComponent {
   async _eventSetup() {
     for (let i = 0; i < this.events.length; i++) {
       let info = this.events[i]
-      if (!this[info.event]) {
+      if (!this[info.fn]) {
         throw `The method ${info.fn} required for event ${info.event} has not been defined !`
       } else {
         info.element.addEventListener(info.event, this[info.fn].bind(this))
