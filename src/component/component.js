@@ -9,7 +9,19 @@ export class TurtleComponent {
     this.exprBindings = []
     this.statesBinding = {}
     this.states = {}
+    this.events = []
     this.dependencies = []
+  }
+
+  async _eventSetup() {
+    for (let i = 0; i < this.events.length; i++) {
+      let info = this.events[i]
+      if (!this[info.event]) {
+        throw `The method ${info.fn} required for event ${info.event} has not been defined !`
+      } else {
+        info.element.addEventListener(info.event, this[info.fn].bind(this))
+      }
+    }
   }
 
   _render() {
@@ -31,13 +43,14 @@ export class TurtleComponent {
         this.exprBindings[i].element.textContent = value
       }
     }
+    this._eventSetup()
     this.onRender()
   }
 
   _updateWithState(name) {
     if (this.statesBinding[name]) {
       this.statesBinding[name].forEach(ref => {
-        if(!this.states[name]){
+        if (!this.states[name]) {
           throw `State ${name} has not been initialized !`
         }
         if (ref.type == "html") {
@@ -68,7 +81,6 @@ export class TurtleComponent {
     }
   }
 
-
   onCreate() {}
   onDestroy() {}
   onRender() {}
@@ -83,13 +95,15 @@ export class TurtleComponent {
       type: "component",
       refs: this.refs,
       exprBindings: [],
-      statesBindings: {}
+      statesBindings: {},
+      events: [],
     }
 
     let dom = render(raw, values, ctx)
     this.refs = Object.assign({}, this.refs, ctx.refs)
     this.exprBindings.push(...ctx.exprBindings)
     this.statesBinding = Object.assign({}, this.statesBinding, ctx.statesBindings)
+    this.events.push(...ctx.events)
     return dom
   }
 

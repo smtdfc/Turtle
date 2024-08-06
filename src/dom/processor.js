@@ -35,6 +35,13 @@ export function process(root, doc, data, ctx) {
               expr: attr.value,
               element
             })
+          }else if(getSubstringAfterPrefix(attr.name,"tevt-")){
+            let eventName = getSubstringAfterPrefix(attr.name,"tevt-")
+            ctx.events.push({
+              element,
+              event:eventName,
+              fn:attr.value
+            })
           } else if (getSubstringAfterPrefix(attr.name, "tbind-") != null) {
             let attrName = getSubstringAfterPrefix(attr.name, "tbind-")
             if (getSubstringAfterPrefix(attr.value, "@") != null) {
