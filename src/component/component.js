@@ -18,7 +18,6 @@ export class TurtleComponent {
       let info = this.events[i]
 
       if (!this[info.fn]) {
-        console.log("err")
         throw `The method ${info.fn} required for event ${info.event} has not been defined !`
       } else {
         info.element.addEventListener(info.event, this[info.fn].bind(this))
