@@ -17,7 +17,9 @@ export class TurtleComponent {
     this._element.textContent = ""
     this._element.appendChild(this.template())
     this.afterRender()
-
+    Object.keys(this.statesBinding).forEach(name => {
+      this._updateWithState(name)
+    })
     for (let i = 0; i < this.exprBindings.length; i++) {
       let str = this.exprBindings[i].expr
       let value = eval(str)
