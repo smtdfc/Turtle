@@ -6,7 +6,9 @@ export class TurtleComponent {
     this._element = null
     this.props = {}
     this.refs = {}
-    this.memories = {}
+    this.exprBindings = {}
+    this.statesBinding = {}
+    this.states = {}
     this.dependencies = []
   }
 
@@ -16,35 +18,51 @@ export class TurtleComponent {
     this._element.appendChild(this.template())
     this.afterRender()
 
-    for (let i = 0; i < this.memories.length; i++) {
-      let str = this.memories[i].expr
+    for (let i = 0; i < this.exprBindings.length; i++) {
+      let str = this.exprBindings[i].expr
       let value = eval(str)
-      if (this.memories[i].type == "html") {
-        this.memories[i].element.innerHTML = value
+      if (this.exprBindings[i].type == "html") {
+        this.exprBindings[i].element.innerHTML = value
       }
 
-      if (this.memories[i].type == "text") {
-        this.memories[i].element.textContent = value
+      if (this.exprBindings[i].type == "text") {
+        this.exprBindings[i].element.textContent = value
       }
     }
     this.onRender()
   }
 
+  _updateWithState(name) {
+    if (this.statesBinding[name]) {
+      this.statesBinding[name].forEach(ref => {
+        if (ref.type == "html") {
+          ref.element.innerHTML = this.states[name].val
+        }
+
+        if (ref.type == "text") {
+          ref.element.textContent = this.states[name].val
+        }
+
+        if (ref.type == "attr") {
+          ref.element.setAttribute(ref.attt, this.states[name].val)
+        }
+      })
+    }
+  }
+
   _update() {
-    this.beforeUpdate()
-    for (let i = 0; i < this.memories.length; i++) {
-      let value = eval(this.memories[i].expr)
-      if (this.memories[i].type == "html") {
-        this.memories[i].element.innerHTML = value
+    for (let i = 0; i < this.exprBindings.length; i++) {
+      let value = eval(this.exprBindings[i].expr)
+      if (this.exprBindings[i].type == "html") {
+        this.exprBindings[i].element.innerHTML = value
       }
 
-      if (this.memories[i].type == "text") {
-        this.memories[i].element.textContent = value
+      if (this.exprBindings[i].type == "text") {
+        this.exprBindings[i].element.textContent = value
       }
     }
-    this.afterUpdate()
-    this.onUpdate()
   }
+
 
   onCreate() {}
   onDestroy() {}
@@ -59,17 +77,36 @@ export class TurtleComponent {
     let ctx = {
       type: "component",
       refs: this.refs,
-      bindings: []
+      exprBindings: [],
+      statesBindings: {}
     }
 
     let dom = render(raw, values, ctx)
-    this.refs = ctx.refs
-    this.memories = ctx.bindings
+    this.refs = Object.assign({}, this.refs, ctx.refs)
+    this.exprBindings.push(...ctx.exprBindings)
+    this.statesBinding = Object.assign({}, this.statesBinding, ctx.statesBindings)
     return dom
   }
 
-  createState(value) {
-    return new TurtleState(this, value)
+  disableStateReact(name) {}
+  enableStateReact(name) {}
+  initState(name, value, reaction = True) {
+    this.states[name] = new TurtleState(this, value, name, reaction)
+  }
+
+  setState(name, value) {
+    if (!this.states) {
+      this.states[name] = new TurtleState(this, value, name)
+    } else {
+      this.beforeUpdate()
+      this.states[name].value = value
+      this.afterUpdate()
+      this.onUpdate()
+    }
+  }
+
+  getState(name) {
+    return this.states[name].val
   }
 
   addUpdateDenpendent(state) {

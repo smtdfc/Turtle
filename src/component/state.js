@@ -1,7 +1,9 @@
 export class TurtleState{
-  constructor(component,value){
+  constructor(component,value,name, reaction=True){
     this.component = component
     this._value = value
+    this._name = name
+    this._reaction = reaction
     this.key = `${(Math.floor(Math.random() * 999999) * Date.now()).toString(16)}`
   }
   
@@ -10,9 +12,11 @@ export class TurtleState{
   }
   
   set value(val){
-    
     this._value = val
-    this.component._update()
+    if(this._reaction){
+      this.component._update()
+      this.component._updateWithState(this._name)
+    }
   }
   
 }

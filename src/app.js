@@ -16,7 +16,8 @@ export class TurtleApp {
     let ctx = {
       type: "app",
       refs: {},
-      bindings: []
+      exprBindings: [],
+      statesBindings:{}
     }
 
     let dom = render(raw, values, ctx)

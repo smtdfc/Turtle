@@ -12,7 +12,8 @@ export * from "./component/component.js"
 export function fragment(raw, ...values) {
   let ctx = {
     refs: {},
-    bindings: [],
+    exprBindings: [],
+    statesBindings:{},
     type: "fragment"
   }
 

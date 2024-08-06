@@ -100,7 +100,8 @@ export class TurtleRouterModule {
 
           element.appendChild(render(raw, values, {
             refs: {},
-            bindings: [],
+            exprBindings: [],
+            statesBindings:{}
             type: "page"
           }))
         }
