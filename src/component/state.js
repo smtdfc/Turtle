@@ -1,5 +1,5 @@
 export class TurtleState{
-  constructor(component,value,name, reaction=True){
+  constructor(component,value,name, reaction=true){
     this.component = component
     this._value = value
     this._name = name

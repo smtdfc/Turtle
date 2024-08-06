@@ -92,7 +92,7 @@ export class TurtleComponent {
 
   disableStateReact(name) {}
   enableStateReact(name) {}
-  initState(name, value, reaction = True) {
+  initState(name, value, reaction = true) {
     this.states[name] = new TurtleState(this, value, name, reaction)
   }
 
