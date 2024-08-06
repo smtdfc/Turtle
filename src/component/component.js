@@ -37,6 +37,9 @@ export class TurtleComponent {
   _updateWithState(name) {
     if (this.statesBinding[name]) {
       this.statesBinding[name].forEach(ref => {
+        if(!this.states[name]){
+          throw `State ${name} has not been initialized !`
+        }
         if (ref.type == "html") {
           ref.element.innerHTML = this.states[name].val
         }
@@ -46,7 +49,7 @@ export class TurtleComponent {
         }
 
         if (ref.type == "attr") {
-          ref.element.setAttribute(ref.attt, this.states[name].val)
+          ref.element.setAttribute(ref.attr, this.states[name].val)
         }
       })
     }
