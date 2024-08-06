@@ -6,7 +6,7 @@ export class TurtleComponent {
     this._element = null
     this.props = {}
     this.refs = {}
-    this.exprBindings = {}
+    this.exprBindings = []
     this.statesBinding = {}
     this.states = {}
     this.dependencies = []
