@@ -13,7 +13,10 @@ export class TurtleRouterModule {
     this.query = new URLSearchParams()
     this.events = {
       notallow: [],
-      notfound: []
+      notfound: [],
+      pagematches: [],
+      pageloaded: [],
+      pagechange: []
     }
   }
 
@@ -36,6 +39,7 @@ export class TurtleRouterModule {
   async matches(url) {
     let u = new URL(url, window.location.origin)
     url = u.pathname
+    this.emitEvent("pagechange", this)
     for (let j = 0; j < Object.keys(this.routes).length; j++) {
       let route = Object.keys(this.routes)[j]
       let configs = this.routes[route]
@@ -43,7 +47,7 @@ export class TurtleRouterModule {
       let urlSplited = url.split("/")
       let passed = true
       let params = {}
-      
+
       if (urlSplited.length != routeSplited.length) {
         passed = false
       } else {
@@ -68,8 +72,9 @@ export class TurtleRouterModule {
           }
         }
       }
-      
+
       if (passed) {
+
         this.params = params
         this.query = u.searchParams
         this.matched = route
@@ -83,10 +88,10 @@ export class TurtleRouterModule {
             return
           }
         }
+        this.emitEvent("pagematches", this)
 
         if (configs.loader) {
           component = await configs.loader()
-          
         }
 
         if (configs.component) {
@@ -101,11 +106,11 @@ export class TurtleRouterModule {
           element.appendChild(render(raw, values, {
             refs: {},
             exprBindings: [],
-            statesBindings:{},
+            statesBindings: {},
             type: "page"
           }))
         }
-        
+        this.emitEvent("pageloaded", this)
         return renderContent`<${component} />`
       }
     }
@@ -130,7 +135,7 @@ export class TurtleRouterModule {
         } else {
           path = path.slice(2)
         }
-        
+
         this.matches(path)
       }
 
