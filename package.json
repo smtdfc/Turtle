@@ -13,6 +13,7 @@
     "build": "jsdoc src -r -d ./dist/docs --no-source && rollup -c ./rollup.config.mjs"
   },
   "dependencies": {
+    "jsdoc":"4.0.3",
     "localforage": "^1.10.0",
     "rollup": "^3.28.1",
     "@rollup/plugin-terser": "^0.4.3"
