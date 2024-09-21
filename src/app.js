@@ -1,31 +1,42 @@
 import { render } from './dom/render.js';
 
+/**
+ * Represents a Turtle application that renders content to a specified DOM element.
+ */
 export class TurtleApp {
-  constructor(root) {
-    this.root = root
-    this.data = {}
-    this.modules = []
-
+  /**
+   * Creates an instance of TurtleApp.
+   * 
+   * @param {HTMLElement|null} [element=null] - The DOM element where the application will be rendered. Defaults to `null`.
+   * @param {Object} [configs={}] - Configuration settings for the application. Defaults to an empty object.
+   */
+  constructor(element = null, configs = {}) {
+    this.element = element;
+    this.configs = configs;
+    this.data = {};
   }
 
-  use(module, opts) {
-    return module.init(this, opts)
-  }
-  
+  /**
+   * Renders the application content using the specified template and values.
+   * 
+   * @param {TemplateStringsArray} raw - The raw template string containing HTML.
+   * @param {...any} values - Values to interpolate into the template.
+   */
   render(raw, ...values) {
-    let ctx = {
-      type: "app",
-      refs: {},
-      exprBindings: [],
-      statesBindings:{}
-    }
-
-    let dom = render(raw, values, ctx)
-    this.root.textContent = ""
-    this.root.appendChild(dom)
+    render(this, this.element, {
+      raw,
+      values
+    });
   }
 }
 
-export function createApp(element) {
-  return new TurtleApp(element)
+/**
+ * Creates a new instance of TurtleApp.
+ * 
+ * @param {HTMLElement|null} element - The DOM element where the application will be rendered.
+   @param {Object} [configs={}] - Configuration settings for the application.
+ * @returns {TurtleApp} A new instance of TurtleApp.
+ */
+export function createApp(element, configs) {
+  return new TurtleApp(element, configs);
 }

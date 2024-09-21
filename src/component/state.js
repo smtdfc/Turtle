@@ -1,22 +1,46 @@
-export class TurtleState{
-  constructor(component,value,name, reaction=true){
-    this.component = component
-    this._value = value
-    this._name = name
-    this._reaction = reaction
-    this.key = `${(Math.floor(Math.random() * 999999) * Date.now()).toString(16)}`
+/**
+ * TurtleComponentState class represents a reactive state for a Turtle component.
+ * It holds the state name, value, and manages updates when the state changes.
+ */
+export class TurtleComponentState {
+
+  /**
+   * Creates an instance of TurtleComponentState.
+   * 
+   * @param {string} name - The name of the state.
+   * @param {*} value - The initial value of the state.
+   * @param {Object} component - The component that the state is associated with.
+   */
+  constructor(name, value, component) {
+    this.name = name;
+    this.value = value;
+    this._component = component;
+    this._reactive = true;
   }
-  
-  get val(){
-    return this._value
+
+  /**
+   * Retrieves the current value of the state.
+   * 
+   * @returns {*} The current value of the state.
+   */
+  get() {
+    return this.value;
   }
-  
-  set value(val){
-    this._value = val
-    if(this._reaction){
-      this.component._update()
-      this.component._updateWithState(this._name)
+
+  /**
+   * Sets a new value for the state and triggers a component update if it's reactive.
+   * 
+   * @param {*} value - The new value to set for the state.
+   */
+  set(value) {
+    this.value = value;
+
+    // Check if the component and state are reactive before triggering an update
+    if (this._component._reactive && this._reactive) {
+      this._component.requestUpdate({
+        state: this.name,
+        value: value
+      });
     }
   }
-  
 }

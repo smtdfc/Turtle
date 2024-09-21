@@ -1,6 +1,17 @@
 import { render } from '../../../dom/render.js';
 
+/**
+ * TurtleRouterModule manages routing in a Turtle application.
+ * It handles matching routes, invoking callbacks, and rendering components based on URLs.
+ */
 export class TurtleRouterModule {
+
+  /**
+   * Creates a new TurtleRouterModule instance.
+   *
+   * @param {Object} app - The Turtle app instance this router is attached to.
+   * @param {Object} configs - Configuration for the router, including the root element.
+   */
   constructor(app, configs) {
     this.root = configs.element ?? document.createElement("div")
     this.app = app
@@ -20,10 +31,22 @@ export class TurtleRouterModule {
     }
   }
 
+  /**
+   * Registers an event listener for a specific router event.
+   *
+   * @param {string} event - The name of the event (e.g., 'pagechange', 'notfound').
+   * @param {function} callback - The function to call when the event is triggered.
+   */
   on(event, callback) {
     this.events[event].push(callback)
   }
 
+  /**
+   * Unregisters an event listener for a specific router event.
+   *
+   * @param {string} event - The name of the event.
+   * @param {function} callback - The callback function to remove.
+   */
   off(event, callback) {
     this.events[event].forEach((fn, idx) => {
       if (fn === callback) {
@@ -32,10 +55,23 @@ export class TurtleRouterModule {
     })
   }
 
+  /**
+   * Initializes the TurtleRouterModule.
+   *
+   * @param {Object} app - The Turtle app instance.
+   * @param {Object} configs - Configuration for the router.
+   * @returns {TurtleRouterModule} - The initialized router module.
+   */
   static init(app, configs) {
     return new TurtleRouterModule(app, configs)
   }
 
+  /**
+   * Matches the provided URL against the router's routes.
+   *
+   * @param {string} url - The URL to match against the defined routes.
+   * @returns {Promise<void>} - A promise that resolves when the match is complete.
+   */
   async matches(url) {
     let u = new URL(url, window.location.origin)
     url = u.pathname
@@ -54,7 +90,6 @@ export class TurtleRouterModule {
         for (let i = 0; i < routeSplited.length; i++) {
           if (urlSplited[i] === undefined) {
             passed = false
-
           }
 
           if (routeSplited[i] == "*") {
@@ -103,12 +138,7 @@ export class TurtleRouterModule {
 
           element.textContent = ""
 
-          element.appendChild(render(raw, values, {
-            refs: {},
-            exprBindings: [],
-            statesBindings: {},
-            type: "page"
-          }))
+          element.appendChild(render(this,element,{raw, values}))
         }
         this.emitEvent("pageloaded", this)
         return renderContent`<${component} />`
@@ -118,6 +148,9 @@ export class TurtleRouterModule {
     this.triggerError("not_found")
   }
 
+  /**
+   * Starts the router and listens for changes in the URL.
+   */
   start() {
     let started = false
     let path = window.location.hash
@@ -145,6 +178,12 @@ export class TurtleRouterModule {
     started = true
   }
 
+  /**
+   * Redirects to a new route.
+   *
+   * @param {string} path - The path to navigate to.
+   * @param {boolean} [replace=false] - Whether to replace the current URL or push a new one.
+   */
   redirect(path, replace = false) {
     if (!replace) {
       window.location.hash = `!${path}`
@@ -154,12 +193,23 @@ export class TurtleRouterModule {
     }
   }
 
+  /**
+   * Emits an event.
+   *
+   * @param {string} name - The event name.
+   * @param {*} data - The data to pass with the event.
+   */
   emitEvent(name, data) {
     this.events[name].forEach(fn => {
       fn(data)
     })
   }
 
+  /**
+   * Triggers a router error event.
+   *
+   * @param {string} name - The error event name (e.g., 'not_allow', 'not_found').
+   */
   triggerError(name) {
     switch (name) {
       case 'not_allow':

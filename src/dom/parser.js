@@ -1,7 +1,17 @@
-export function parseHTML(content){
-  let parser = new DOMParser()
-  let doc = parser.parseFromString(`<root>${content}</root>`,"text/xml")
-  
-  return doc.getElementsByTagName("root")[0]
+/**
+ * Parses a string of HTML content and returns the root element of the parsed document.
+ * 
+ * @param {string} content - The HTML content to be parsed.
+ * @returns {Element|null} The root element of the parsed document if parsing is successful; otherwise, returns `null`.
+ */
+export function parseHTML(content) {
+  let parser = new DOMParser();
+  let doc = parser.parseFromString(`<root>${content}</root>`, "text/xml");
+  let parserError = doc.getElementsByTagName("parsererror");
+  if (parserError.length > 0) {
+    // Error handling can be added here if needed
+    return null;
+  } else {
+    return doc.getElementsByTagName("root")[0];
+  }
 }
-

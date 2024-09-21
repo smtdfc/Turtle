@@ -1,85 +1,98 @@
-function getSubstringAfterPrefix(str1, str2) {
-  if (str1.startsWith(str2)) {
-    return str1.substring(str2.length);
-  } else {
-    return null;
+/**
+ * Processes attributes of a given node and applies relevant bindings or actions to the element.
+ * 
+ * @param {Object} root - The root object containing component methods and event handlers.
+ * @param {HTMLElement} element - The DOM element to which attributes will be applied.
+ * @param {Element} node - The XML/HTML node from which attributes are read.
+ * @param {TurtleRenderContext} context - The rendering context used to manage bindings and references.
+ */
+function processAttributes(root, element, node, context) {
+  let attributes = Array.from(node.attributes);
+  for (let i = 0; i < attributes.length; i++) {
+    let attribute = attributes[i];
+
+    if (attribute.name === "ref") {
+      context._addRef(attribute.value, element);
+    }
+
+    if (attribute.name === "thtml") {
+      context._addBinding(attribute.value, {
+        type: "property",
+        name: "innerHTML",
+        target: element
+      });
+    }
+
+    if (attribute.name === "ttext") {
+      context._addBinding(attribute.value, {
+        type: "property",
+        name: "textContent",
+        target: element
+      });
+    }
+
+    if (attribute.name.slice(0, "tbind-".length) === "tbind-") {
+      let attrName = attribute.name.substr("tbind-".length);
+      context._addBinding(attribute.value, {
+        type: "attr",
+        name: attrName,
+        target: element
+      });
+    }
+
+    if (attribute.name.slice(0, "tevent-".length) === "tevent-") {
+      let eventName = attribute.name.substr("tevent-".length);
+      if (!root[attribute.value]) {
+        throw new Error("[Turtle Binding Error] Cannot set event for " + attribute.value);
+      }
+      element.addEventListener(eventName, root[attribute.value]);
+      context._addBinding(attribute.value, {
+        type: "event",
+        name: eventName,
+        target: element,
+        fn: attribute.value
+      });
+    }
   }
 }
 
-export function process(root, doc, data, ctx) {
+/**
+ * Processes nodes from a parsed document and creates corresponding DOM elements with bindings.
+ * 
+ * @param {Object} root - The root object containing component methods and event handlers.
+ * @param {HTMLElement} rootElement - The root DOM element to append processed elements.
+ * @param {Document} doc - The parsed XML/HTML document.
+ * @param {Object} data - Data object containing component definitions.
+ * @param {TurtleRenderContext} context - The rendering context used to manage bindings and references.
+ */
+export function process(root, rootElement, doc, data, context) {
+  let nodes = Array.from(doc.childNodes);
 
-  let childNodes = doc.childNodes
-  for (let i = 0; i < childNodes.length; i++) {
-    let currentNode = childNodes[i]
-    let nodeName = childNodes[i].nodeName
+  for (let i = 0; i < nodes.length; i++) {
+    let currentNode = nodes[i];
+
     if (currentNode.nodeType === Node.ELEMENT_NODE) {
-      if (data.components[nodeName]) {
-        let componentElement = document.createElement("turtle-component")
-        componentElement._instance = data.components[nodeName]
-        root.appendChild(componentElement)
-      } else {
-        let element = document.createElement(nodeName)
 
-        for (let attr of currentNode.attributes) {
-          if (attr.name == "ref") {
-            ctx.refs[attr.value] = element
-          } else if (attr.name == "t-html") {
-            ctx.exprBindings.push({
-              type: "html",
-              expr: attr.value,
-              element
-            })
-          } else if (attr.name == "t-text") {
-            ctx.exprBindings.push({
-              type: "text",
-              expr: attr.value,
-              element
-            })
-          }else if(getSubstringAfterPrefix(attr.name,"tevt-")){
-            let eventName = getSubstringAfterPrefix(attr.name,"tevt-")
-            ctx.events.push({
-              element,
-              event:eventName,
-              fn:attr.value
-            })
-          } else if (getSubstringAfterPrefix(attr.name, "tbind-") != null) {
-            let attrName = getSubstringAfterPrefix(attr.name, "tbind-")
-            if (getSubstringAfterPrefix(attr.value, "@") != null) {
-              let stateName = getSubstringAfterPrefix(attr.value, "@")
-              if (!ctx.statesBindings[stateName]) {
-                ctx.statesBindings[stateName] = [{
-                  type: "attr",
-                  attr: attrName,
-                  element
-                }]
-              } else {
-                ctx.statesBindings[stateName].push({
-                  type: "attr",
-                  attr: attrName,
-                  element
-                })
-              }
-            } else {
-              ctx.exprBindings.push({
-                type: "attr",
-                attr: attrName,
-                expr: attr.value,
-                element
-              })
-            }
-          } else {
-            element.setAttribute(attr.name, attr.value)
-          }
-        }
-
-        if (currentNode.childNodes.length > 0) {
-          process(element, currentNode, data, ctx)
-        }
-
-        root.appendChild(element)
+      if (data.components[currentNode.nodeName]) {
+        let componentElement = document.createElement("turtle-component");
+        componentElement._instance = data.components[currentNode.nodeName];
+        rootElement.appendChild(componentElement);
+        continue;
       }
-    } else if (currentNode.nodeType === Node.TEXT_NODE) {
-      root.appendChild(document.createTextNode(currentNode.textContent))
+
+      const element = document.createElement(currentNode.nodeName);
+
+      if (element instanceof HTMLUnknownElement) {
+        continue;
+      }
+      processAttributes(root, element, currentNode, context);
+      process(root, element, currentNode, data, context);
+      rootElement.appendChild(element);
+
+    }
+
+    if (currentNode.nodeType === Node.TEXT_NODE) {
+      rootElement.appendChild(currentNode);
     }
   }
 }

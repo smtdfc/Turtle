@@ -1,160 +1,175 @@
-import { TurtleState } from './state.js';
 import { render } from '../dom/render.js';
+import { TurtleRenderContext } from '../dom/context.js';
+import { TurtleComponentState } from './state.js';
 
+/**
+ * The TurtleComponent class provides a base structure for UI components in the Turtle framework.
+ * It handles state management, lifecycle events, and rendering.
+ */
 export class TurtleComponent {
-  constructor() {
-    this._element = null
-    this.props = {}
-    this.refs = {}
-    this.exprBindings = []
-    this.statesBinding = {}
-    this.states = {}
-    this.events = []
-    this.dependencies = []
+  
+  /**
+   * Creates an instance of TurtleComponent.
+   * 
+   * @param {HTMLElement} element - The HTML element associated with this component.
+   * @param {Object} props - The properties passed to the component.
+   */
+  constructor(element, props) {
+    this.renderContext = new TurtleRenderContext();
+    this.context = {};
+    this.element = element;
+    this._reactive = true;
+    this.props = props;
+    this.states = {};
+    this.app = null;
+    this._instance = null;
+    this.element._component = this;
+    this._start();
   }
 
-  async _eventSetup() {
-    for (let i = 0; i < this.events.length; i++) {
-      let info = this.events[i]
-
-      if (!this[info.fn]) {
-        throw `The method ${info.fn} required for event ${info.event} has not been defined !`
-      } else {
-        info.element.addEventListener(info.event, this[info.fn].bind(this))
-      }
-    }
-  }
-
-  _render() {
-    this.beforeRender()
-    this._element.textContent = ""
-    this._element.appendChild(this.template())
-    this.afterRender()
-    Object.keys(this.statesBinding).forEach(name => {
-      this._updateWithState(name)
-    })
-    for (let i = 0; i < this.exprBindings.length; i++) {
-      let str = this.exprBindings[i].expr
-      let value = eval(str)
-      if (this.exprBindings[i].type == "html") {
-        this.exprBindings[i].element.innerHTML = value
-      }
-
-      if (this.exprBindings[i].type == "text") {
-        this.exprBindings[i].element.textContent = value
-      }
-    }
-    this._eventSetup()
-      .catch(e => { throw e })
-    this.onRender()
-  }
-
-  _updateWithState(name) {
-    if (this.statesBinding[name]) {
-      this.statesBinding[name].forEach(ref => {
-        if (!this.states[name]) {
-          throw `State ${name} has not been initialized !`
-        }
-        if (ref.type == "html") {
-          ref.element.innerHTML = this.states[name].val
-        }
-
-        if (ref.type == "text") {
-          ref.element.textContent = this.states[name].val
-        }
-
-        if (ref.type == "attr") {
-          ref.element.setAttribute(ref.attr, this.states[name].val)
-        }
-      })
-    }
-  }
-
-  _update() {
-    for (let i = 0; i < this.exprBindings.length; i++) {
-      let value = eval(this.exprBindings[i].expr)
-      if (this.exprBindings[i].type == "html") {
-        this.exprBindings[i].element.innerHTML = value
-      }
-
-      if (this.exprBindings[i].type == "text") {
-        this.exprBindings[i].element.textContent = value
-      }
-    }
-  }
-
+  /**
+   * Called when the component is created.
+   * Meant to be overridden by subclasses.
+   */
   onCreate() {}
+
+  /**
+   * Called when the component is destroyed.
+   * Meant to be overridden by subclasses.
+   */
   onDestroy() {}
+
+  /**
+   * Called after the component is rendered.
+   * Meant to be overridden by subclasses.
+   */
   onRender() {}
+
+  /**
+   * Called after the component's state is updated.
+   * Meant to be overridden by subclasses.
+   */
   onUpdate() {}
-  beforeRender() {}
-  afterRender() {}
-  beforeUpdate() {}
-  afterUpdate() {}
-  template() {}
-  html(raw, ...values) {
-    let ctx = {
-      type: "component",
-      refs: this.refs,
-      exprBindings: [],
-      statesBindings: {},
-      events: [],
-    }
 
-    let dom = render(raw, values, ctx)
-    this.refs = Object.assign({}, this.refs, ctx.refs)
-    this.exprBindings.push(...ctx.exprBindings)
-    this.statesBinding = Object.assign({}, this.statesBinding, ctx.statesBindings)
-    this.events.push(...ctx.events)
-    return dom
+  /**
+   * Called when a component's state changes.
+   * 
+   * @param {Object} commit - Contains information about the state change.
+   */
+  onStateChange(commit) {}
+
+  /**
+   * Creates and registers a new state for the component.
+   * 
+   * @param {string} name - The name of the state.
+   * @param {*} value - The initial value of the state.
+   * @returns {TurtleComponentState} - The newly created state object.
+   */
+  createState(name, value) {
+    this.states[name] = new TurtleComponentState(name, value, this);
+    return this.states[name];
   }
 
-  disableStateReact(name) {}
-  enableStateReact(name) {}
-  initState(name, value, reaction = true) {
-    this.states[name] = new TurtleState(this, value, name, reaction)
-  }
-
+  /**
+   * Updates the value of an existing state.
+   * 
+   * @param {string} name - The name of the state.
+   * @param {*} value - The new value for the state.
+   */
   setState(name, value) {
-    if (!this.states) {
-      this.states[name] = new TurtleState(this, value, name)
-    } else {
-      this.beforeUpdate()
-      this.states[name].value = value
-      this.afterUpdate()
-      this.onUpdate()
+    this.states[name].set(value);
+  }
+
+  /**
+   * Retrieves the component references from the rendering context.
+   * 
+   * @returns {Object} - The references to the component's elements.
+   */
+  get refs() {
+    return this.renderContext._refs;
+  }
+
+  /**
+   * Renders the HTML of the component using template literals.
+   * 
+   * @param {TemplateStringsArray} raw - The raw template string.
+   * @param {...any} values - The values to be interpolated into the template.
+   * @returns {DocumentFragment} - The rendered HTML fragment.
+   */
+  html(raw, ...values) {
+    return render(this, document.createDocumentFragment(), { raw, values }, this.renderContext);
+  }
+
+  /**
+   * Requests an update of the component based on a state change.
+   * 
+   * @param {Object} commit - Contains information about the state change.
+   */
+  requestUpdate(commit) {
+    this.onStateChange(commit);
+    if (!this.renderContext._bindings[commit.state]) return;
+    for (let bind of this.renderContext._bindings[commit.state]) {
+      if (!this.states[commit.state]) {
+        console.warn(`[Turtle Render Warning] State "${commit.state}" does not exist!`);
+        return;
+      }
+      let stateValue = (this.states[commit.state] instanceof Function) ? this.states[commit.state]() : this.states[commit.state].value;
+      if (!stateValue) {
+        console.warn(`[Turtle Render Warning] State "${commit.state}" does not exist!`);
+        return;
+      }
+      if (bind.type === "property") {
+        bind.target[bind.name] = stateValue;
+      } else if (bind.type === "attr") {
+        bind.target.setAttribute(bind.name, stateValue);
+      }
     }
+    this.onUpdate();
   }
 
-  getState(name) {
-    return this.states[name].val
+  /**
+   * Forces an update of all bound properties and attributes in the component.
+   * Iterates over all bindings and updates them with the current state values.
+   */
+  _forceUpdateAll() {
+    Object.keys(this.renderContext._bindings).forEach(name => {
+      if (!this.renderContext._bindings[name]) return;
+      for (let bind of this.renderContext._bindings[name]) {
+        if (!this.states[name]) {
+          console.warn(`[Turtle Render Warning] State "${name}" does not exist!`);
+          return;
+        }
+        let stateValue = (this.states[name] instanceof Function) ? this.states[name]() : this.states[name].value;
+        if (!stateValue) {
+          console.warn(`[Turtle Render Warning] State "${name}" does not exist!`);
+          return;
+        }
+        if (bind.type === "property") {
+          bind.target[bind.name] = stateValue;
+        } else if (bind.type === "attr") {
+          bind.target.setAttribute(bind.name, stateValue);
+        }
+      }
+    });
   }
 
-  addUpdateDenpendent(state) {
-    this.dependencies.push(state.key)
+  /**
+   * Asynchronously renders the component's template, appending it to the component's root element.
+   * Calls the onRender() method after rendering is complete.
+   */
+  async render() {
+    let template = this.template();
+    this._forceUpdateAll();
+    this.element.appendChild(template);
+    this.onRender();
+  }
+
+  /**
+   * Initializes the component by rendering it.
+   * Called during the component's construction.
+   */
+  _start() {
+    this.render();
   }
 }
 
-export class TurtleComponentCaller {
-  constructor(component, props) {
-    this.component = component
-    this.props = props
-  }
-
-  call() {
-    let component = new this.component()
-    component.props = this.props
-    return component
-  }
-
-}
-
-export function createComponent(_constructor) {
-
-  function fn(...props) {
-    return new TurtleComponentCaller(_constructor, props)
-  }
-
-  fn.ins = TurtleComponent
-  return fn
-}
