@@ -10,7 +10,7 @@
   "author": "smtdfc",
   "license": "MIT",
   "scripts": {
-    "build": "rollup -c ./rollup.config.mjs"
+    "build": "jsdoc src -r -d ./dist/docs --no-source && rollup -c ./rollup.config.mjs"
   },
   "dependencies": {
     "localforage": "^1.10.0",
