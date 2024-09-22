@@ -10,7 +10,7 @@
   "author": "smtdfc",
   "license": "MIT",
   "scripts": {
-    "build": "jsdoc src -r -d ./dist/docs --no-source && rollup -c ./rollup.config.mjs"
+    "build": "jsdoc -c jsdoc.json && rollup -c ./rollup.config.mjs"
   },
   "dependencies": {
     "jsdoc":"4.0.3",

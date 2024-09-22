@@ -5,9 +5,9 @@
     "excludePattern": "(^|\\/|\\\\)_"
   },
   "opts": {
-    "destination": "./docs", 
+    "destination": "./dist/docs", 
     "recurse": true, 
-    "readme": "./README.md" 
+    "readme": "./README.md"
   },
   "plugins": [
     "plugins/markdown" 
