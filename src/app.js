@@ -14,7 +14,7 @@ export class TurtleApp {
     this.element = element;
     this.configs = configs;
     this.data = {};
-    this.modules = {}
+    this.modules = []
   }
 
   /**
