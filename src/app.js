@@ -17,6 +17,16 @@ export class TurtleApp {
   }
 
   /**
+   * Registers and initializes a module in the Turtle application.
+   * 
+   * @param {Object} module - The module to be registered and initialized.
+   * @param {Object} configs - The configuration settings for the module.
+   */
+  use(module, configs) {
+    module.init(this, configs);
+  }
+
+  /**
    * Renders the application content using the specified template and values.
    * 
    * @param {TemplateStringsArray} raw - The raw template string containing HTML.
@@ -33,10 +43,10 @@ export class TurtleApp {
 /**
  * Creates a new instance of TurtleApp.
  * 
- * @param {HTMLElement|null} element - The DOM element where the application will be rendered.
-   @param {Object} [configs={}] - Configuration settings for the application.
+ * @param {HTMLElement|null} element - The DOM element where the application will be rendered. 
+ * @param {Object} [configs={}] - Configuration settings for the application.
  * @returns {TurtleApp} A new instance of TurtleApp.
  */
-export function createApp(element, configs) {
+export function createApp(element, configs = {}) {
   return new TurtleApp(element, configs);
 }
