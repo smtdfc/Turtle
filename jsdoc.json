@@ -1,19 +1,24 @@
 {
   "source": {
-    "include": ["src"], 
-    "includePattern": ".+\\.js$", 
+    "include": ["src"],
+    "includePattern": ".+\\.js$",
     "excludePattern": "(^|\\/|\\\\)_"
   },
   "opts": {
-    "destination": "./dist/docs", 
-    "recurse": true, 
-    "readme": "./README.md"
+    "destination": "./dist/docs",
+    "recurse": true,
+    "readme": "./README.md",
+    "template": "./node_modules/minami"
+
   },
   "plugins": [
-    "plugins/markdown" 
+    "plugins/markdown"
   ],
   "templates": {
-    "cleverLinks": true, 
-    "monospaceLinks": false
+    "cleverLinks": true,
+    "monospaceLinks": false,
+    "default": {
+      "outputSourceFiles": false
+    }
   }
 }

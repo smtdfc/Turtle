@@ -16,7 +16,8 @@
     "jsdoc":"4.0.3",
     "localforage": "^1.10.0",
     "rollup": "^3.28.1",
-    "@rollup/plugin-terser": "^0.4.3"
+    "@rollup/plugin-terser": "^0.4.3",
+    "minami":"1.2.3"
   },
   "files": [
     "dist"
