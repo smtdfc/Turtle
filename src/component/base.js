@@ -58,7 +58,9 @@ export class TurtleElement extends HTMLElement {
    */
   disconnectedCallback() {
     // Remove the component from the Turtle development environment registry
-    __TURTLE_DEV__.components[this._key] = null;
+    if (window.__TURTLE_DEV__) {
+      __TURTLE_DEV__.components[this._key] = null;
+    }
 
     // Ensure that _component is available before calling onDestroy
     if (this._component) {
