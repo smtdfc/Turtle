@@ -25,6 +25,8 @@ export class TurtleComponent {
     this._instance = null;
     this.element._component = this;
     this._start();
+    
+    
   }
 
   /**
