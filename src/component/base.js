@@ -18,7 +18,7 @@ export class TurtleElement extends HTMLElement {
      * @type {Object|null}
      */
     this._instance = null;
-
+    this._app = null;
     /**
      * Stores the associated component for the element.
      * @type {Object|null}
@@ -27,7 +27,7 @@ export class TurtleElement extends HTMLElement {
 
     /**
      * A unique key for identifying the component, generated using a combination of random numbers and the current timestamp.
-     * @type {number}
+     * @type {number}&& 
      */
     this._key = (Math.floor(Math.random() * 10000) * Date.now());
 

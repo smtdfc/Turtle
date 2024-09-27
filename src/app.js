@@ -15,6 +15,7 @@ export class TurtleApp {
     this.configs = configs;
     this.data = {};
     this.modules = []
+    this._app = this
   }
 
   /**

@@ -14,7 +14,8 @@ export class TurtleComponent {
    * @param {HTMLElement} element - The HTML element associated with this component.
    * @param {Object} props - The properties passed to the component.
    */
-  constructor(element, props) {
+  constructor(app,element, props) {
+    this._app = app
     this.renderContext = new TurtleRenderContext();
     this.context = {};
     this.element = element;

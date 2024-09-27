@@ -23,8 +23,8 @@ export class TurtleComponentCaller {
    * 
    * @param {HTMLElement} element - The DOM element to which the component will be attached.
    */
-  call(element) {
-    new this.component(element, this.props);
+  call(base) {
+    new this.component(base._app,base, this.props);
   }
 }
 
