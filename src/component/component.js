@@ -15,19 +15,16 @@ export class TurtleComponent {
    * @param {Object} props - The properties passed to the component.
    */
   constructor(app,element, props) {
-    this._app = app
+    this.app = app
     this.renderContext = new TurtleRenderContext();
     this.context = {};
     this.element = element;
     this._reactive = true;
     this.props = props;
     this.states = {};
-    this.app = null;
     this._instance = null;
     this.element._component = this;
     this._start();
-    
-    
   }
 
   /**

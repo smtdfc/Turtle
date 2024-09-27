@@ -77,6 +77,7 @@ export function process(root, rootElement, doc, data, context) {
         let componentElement = document.createElement("turtle-component");
         componentElement._instance = data.components[currentNode.nodeName];
         componentElement._app = root._app
+        componentElement._parent = root
         rootElement.appendChild(componentElement);
         continue;
       }
