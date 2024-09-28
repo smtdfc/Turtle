@@ -36,7 +36,7 @@ export class TurtleApp {
    * @param {Object} configs - The configuration settings for the module.
    */
   use(module, configs) {
-    module.init(this, configs);
+    return module.init(this, configs);
   }
 
   /**
