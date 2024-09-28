@@ -7,14 +7,14 @@ import { TurtleComponentState } from './state.js';
  * It handles state management, lifecycle events, and rendering.
  */
 export class TurtleComponent {
-  
+
   /**
    * Creates an instance of TurtleComponent.
    * 
    * @param {HTMLElement} element - The HTML element associated with this component.
    * @param {Object} props - The properties passed to the component.
    */
-  constructor(app,element, props) {
+  constructor(app, element, props) {
     this.app = app
     this.renderContext = new TurtleRenderContext();
     this.context = {};
@@ -164,6 +164,10 @@ export class TurtleComponent {
     this.onRender();
   }
 
+  getContext(name) {
+    return this.app.contexts[name]
+  }
+  
   /**
    * Initializes the component by rendering it.
    * Called during the component's construction.
@@ -172,4 +176,3 @@ export class TurtleComponent {
     this.render();
   }
 }
-
