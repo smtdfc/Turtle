@@ -15,7 +15,7 @@ function processAttributes(root, element, node, context) {
       context._addRef(attribute.value, element);
     }
 
-    if (attribute.name === "thtml") {
+    else if (attribute.name === "thtml") {
       context._addBinding(attribute.value, {
         type: "property",
         name: "innerHTML",
@@ -23,7 +23,7 @@ function processAttributes(root, element, node, context) {
       });
     }
 
-    if (attribute.name === "ttext") {
+    else if (attribute.name === "ttext") {
       context._addBinding(attribute.value, {
         type: "property",
         name: "textContent",
@@ -31,7 +31,7 @@ function processAttributes(root, element, node, context) {
       });
     }
 
-    if (attribute.name.slice(0, "tbind-".length) === "tbind-") {
+    else if (attribute.name.slice(0, "tbind-".length) === "tbind-") {
       let attrName = attribute.name.substr("tbind-".length);
       context._addBinding(attribute.value, {
         type: "attr",
@@ -40,7 +40,7 @@ function processAttributes(root, element, node, context) {
       });
     }
 
-    if (attribute.name.slice(0, "tevent-".length) === "tevent-") {
+    else if (attribute.name.slice(0, "tevent-".length) === "tevent-") {
       let eventName = attribute.name.substr("tevent-".length);
       if (!root[attribute.value]) {
         throw new Error("[Turtle Binding Error] Cannot set event for " + attribute.value);
@@ -52,6 +52,10 @@ function processAttributes(root, element, node, context) {
         target: element,
         fn: attribute.value
       });
+    }
+    
+    else{
+      element.setAttribute(attribute.name,attribute.value)
     }
   }
 }
