@@ -14,9 +14,9 @@ export class TurtleRouterModule {
    */
   constructor(app, configs) {
     this.root = configs.element ?? document.createElement("div")
-    this.app = app
-    this.app.modules.push(this)
-    this.app.router = this
+    this._app = app
+    this._app.modules.push(this)
+    this._app.router = this
     this.routes = {}
     this.matched = null
     this.url = null
@@ -132,13 +132,12 @@ export class TurtleRouterModule {
         if (configs.component) {
           component = configs.component
         }
+        let ctx = this
         let element = this.root
-
         function renderContent(raw, ...values) {
-
           element.textContent = ""
-
-          element.appendChild(render(this,element,{raw, values}))
+          
+          element.appendChild(render(ctx, document.createDocumentFragment(), { raw, values }))
         }
         this.emitEvent("pageloaded", this)
         return renderContent`<${component} />`

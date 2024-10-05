@@ -19,7 +19,6 @@ export function render(root, rootEle, template, context = new TurtleRenderContex
   let data = {
     components: {}
   };
-
   for (let i = 0; i < values.length; i++) {
     let key = `turtle-component-${(Math.floor(Math.random() * 999999) * Date.now()).toString(16)}`;
     if (values[i]) {

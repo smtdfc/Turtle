@@ -16,6 +16,7 @@ export class TurtleComponent {
    */
   constructor(app, element, props) {
     this.app = app
+    this._app = app
     this.renderContext = new TurtleRenderContext();
     this.context = {};
     this.element = element;
