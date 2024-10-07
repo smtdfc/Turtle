@@ -174,6 +174,6 @@ export class TurtleComponent {
    * Called during the component's construction.
    */
   _start() {
-    this.render();
+    return this;
   }
 }
