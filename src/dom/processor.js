@@ -1,4 +1,6 @@
-/**
+import {TurtleComponentRef} from '../component/ref.js';
+
+ /***
  * Processes attributes of a given node and applies relevant bindings or actions to the element.
  * 
  * @param {Object} root - The root object containing component methods and event handlers.
@@ -45,13 +47,7 @@ function processAttributes(root, element, node, context) {
       if (!root[attribute.value]) {
         throw new Error("[Turtle Binding Error] Cannot set event for " + attribute.value);
       }
-      element.addEventListener(eventName, root[attribute.value]);
-      context._addBinding(attribute.value, {
-        type: "event",
-        name: eventName,
-        target: element,
-        fn: attribute.value
-      });
+      element.addEventListener(eventName, root[attribute.value].bind(root));
     }
     
     else{
@@ -83,6 +79,12 @@ export function process(root, rootElement, doc, data, context) {
         componentElement._app = root._app
         componentElement._parent = root
         rootElement.appendChild(componentElement);
+        if(currentNode.getAttribute("ref")){
+          context._addRef(
+            currentNode.getAttribute("ref"),
+            new TurtleComponentRef(componentElement)
+          )
+        }
         continue;
       }
 

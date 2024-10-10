@@ -25,6 +25,7 @@ export class TurtleComponent {
     this.states = {};
     this._instance = null;
     this.element._component = this;
+    this.forwardRef = {}
     this._start();
   }
 
@@ -161,6 +162,7 @@ export class TurtleComponent {
   async render() {
     let template = this.template();
     this._forceUpdateAll();
+    
     this.element.appendChild(template);
     this.onRender();
   }
