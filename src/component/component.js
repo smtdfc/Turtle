@@ -29,6 +29,9 @@ export class TurtleComponent {
     this._start();
   }
 
+  setupForwardRef() {}
+
+  onInit() {}
   /**
    * Called when the component is created.
    * Meant to be overridden by subclasses.
@@ -162,7 +165,7 @@ export class TurtleComponent {
   async render() {
     let template = this.template();
     this._forceUpdateAll();
-    
+
     this.element.appendChild(template);
     this.onRender();
   }
@@ -170,15 +173,16 @@ export class TurtleComponent {
   getContext(name) {
     return this.app.contexts[name]
   }
-  
+
   /**
    * Initializes the component by rendering it.
    * Called during the component's construction.
    */
   _start() {
+    this.forwardRef = this.setupForwardRef()
     return this;
   }
-  
-  
-  
+
+
+
 }

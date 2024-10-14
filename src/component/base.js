@@ -42,12 +42,15 @@ export class TurtleElement extends HTMLElement {
    * Used to initialize the component and trigger the `onCreate` lifecycle event.
    */
   connectedCallback() {
+   
     // Ensure that _instance and _component are available before calling methods
     if (this._instance) {
       this._instance.call(this);
     }
     
     if (this._component) {
+      this._component.onInit()
+      
       this._component.onCreate();
     }
     
