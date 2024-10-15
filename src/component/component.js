@@ -85,6 +85,10 @@ export class TurtleComponent {
     this.states[name].set(value);
   }
 
+  getState(name ) {
+    return this.states[name];
+  }
+  
   /**
    * Retrieves the component references from the rendering context.
    * 

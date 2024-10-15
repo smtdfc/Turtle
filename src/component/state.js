@@ -42,5 +42,7 @@ export class TurtleComponentState {
         value: value
       });
     }
+    
+    return value
   }
 }
