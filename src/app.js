@@ -16,6 +16,7 @@ export class TurtleApp {
     this.configs = configs;
     this.data = {};
     this.contexts = {}
+    this.services = {}
     this.modules = []
     this._app = this
   }
@@ -28,6 +29,9 @@ export class TurtleApp {
     this.contexts[name] = context
   }
   
+  addService(service){
+    new service(app)
+  }
   
   /**
    * Registers and initializes a module in the Turtle application.
