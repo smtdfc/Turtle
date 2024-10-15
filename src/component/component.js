@@ -173,6 +173,11 @@ export class TurtleComponent {
     this.element.appendChild(template);
     this.onRender();
   }
+  
+  
+  callService(name){
+    return this.app.services[name]
+  }
 
   getContext(name) {
     return this.app.contexts[name]
