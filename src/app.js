@@ -30,7 +30,7 @@ export class TurtleApp {
   }
   
   addService(service){
-    new service(app)
+    new service(this)
   }
   
   /**

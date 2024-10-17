@@ -45,4 +45,8 @@ export class TurtleComponentState {
     
     return value
   }
+  
+  bindContext(context,key){
+    context.bind(key,this)
+  }
 }

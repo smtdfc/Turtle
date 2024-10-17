@@ -5,4 +5,12 @@ export class TurtleAppService{
     this.app.services[alias_name] = this
   }
   
+  callService(name) {
+    return this.app.services[name]
+  }
+  
+  getContext(name) {
+    return this.app.contexts[name]
+  }
+  
 }
