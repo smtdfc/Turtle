@@ -22,6 +22,10 @@ export class TurtleComponent {
     this.renderContext = new TurtleRenderContext(this);
   }
 
+  getContext(name) {
+    return this.app.contexts[name]
+  }
+  
   /**
    * Gets the references from the render context.
    * @returns {Object} The refs object.
@@ -41,7 +45,7 @@ export class TurtleComponent {
     this.states[name] = state;
     return state;
   }
-  
+
   /**
    * Sets the state of the component.
    * @param {string} name - The name of the state.
@@ -77,7 +81,7 @@ export class TurtleComponent {
    * @returns {DocumentFragment} The rendered HTML as a DocumentFragment.
    */
   html(raw, ...values) {
-    let fragment = render(document.createDocumentFragment(), { raw, values }, this.renderContext,this.app);
+    let fragment = render(document.createDocumentFragment(), { raw, values }, this.renderContext, this.app);
     return fragment;
   }
 
@@ -173,7 +177,7 @@ export class TurtleComponent {
    * Handles reactivity for state changes.
    * @param {Object} commit - The commit object representing state changes.
    */
-  
+
   reactive(commit) {
     let bindings = this.renderContext.bindings[commit.state];
     for (let bind of bindings) {
