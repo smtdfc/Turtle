@@ -22,6 +22,7 @@ function extractName(name, start) {
  * @param {Object} context - The context in which the directive is applied.
  */
 function applyDirective(target, name, value, context) {
+  let passed = false
   for (let prefix in directives) {
     const ename = extractName(name, prefix);
     const DirectiveClass = directives[ename != null ? prefix : name];
@@ -31,9 +32,11 @@ function applyDirective(target, name, value, context) {
     const directiveInstance = new DirectiveClass(target, ename, value, context);
     if (typeof directiveInstance.apply === 'function') {
       directiveInstance.apply();
+      passed=true
     }
     break;
   }
+  return passed
 }
 
 // Map of directive prefixes to their corresponding classes
@@ -57,7 +60,10 @@ export function processAttribute(target, node, context, data) {
   for (let attribute of Array.from(node.attributes)) {
     let name = attribute.name;
     let value = attribute.value;
-    applyDirective(target, name, value, context);
+    let isDirective= applyDirective(target, name, value, context);
+    if(!isDirective){
+      target.setAttribute(name,value)
+    }
   }
 }
 
