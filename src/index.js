@@ -7,7 +7,7 @@ export * from "./service/index.js"
 export * from "./features/script.js"
 export * from "./features/performance.js"
 export * from "./context/index.js"
- 
+export * from "./modules/router/index.js"
 export const __TURTLE__ = {
   version: "1.0.1",
   dev: true
