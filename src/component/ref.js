@@ -1,12 +1,12 @@
-export class TurtleComponentRef{
- 
+export class TurtleComponentRef {
+
   #element;
-  constructor(element ){
+  constructor(element) {
     this.#element = element
   }
-  
-  get component(){
-    return this.#element._component.forwardRef
+
+  get component() {
+    return this.#element.component.forwardRefs
   }
-  
+
 }

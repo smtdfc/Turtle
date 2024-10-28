@@ -1,82 +1,51 @@
-import { TurtleRenderContext } from '../dom/context.js';
+import { TURTLE_DEV_EVENTS, devLog } from '../dev/dev.js';
 
 /**
- * TurtleElement class is a custom HTML element that manages the lifecycle of a Turtle component.
- * It connects to the DOM and handles lifecycle methods like `connectedCallback` and `disconnectedCallback`.
+ * Custom element that represents a Turtle component in the DOM.
+ * Extends HTMLElement to manage lifecycle and interaction with the Turtle component.
  */
-export class TurtleElement extends HTMLElement {
-
+export class TurtleComponentElement extends HTMLElement {
   /**
-   * Creates an instance of TurtleElement.
-   * This constructor is called when the custom element is created.
+   * Creates an instance of TurtleComponentElement.
    */
   constructor() {
     super();
-
-    /**
-     * Stores the component instance, if any.
-     * @type {Object|null}
-     */
-    this._instance = null;
-    this._app = null;
-    /**
-     * Stores the associated component for the element.
-     * @type {Object|null}
-     */
-    this._component = null;
-
-    /**
-     * A unique key for identifying the component, generated using a combination of random numbers and the current timestamp.
-     * @type {number}&& 
-     */
-    this._key = (Math.floor(Math.random() * 10000) * Date.now());
-
-    // Register the component in the Turtle development environment if available
-    if (window.__TURTLE_DEV__) {
-      __TURTLE_DEV__.components[this._key] = this;
-    }
+    this.app = null;
+    this.component = null;
   }
 
   /**
-   * Invoked each time the custom element is appended into a document-connected element.
-   * Used to initialize the component and trigger the `onCreate` lifecycle event.
+   * Attaches a Turtle application and component to this custom element.
+   * @param {Object} app - The Turtle application instance.
+   * @param {TurtleComponent} component - The Turtle component instance.
+   */
+  attach(app, component) {
+    this.app = app;
+    this.component = component;
+    this.component.element = this;
+    this.component.app = app;
+    devLog(TURTLE_DEV_EVENTS.COMPONENT_ATTACHED, component);
+  }
+
+  /**
+   * Lifecycle method called when the element is inserted into the DOM.
+   * Initializes and starts the attached component.
    */
   connectedCallback() {
-   
-    // Ensure that _instance and _component are available before calling methods
-    if (this._instance) {
-      this._instance.call(this);
-    }
-    
-    if (this._component) {
-      this._component.onInit()
-      
-      this._component.onCreate();
-    }
-    
-    this._component.render()
-
-
-
+    this.component.onInit()
+    this.component.start();
+    this.component.onCreate()
   }
 
   /**
-   * Invoked each time the custom element is disconnected from the document's DOM.
-   * Used to trigger the `onDestroy` lifecycle event when the component is removed.
+   * Lifecycle method called when the element is removed from the DOM.
+   * Can be used for cleanup operations if needed.
    */
   disconnectedCallback() {
-    // Remove the component from the Turtle development environment registry
-    if (window.__TURTLE_DEV__) {
-      __TURTLE_DEV__.components[this._key] = null;
-    }
-
-    // Ensure that _component is available before calling onDestroy
-    if (this._component) {
-      this._component.onDestroy();
-    }
+    this.component.onDestroy()
+    // Add any cleanup code here if necessary
   }
-
 }
 
-// Define the custom element with the tag name "turtle-component"
-window.customElements.define("turtle-component", TurtleElement);
+// Define the custom element "turtle-component" with the TurtleComponentElement class.
+window.customElements.define("turtle-component", TurtleComponentElement);

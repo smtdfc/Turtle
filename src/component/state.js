@@ -14,8 +14,8 @@ export class TurtleComponentState {
   constructor(name, value, component) {
     this.name = name;
     this.value = value;
-    this._component = component;
-    this._reactive = true;
+    this.component = component;
+    this.reactive = true;
   }
 
   /**
@@ -31,22 +31,32 @@ export class TurtleComponentState {
    * Sets a new value for the state and triggers a component update if it's reactive.
    * 
    * @param {*} value - The new value to set for the state.
+   * @returns {*} The updated value.
    */
   set(value) {
     this.value = value;
-
-    // Check if the component and state are reactive before triggering an update
-    if (this._component._reactive && this._reactive) {
-      this._component.requestUpdate({
+    // Trigger the watcher if one is defined for this state.
+    if (this.component.watchers[name]) this.component.watchers[name](value);
+    // Trigger a component update if the component and state are reactive.
+    if (this.component.reactive && this.reactive) {
+      this.component.requestUpdate({
         state: this.name,
         value: value
       });
     }
-    
-    return value
+
+    return value;
   }
-  
-  bindContext(context,key){
-    context.bind(key,this)
+
+  /**
+   * Synchronizes the state with a given context and key, establishing a binding.
+   * 
+   * @param {Object} context - The context to bind the state to.
+   * @param {string} key - The key under which the state will be bound in the context.
+   * @returns {TurtleComponentState} The instance of the state for chaining.
+   */
+  sync(context, key) {
+    context.bind(key, this);
+    return this;
   }
 }
