@@ -1,6 +1,7 @@
 import { TURTLE_DEV_EVENTS, devLog } from '../dev/dev.js';
 import { render } from '../render/render.js';
 import { TurtleRenderContext } from '../render/context.js';
+import {TurtleContext} from '../context/index.js';
 
 /**
  * Represents the main application for Turtle.
