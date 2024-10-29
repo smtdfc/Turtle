@@ -34,6 +34,8 @@ export function render(element, template, context = new TurtleRenderContext(),ap
 
   let content = String.raw(raw, ...values);
   let tree = parseHTML(content);
+  console.log(tree)
+  console.log(content)
   process(element, tree, context, data,app);
 
   return element;
