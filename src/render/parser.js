@@ -10,6 +10,7 @@ export function parseHTML(content) {
   let parserError = doc.getElementsByTagName("parsererror");
 
   if (parserError.length > 0) {
+    console.log("error")
     // Error handling can be added here if needed
     return null;
   } else {
