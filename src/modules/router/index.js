@@ -137,7 +137,7 @@ export class TurtleRouterModule {
         let element = this.root
         function renderContent(raw, ...values) {
           element.textContent = ""
-          element.appendChild(render(document.createDocumentFragment(), { raw, values },new TurtleRenderContext(ctx) ))
+          element.appendChild(render(document.createDocumentFragment(), { raw, values },new TurtleRenderContext(ctx),ctx._app))
         }
         this.emitEvent("pageloaded", this)
         return renderContent`<${component} />`
