@@ -87,7 +87,7 @@ export function process(element, tree, context, data, app) {
         if (node.getAttribute("ref")) {
           context.addRef(
             node.getAttribute("ref"),
-            new TurtleComponentRef(element)
+            new TurtleComponentRef(componentElement)
           )
         }
         element.appendChild(componentElement);
