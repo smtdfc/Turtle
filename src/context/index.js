@@ -81,7 +81,7 @@ export class TurtleContext {
    * @param {Object} state - The state object to bind.
    */
   bind(key, state) {
-    this.binding(key, state); // Register the binding
+    this._binding(key, state); // Register the binding
   }
 
   /**
