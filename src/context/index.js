@@ -71,7 +71,7 @@ export class TurtleContext {
    */
   set(name, value) {
     this.values[name] = value; // Update the value
-    this.reactive(name, value); // Trigger reactivity
+    this._reactive(name, value); // Trigger reactivity
   }
 
   /**
