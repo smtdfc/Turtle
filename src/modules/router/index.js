@@ -135,11 +135,12 @@ export class TurtleRouterModule {
         }
         let ctx = this
         let element = this.root
+
         function renderContent(raw, ...values) {
           element.textContent = ""
-          element.appendChild(render(document.createDocumentFragment(), { raw, values },new TurtleRenderContext(ctx),ctx._app))
+          element.appendChild(render(document.createDocumentFragment(), { raw, values }, new TurtleRenderContext(ctx), ctx._app))
         }
-        
+
         this.emitEvent("pageloaded", this)
         return renderContent`<${component}/>`
       }
@@ -156,6 +157,7 @@ export class TurtleRouterModule {
     let path = window.location.hash
     if (path.length == 0) {
       path = "/"
+      window.location = "#"
     } else {
       path = path.slice(2)
     }
