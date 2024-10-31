@@ -156,7 +156,8 @@ export class TurtleComponent {
    * @returns {Promise<void>}
    */
   async requestUpdate(commit) {
-    this.reactive(commit);
+    
+    this._reactive(commit);
     devLog(TURTLE_DEV_EVENTS.COMPONENT_UPDATE, this);
     this.onUpdate(commit);
   }
@@ -178,7 +179,7 @@ export class TurtleComponent {
    * @param {Object} commit - The commit object representing state changes.
    */
 
-  reactive(commit) {
+  _reactive(commit) {
     let bindings = this.renderContext.bindings[commit.state];
     for (let bind of bindings) {
       if (bind.type == "property") bind.target[bind.name] = commit.value;
