@@ -48,8 +48,8 @@ export class TurtleApp {
    * @param {Object} service - The service to be added.
    * @param {Object} configs - The configuration settings for the service.
    */
-  addService(service, configs) {
-    
+  addService(name, service) {
+    this.services[name] = service
     // Implementation of service addition will go here
   }
 
