@@ -205,6 +205,11 @@ export class TurtleComponent {
     this.initStates(this.setupState() ?? {});
     this.requestRender();
   }
+  
+  
+  callService(name){
+    return this.app.services[name]
+  }
 }
 
 /**
