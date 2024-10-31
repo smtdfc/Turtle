@@ -156,7 +156,6 @@ export class TurtleComponent {
    * @returns {Promise<void>}
    */
   async requestUpdate(commit) {
-    
     this._reactive(commit);
     devLog(TURTLE_DEV_EVENTS.COMPONENT_UPDATE, this);
     this.onUpdate(commit);
@@ -181,6 +180,7 @@ export class TurtleComponent {
 
   _reactive(commit) {
     let bindings = this.renderContext.bindings[commit.state];
+    if(!bindings) return
     for (let bind of bindings) {
       if (bind.type == "property") bind.target[bind.name] = commit.value;
       if (bind.type == "attribute") bind.target.setAttribute(bind.name, commit.value);
