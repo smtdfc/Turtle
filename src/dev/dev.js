@@ -1,45 +1,26 @@
-export const TURTLE_DEV_EVENTS = {
-  COMPONENT_CREATE: "COMPONENT_CREATE",
-  COMPONENT_ATTACHED: "COMPONENT_ATTACHED",
-  COMPONENT_RENDER: "COMPONENT_RENDER",
-  COMPONENT_DESTROYED: "COMPONENT_DESTROYED",
-  COMPONENT_UPDATE: "COMPONENT_UPDATE",
-  APP_INIT: "APP_INIT",
-  APP_ATTACHED: "APP_ATTACHED"
-};
-
-window.__TURTLE_DEV__ = {
-  apps: [],
-  components: []
-};
-
-window.addEventListener("turtledev", function(event) {
-  let eventInfo = event.detail;
-  switch (eventInfo.event) {
-    case TURTLE_DEV_EVENTS.APP_INIT:
-      __TURTLE_DEV__.apps.push(eventInfo.data);
-      break;
-    
-    case TURTLE_DEV_EVENTS.COMPONENT_ATTACHED:
-      __TURTLE_DEV__.components.push(eventInfo.data)
-      break
-  }
-});
+import { initListener } from './listeners.js';
 
 /**
- * Logs development events if the Turtle dev mode is enabled.
+ * Initializes the Turtle Development Mode.
  * 
- * @param {string} event - The type of event to log (e.g., "COMPONENT_INIT", "APP_ATTACHED").
- * @param {Object} data - The data related to the event, which could include information about the app or component.
- * @returns {Promise<void>} - Resolves when the event has been dispatched.
+ * This function checks if the development mode is enabled in the Turtle framework.
+ * If so, it sets up logging for development tools, initializes tracking for apps and components,
+ * and activates additional debugging features.
  */
-export async function devLog(event, data) {
-  if (!window.__TURTLE__.dev) return;
+export function initDevMode() {
+  if (window.__TURTLE__.dev) {
+    console.info("Turtle Development Mode is activated !");
+    console.info("In development mode, you can access additional debugging tools and features.");
 
-  window.dispatchEvent(new CustomEvent("turtledev", {
-    detail: {
-      event,
-      data
-    }
-  }));
+    // Initialize the development tracking object
+    window.__TURTLE_DEV__ = {
+      apps: {},
+      components: {},
+    };
+
+    console.info("Tracking initialized. Use window.__TURTLE_DEV__.apps and window.__TURTLE_DEV__.components to monitor your applications and components.");
+
+    // Initialize event listeners for debugging
+    initListener();
+  }
 }

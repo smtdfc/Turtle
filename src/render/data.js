@@ -1,10 +1,10 @@
 /**
- * Represents the rendering context for Turtle components.
+ * Represents the rendering Data for Turtle components.
  * This class manages references, bindings, and events for rendering.
  */
-export class TurtleRenderContext {
+export class TurtleRenderData {
   /**
-   * Creates an instance of TurtleRenderContext.
+   * Creates an instance of TurtleRenderData.
    * 
    * @param {DocumentFragment} [root] - The root element for rendering. Defaults to a new DocumentFragment.
    */
@@ -19,7 +19,7 @@ export class TurtleRenderContext {
    * Adds a binding for a specific state.
    * 
    * @param {string} state - The name of the state to bind.
-   * @param {Object} configs - Configuration object for the binding.
+   * @param {Object} configs - Configuration object for the binding, which may include callback functions or parameters.
    */
   addBinding(state, configs) {
     if (!this.bindings[state]) {
@@ -44,5 +44,31 @@ export class TurtleRenderContext {
     this.refs[name] = element;
   }
 
+  /**
+   * Retrieves a referenced DOM element by its unique name.
+   * 
+   * @param {string} name - The unique name for the reference.
+   * @returns {HTMLElement} - The referenced DOM element.
+   * @throws {Error} Throws an error if no reference with the given name exists.
+   */
+  getRef(name) {
+    const ref = this.refs[name];
+    if (!ref) {
+      throw new Error(`[Turtle Render Error] No ref found with the name: ${name}`);
+    }
+    return ref;
+  }
 
+  /**
+   * Removes a reference by its unique name.
+   * 
+   * @param {string} name - The unique name for the reference to remove.
+   * @throws {Error} Throws an error if no reference with the given name exists.
+   */
+  removeRef(name) {
+    if (!this.refs[name]) {
+      throw new Error(`[Turtle Render Error] Cannot remove ref: No ref found with the name: ${name}`);
+    }
+    delete this.refs[name];
+  }
 }

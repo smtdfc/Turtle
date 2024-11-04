@@ -1,5 +1,5 @@
 /**
- * TurtleComponentState class represents a reactive state for a Turtle component.
+ * Represents a state for a Turtle component.
  * It holds the state name, value, and manages updates when the state changes.
  */
 export class TurtleComponentState {
@@ -36,7 +36,9 @@ export class TurtleComponentState {
   set(value) {
     this.value = value;
     // Trigger the watcher if one is defined for this state.
-    if (this.component.watchers[this.name]) this.component.watchers[this.name](value);
+    if (this.component.watchers[this.name]) {
+      this.component.watchers[this.name](value);
+    }
     // Trigger a component update if the component and state are reactive.
     if (this.component.reactive && this.reactive) {
       this.component.requestUpdate({
@@ -56,7 +58,7 @@ export class TurtleComponentState {
    * @returns {TurtleComponentState} The instance of the state for chaining.
    */
   sync(context, key) {
-    context.bind(key, this);
+    context.sync(key, this);
     return this;
   }
 }

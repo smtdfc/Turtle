@@ -1,7 +1,10 @@
-import { TURTLE_DEV_EVENTS, devLog } from '../dev/dev.js';
+import { emitDevEvent } from '../dev/emitter.js';
+import * as TURTLE_DEV_EVENTS from '../dev/events.js';
+
 import { render } from '../render/render.js';
-import { TurtleRenderContext } from '../render/context.js';
+import { TurtleRenderData } from '../render/data.js';
 import { TurtleComponentState } from './state.js';
+import { TurtleContextManagement, TurtleContext } from '../context/context.js';
 
 /**
  * Represents a Turtle Component.
@@ -12,6 +15,7 @@ export class TurtleComponent {
    * @param {Object} props - The properties passed to the component.
    */
   constructor(props) {
+    this.parent = null;
     this.app = null;
     this.element = null;
     this.props = props;
@@ -19,13 +23,34 @@ export class TurtleComponent {
     this.forwardRefs = {};
     this.states = {};
     this.reactive = true;
-    this.renderContext = new TurtleRenderContext(this);
+    this._contexts = {};
+    this.contexts = new TurtleContextManagement(this.parent, this);
+    this.renderContext = new TurtleRenderData(this);
+    emitDevEvent(TURTLE_DEV_EVENTS.COMPONENT_INIT, this);
   }
 
-  getContext(name) {
-    return this.app.contexts[name]
+  /**
+   * Registers a context for use within the component.
+   * @param {string} name - The name of the context.
+   * @param {TurtleContext} context - The context instance.
+   * @throws {Error} Throws an error if the context is not an instance of TurtleContext.
+   */
+  useContext(name, context) {
+    if (!(context instanceof TurtleContext)) {
+      throw new Error('[Turtle Data Error] Context must be an instance of TurtleContext');
+    }
+    this.contexts.set(name, context);
   }
-  
+
+  /**
+   * Retrieves a context by name.
+   * @param {string} name - The name of the context.
+   * @returns {TurtleContext} The requested context instance.
+   */
+  getContext(name) {
+    return this.contexts.get(name);
+  }
+
   /**
    * Gets the references from the render context.
    * @returns {Object} The refs object.
@@ -52,7 +77,9 @@ export class TurtleComponent {
    * @param {*} value - The new value of the state.
    */
   setState(name, value) {
-    if (!this.states[name]) this.states[name] = new TurtleComponentState(name, value, this);
+    if (!this.states[name]) {
+      this.states[name] = new TurtleComponentState(name, value, this);
+    }
     this.states[name].set(value);
   }
 
@@ -157,7 +184,7 @@ export class TurtleComponent {
    */
   async requestUpdate(commit) {
     this._reactive(commit);
-    devLog(TURTLE_DEV_EVENTS.COMPONENT_UPDATE, this);
+    emitDevEvent(TURTLE_DEV_EVENTS.COMPONENT_UPDATED, this);
     this.onUpdate(commit);
   }
 
@@ -169,7 +196,7 @@ export class TurtleComponent {
     let fragment = this.template();
     this.element.textContent = "";
     this.element.appendChild(fragment);
-    devLog(TURTLE_DEV_EVENTS.COMPONENT_RENDER, this);
+    emitDevEvent(TURTLE_DEV_EVENTS.COMPONENT_RENDERED, this);
     this.onRender();
   }
 
@@ -177,13 +204,12 @@ export class TurtleComponent {
    * Handles reactivity for state changes.
    * @param {Object} commit - The commit object representing state changes.
    */
-
   _reactive(commit) {
     let bindings = this.renderContext.bindings[commit.state];
-    if(!bindings) return
+    if (!bindings) return;
     for (let bind of bindings) {
-      if (bind.type == "property") bind.target[bind.name] = commit.value;
-      if (bind.type == "attribute") bind.target.setAttribute(bind.name, commit.value);
+      if (bind.type === "property") bind.target[bind.name] = commit.value;
+      if (bind.type === "attribute") bind.target.setAttribute(bind.name, commit.value);
     }
   }
 
@@ -205,11 +231,6 @@ export class TurtleComponent {
     this.watchers = this.setupWatcher() ?? {};
     this.initStates(this.setupState() ?? {});
     this.requestRender();
-  }
-  
-  
-  callService(name){
-    return this.app.services[name]
   }
 }
 

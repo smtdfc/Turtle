@@ -1,7 +1,7 @@
 import { EventDirective, BindingDirective, HTMLDirective, TextContentDirective, RefDirective } from './directives.js';
-import {TurtleComponentRef} from '../component/ref.js';
+import { TurtleComponentRef } from '../component/ref.js';
 
- /**
+/**
  * Extracts the name from the directive based on the given prefix.
  *
  * @param {string} name - The name of the directive.
@@ -20,9 +20,10 @@ function extractName(name, start) {
  * @param {string} name - The name of the directive.
  * @param {string} value - The value associated with the directive.
  * @param {Object} context - The context in which the directive is applied.
+ * @returns {boolean} Returns true if the directive was successfully applied, otherwise false.
  */
 function applyDirective(target, name, value, context) {
-  let passed = false
+  let passed = false;
   for (let prefix in directives) {
     const ename = extractName(name, prefix);
     const DirectiveClass = directives[ename != null ? prefix : name];
@@ -32,11 +33,11 @@ function applyDirective(target, name, value, context) {
     const directiveInstance = new DirectiveClass(target, ename, value, context);
     if (typeof directiveInstance.apply === 'function') {
       directiveInstance.apply();
-      passed=true
+      passed = true;
     }
     break;
   }
-  return passed
+  return passed;
 }
 
 // Map of directive prefixes to their corresponding classes
@@ -60,9 +61,9 @@ export function processAttribute(target, node, context, data) {
   for (let attribute of Array.from(node.attributes)) {
     let name = attribute.name;
     let value = attribute.value;
-    let isDirective= applyDirective(target, name, value, context);
-    if(!isDirective){
-      target.setAttribute(name,value)
+    let isDirective = applyDirective(target, name, value, context);
+    if (!isDirective) {
+      target.setAttribute(name, value);
     }
   }
 }
@@ -74,26 +75,27 @@ export function processAttribute(target, node, context, data) {
  * @param {Node} tree - The DOM tree to process.
  * @param {Object} context - The context for processing.
  * @param {Object} data - Additional data, including component mappings.
+ * @param {Object} app - The application context for components.
  */
 export function process(element, tree, context, data, app) {
   for (let node of Array.from(tree.childNodes)) {
-    if (node.nodeType == Node.TEXT_NODE) {
+    if (node.nodeType === Node.TEXT_NODE) {
       element.appendChild(node);
-    } else if (node.nodeType == Node.ELEMENT_NODE) {
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
       if (data.components[node.nodeName]) {
         let component = data.components[node.nodeName];
         let componentElement = document.createElement("turtle-component");
-        componentElement.attach(app, component);
+        componentElement.attach(app, context.root, component);
         if (node.getAttribute("ref")) {
           context.addRef(
             node.getAttribute("ref"),
             new TurtleComponentRef(componentElement)
-          )
+          );
         }
         element.appendChild(componentElement);
       } else {
         let newElement = document.createElement(node.tagName);
-        processAttribute(newElement, node, context, data, app);
+        processAttribute(newElement, node, context, data);
         if (node.childNodes.length > 0) process(newElement, node, context, data);
         element.appendChild(newElement);
       }

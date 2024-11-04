@@ -1,18 +1,18 @@
-import { TurtleRenderContext } from './context.js';
+import { TurtleRenderData } from './data.js';
 import { TurtleComponent } from '../component/component.js';
 import { parseHTML } from './parser.js';
 import { process } from './process.js';
 
 /**
- * Renders a template into a specified element, creating a DOM tree
- * based on the provided template and context.
+ * Renders a template by processing its raw HTML and inserting values into it.
  *
- * @param {HTMLElement} element - The target element where the rendered content will be appended.
- * @param {Object} template - The template containing raw HTML and values to be injected.
- * @param {TurtleRenderContext} [context=new TurtleRenderContext()] - The rendering context for the operation.
- * @returns {HTMLElement} The target element with the rendered content.
+ * @param {HTMLElement} element - The parent element to which the rendered content will be appended.
+ * @param {TemplateStringsArray} template - The template containing the raw HTML and associated values.
+ * @param {TurtleRenderData} [context=new TurtleRenderData()] - The context for rendering, defaulting to a new instance.
+ * @param {Object|null} [app=null] - The application context, optional parameter.
+ * @returns {HTMLElement} The parent element after rendering the template.
  */
-export function render(element, template, context = new TurtleRenderContext(),app=null) {
+export function render(element, template, context = new TurtleRenderData(), app = null) {
   let raw = template.raw; // Raw HTML string from the template
   let values = template.values; // Values to be inserted into the raw HTML
   let data = {
@@ -34,8 +34,8 @@ export function render(element, template, context = new TurtleRenderContext(),ap
 
   let content = String.raw(raw, ...values);
   let tree = parseHTML(content);
-  
-  process(element, tree, context, data,app);
+
+  process(element, tree, context, data, app);
 
   return element;
 }

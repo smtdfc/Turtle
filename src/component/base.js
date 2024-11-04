@@ -1,4 +1,5 @@
-import { TURTLE_DEV_EVENTS, devLog } from '../dev/dev.js';
+import { emitDevEvent } from '../dev/emitter.js';
+import * as TURTLE_DEV_EVENTS from '../dev/events.js';
 
 /**
  * Custom element that represents a Turtle component in the DOM.
@@ -10,21 +11,24 @@ export class TurtleComponentElement extends HTMLElement {
    */
   constructor() {
     super();
-    this.app = null;
-    this.component = null;
+    this.app = null; // The Turtle application instance.
+    this.component = null; // The Turtle component instance.
   }
 
   /**
    * Attaches a Turtle application and component to this custom element.
    * @param {Object} app - The Turtle application instance.
+   * @param {Object} parent - The parent component or context of this component.
    * @param {TurtleComponent} component - The Turtle component instance.
    */
-  attach(app, component) {
+  attach(app, parent, component) {
     this.app = app;
     this.component = component;
+    this.component.parent = parent;
+    this.component.contexts.parent = parent;
     this.component.element = this;
     this.component.app = app;
-    devLog(TURTLE_DEV_EVENTS.COMPONENT_ATTACHED, component);
+    emitDevEvent(TURTLE_DEV_EVENTS.COMPONENT_ATTACHED, component);
   }
 
   /**
@@ -32,9 +36,9 @@ export class TurtleComponentElement extends HTMLElement {
    * Initializes and starts the attached component.
    */
   connectedCallback() {
-    this.component.onInit()
+    this.component.onInit();
     this.component.start();
-    this.component.onCreate()
+    this.component.onCreate();
   }
 
   /**
@@ -42,7 +46,7 @@ export class TurtleComponentElement extends HTMLElement {
    * Can be used for cleanup operations if needed.
    */
   disconnectedCallback() {
-    this.component.onDestroy()
+    this.component.onDestroy();
     // Add any cleanup code here if necessary
   }
 }

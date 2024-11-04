@@ -1,94 +1,86 @@
-import { TURTLE_DEV_EVENTS, devLog } from '../dev/dev.js';
-import { render } from '../render/render.js';
-import { TurtleRenderContext } from '../render/context.js';
-import {TurtleContext} from '../context/index.js';
+import { emitDevEvent } from '../dev/emitter.js';
+import * as TURTLE_DEV_EVENTS from '../dev/events.js';
 
-/**
- * Represents the main application for Turtle.
+import { render } from '../render/render.js';
+import { TurtleRenderData } from '../render/data.js';
+import { TurtleContextManagement, TurtleContext } from '../context/context.js';
+
+
+ /**
+ * Class representing the main application for the Turtle library.
  */
 export class TurtleApp {
   /**
    * Creates an instance of TurtleApp.
-   * @param {Object} [configs={}] - Optional configurations for the application.
+   * @param {Object} [configs={}] - Configuration options for the app.
    */
   constructor(configs = {}) {
     this.root = null;
-    this.app = this;
     this.configs = configs;
-    this.data = {};
-    this.contexts = {};
-    this.services = {};
+    this._contexts = {};
     this.modules = [];
-    devLog(TURTLE_DEV_EVENTS.APP_INIT, this);
+    this.contexts = new TurtleContextManagement(null, this);
+    emitDevEvent(TURTLE_DEV_EVENTS.APP_INIT, this);
   }
 
   /**
-   * Registers and initializes a module in the Turtle application.
-   * @param {Object} module - The module to be registered and initialized.
-   * @param {Object} configs - The configuration settings for the module.
+   * Initializes and uses a specified module.
+   * @param {Object} module - The module to be initialized.
+   * @param {Object} [configs] - Configuration options for the module.
+   * @returns {*} The result of the module's initialization.
    */
-  use(module, configs) {
+  useModule(module, configs) {
     return module.init(this, configs);
   }
 
   /**
-   * Uses a context in the Turtle application.
+   * Retrieves a context by its name.
    * @param {string} name - The name of the context.
-   * @param {TurtleContext} context - The context instance to be used.
+   * @returns {TurtleContext|null} The context associated with the given name, or null if not found.
+   */
+  getContext(name) {
+    return this.contexts.get(name);
+  }
+
+  /**
+   * Attaches a context to the app by name.
+   * @param {string} name - The name of the context.
+   * @param {TurtleContext} context - An instance of TurtleContext to attach.
+   * @throws {Error} Throws an error if the context is not an instance of TurtleContext.
    */
   useContext(name, context) {
     if (!(context instanceof TurtleContext)) {
-      throw new Error("[Turtle Data Error] Object must be an instance of TurtleContext");
+      throw new Error('[Turtle Data Error] Context must be an instance of TurtleContext');
     }
-    this.contexts[name] = context;
+    this.contexts.set(name, context);
   }
 
   /**
-   * Adds a service to the application.
-   * @param {Object} service - The service to be added.
-   * @param {Object} configs - The configuration settings for the service.
-   */
-  addService(name, service) {
-    this.services[name] = service
-    // Implementation of service addition will go here
-  }
-
-  /**
-   * Attaches the application to a root HTML element.
-   * @param {HTMLElement} element - The HTML element to attach the app to.
+   * Attaches the specified HTML element as the root for rendering.
+   * @param {HTMLElement} element - The HTML element to use as the root.
+   * @throws {Error} Throws an error if the element is not an instance of HTMLElement.
    */
   attach(element) {
-    this.root = element;
-    devLog(TURTLE_DEV_EVENTS.APP_ATTACHED, {
-      app: this,
-      element
-    });
+    emitDevEvent(TURTLE_DEV_EVENTS.APP_ATTACHED, this);
+    if (element instanceof HTMLElement) {
+      this.root = element;
+    } else {
+      throw new Error('[Turtle Render Error] Element must be an instance of HTMLElement');
+    }
   }
 
   /**
-   * Renders a template into the root element of the application.
-   * @param {TemplateStringsArray} raw - The raw template literal.
-   * @param {...*} values - The values to be used in the template.
+   * Renders the provided raw content and values into the root element.
+   * @param {TemplateStringsArray} raw - A template string containing the static parts of the template.
+   * @param {...*} values - Values to be interpolated into the template.
+   * @throws {Error} Throws an error if the root element is not attached.
    */
   render(raw, ...values) {
-    const context = new TurtleRenderContext(this);
-    const template = { raw, values };
-    const element = render(document.createDocumentFragment(), template, context, this);
+    if (!this.root) {
+      throw new Error('[Turtle Render Error] Root element is not attached. Please attach a root element before rendering.');
+    }
 
-    // Clear existing content and append the new rendered element
     this.root.textContent = "";
-    this.root.appendChild(element);
+    this.root.appendChild(render(document.createDocumentFragment(), { raw, values }, new TurtleRenderData(this), this));
   }
-}
-
-/**
- * Creates and initializes a Turtle application.
- * @param {HTMLElement} root - The root element for the application.
- * @param {Object} [configs={}] - Optional configurations for the application.
- * @returns {TurtleApp} - The initialized Turtle application instance.
- */
-export function createApp(root, configs = {}) {
-  const app = new TurtleApp(configs);
-  app.attach(root);
-  return app;
 }

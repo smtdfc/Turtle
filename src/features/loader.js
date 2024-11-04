@@ -8,22 +8,21 @@
  * @returns {Promise<void>} - A promise that resolves when the script is loaded, or rejects on error.
  */
 export function addScript(src, asyncLoad = false, module = false, script) {
-  let d = document
+  let d = document;
   return new Promise((resolve, reject) => {
     script = d.createElement('script');
     script.type = 'text/javascript';
     if (module) script.type = 'module';
     script.async = asyncLoad;
     script.onload = function() {
-      resolve()
+      resolve();
     };
     script.onerror = function() {
-      reject()
-    }
+      reject(new Error(`Failed to load script: ${src}`));
+    };
     script.src = src;
-    d.getElementsByTagName('body')[0].appendChild(script)
-  })
-
+    d.getElementsByTagName('body')[0].appendChild(script);
+  });
 }
 
 /**
@@ -39,6 +38,12 @@ export function addScript(src, asyncLoad = false, module = false, script) {
  */
 export async function ensureNamespace(name, context, path, defer, module = false, raise = false) {
   if (!(name in context)) {
-    await addScript(path, defer, module, null)
+    try {
+      await addScript(path, defer, module);
+    } catch (error) {
+      if (raise) {
+        throw new Error(`Failed to ensure namespace: ${name} - ${error.message}`);
+      }
+    }
   }
 }
