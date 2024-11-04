@@ -5,18 +5,18 @@ export default [
     input: "./src/production.js",
     output: [
       {
-        file: './dist/production.turtle.cjs',
+        file: './dist/bundles/production.turtle.cjs',
         format: 'cjs',
         sourcemap: true
         },
       {
-        file: './dist/production.turtle.min.js',
+        file: './dist/bundles/production.turtle.min.js',
         format: 'umd',
         name: "Turtle",
         sourcemap: true
         },
       {
-        file: './dist/production.turtle.min.mjs',
+        file: './dist/bundles/production.turtle.min.mjs',
         format: 'esm',
         sourcemap: true
         },
@@ -27,18 +27,18 @@ export default [
     input: "./src/development.js",
     output: [
       {
-        file: './dist/development.turtle.min.cjs',
+        file: './dist/bundles/development.turtle.min.cjs',
         format: 'cjs',
         sourcemap: true
         },
       {
-        file: './dist/development.turtle.min.js',
+        file: './dist/bundles/development.turtle.min.js',
         format: 'umd',
         name: "Turtle",
         sourcemap: true
         },
       {
-        file: './dist/development.turtle.min.mjs',
+        file: './dist/bundles/development.turtle.min.mjs',
         format: 'esm',
         sourcemap: true
         },
@@ -49,18 +49,18 @@ export default [
     input: "./src/development.js",
     output: [
       {
-        file: './dist/development.turtle.cjs',
+        file: './dist/bundles/development.turtle.cjs',
         format: 'cjs',
         sourcemap: true
         },
       {
-        file: './dist/development.turtle.js',
+        file: './dist/bundles/development.turtle.js',
         format: 'umd',
         name: "Turtle",
         sourcemap: true
         },
       {
-        file: './dist/development.turtle.mjs',
+        file: './dist/bundles/development.turtle.mjs',
         format: 'esm',
         sourcemap: true
         },
