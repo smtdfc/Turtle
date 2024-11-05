@@ -54,6 +54,40 @@ export class TurtleContext {
     if (!this._bindings[name]) this._bindings[name] = [];
     this._bindings[name].push(state);
   }
+
+  /**
+   * Registers an event listener for a specified event name.
+   * @param {string} name - The name of the event.
+   * @param {Function} callback - The callback function to execute when the event occurs.
+   */
+  on(name, callback) {
+    if (!this.events[name]) {
+      this.events[name] = [];
+    }
+    this.events[name].push(callback);
+  }
+
+  /**
+   * Unregisters an event listener for a specified event name.
+   * @param {string} name - The name of the event.
+   * @param {Function} callback - The callback function to remove.
+   */
+  off(name, callback) {
+    if (this.events[name]) {
+      this.events[name] = this.events[name].filter(cb => cb !== callback);
+    }
+  }
+
+  /**
+   * Triggers an event with the specified name and data.
+   * @param {string} name - The name of the event to trigger.
+   * @param {*} data - The data to pass to the event callbacks.
+   */
+  triggerEvent(name, data) {
+    if (this.events[name]) {
+      this.events[name].forEach(callback => callback(data));
+    }
+  }
 }
 
 /**
