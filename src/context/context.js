@@ -61,10 +61,10 @@ export class TurtleContext {
    * @param {Function} callback - The callback function to execute when the event occurs.
    */
   on(name, callback) {
-    if (!this.events[name]) {
-      this.events[name] = [];
+    if (!this._events[name]) {
+      this._events[name] = [];
     }
-    this.events[name].push(callback);
+    this._events[name].push(callback);
   }
 
   /**
@@ -73,8 +73,8 @@ export class TurtleContext {
    * @param {Function} callback - The callback function to remove.
    */
   off(name, callback) {
-    if (this.events[name]) {
-      this.events[name] = this.events[name].filter(cb => cb !== callback);
+    if (this._events[name]) {
+      this._events[name] = this.events[name].filter(cb => cb !== callback);
     }
   }
 
@@ -83,9 +83,9 @@ export class TurtleContext {
    * @param {string} name - The name of the event to trigger.
    * @param {*} data - The data to pass to the event callbacks.
    */
-  triggerEvent(name, data) {
-    if (this.events[name]) {
-      this.events[name].forEach(callback => callback(data));
+  emit(name, data) {
+    if (this._events[name]) {
+      this._events[name].forEach(callback => callback(data));
     }
   }
 }
