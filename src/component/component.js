@@ -40,6 +40,7 @@ export class TurtleComponent {
       throw new Error('[Turtle Data Error] Context must be an instance of TurtleContext');
     }
     this.contexts.set(name, context);
+    return context
   }
 
   /**
