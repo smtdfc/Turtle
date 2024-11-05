@@ -52,7 +52,7 @@ export class TurtleApp {
     if (!(context instanceof TurtleContext)) {
       throw new Error('[Turtle Data Error] Context must be an instance of TurtleContext');
     }
-    this.contexts.set(name, context);
+    this.contexts.use(name, context);
   }
 
   /**
