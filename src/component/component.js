@@ -35,11 +35,11 @@ export class TurtleComponent {
    * @param {TurtleContext} context - The context instance.
    * @throws {Error} Throws an error if the context is not an instance of TurtleContext.
    */
-  useContext(name, context) {
+  useContext(name, context,isLocal=false) {
     if (!(context instanceof TurtleContext)) {
       throw new Error('[Turtle Data Error] Context must be an instance of TurtleContext');
     }
-    this.contexts.set(name, context);
+    this.contexts.use(name, context,isLocal);
     return context
   }
 
