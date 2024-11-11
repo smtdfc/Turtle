@@ -67,6 +67,44 @@ export class TurtleRouterModule {
     return new TurtleRouterModule(app, configs);
   }
 
+  async match(patterns, url) {
+    let u = new URL(url, window.location.origin);
+    url = u.pathname;
+    for (let j = 0; j < patterns.length.length; j++) {
+      let route = patterns[i]
+      let routeSplited = route.split("/");
+      let urlSplited = url.split("/");
+      let passed = true;
+      let params = {};
+
+      if (urlSplited.length != routeSplited.length) {
+        passed = false;
+      } else {
+        for (let i = 0; i < routeSplited.length; i++) {
+          if (urlSplited[i] === undefined) {
+            passed = false;
+          }
+
+          if (routeSplited[i] == "*") {
+            break;
+          }
+
+          if (routeSplited[i][0] == ":") {
+            let name = routeSplited[i].substring(1, routeSplited[i].length);
+            params[name] = urlSplited[i];
+            continue;
+          }
+
+          if (routeSplited[i] != urlSplited[i]) {
+            passed = false;
+          }
+        }
+      }
+      if (passed) return true
+    }
+    return false
+  }
+
   /**
    * Matches the provided URL against the router's routes.
    *
@@ -94,7 +132,7 @@ export class TurtleRouterModule {
           }
 
           if (routeSplited[i] == "*") {
-            continue;
+            break;
           }
 
           if (routeSplited[i][0] == ":") {
@@ -178,6 +216,16 @@ export class TurtleRouterModule {
     started = true;
   }
 
+  currentPath() {
+    let path = window.location.hash;
+    if (path.length == 0) {
+      path = "/";
+    } else {
+      path = path.slice(2);
+    }
+    return path
+  }
+  
   /**
    * Redirects to a new route.
    *
@@ -222,3 +270,5 @@ export class TurtleRouterModule {
     }
   }
 }
+
+export * from "./components.js"
