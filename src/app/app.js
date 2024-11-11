@@ -83,4 +83,9 @@ export class TurtleApp {
     this.root.textContent = "";
     this.root.appendChild(render(document.createDocumentFragment(), { raw, values }, new TurtleRenderData(this), this));
   }
+  
+  fragment(raw,...values){
+    return render(document.createDocumentFragment(), { raw, values }, new TurtleRenderData(this), this)
+  }
+  
 }
