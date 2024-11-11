@@ -1,8 +1,8 @@
 import { TurtleComponent,createComponent } from '../../component/component.js';
 
 export class TurtleRouteComponent extends TurtleComponent {
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.matched = false
   }
 
