@@ -67,11 +67,11 @@ export class TurtleRouterModule {
     return new TurtleRouterModule(app, configs);
   }
 
-   match(patterns, url) {
+  match(patterns, url) {
     let u = new URL(url, window.location.origin);
     url = u.pathname;
-   
-    if(!patterns ) return
+
+    if (!patterns) return
     for (let i = 0; i < patterns.length; i++) {
       let route = patterns[i]
       let routeSplited = route.split("/");
@@ -213,7 +213,7 @@ export class TurtleRouterModule {
         this.matches(path);
       }
     }.bind(this));
-
+    started = true;
     this.matches(path);
     started = true;
   }
@@ -227,7 +227,7 @@ export class TurtleRouterModule {
     }
     return path
   }
-  
+
   /**
    * Redirects to a new route.
    *
