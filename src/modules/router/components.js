@@ -7,7 +7,7 @@ export class TurtleRouteComponent extends TurtleComponent {
   }
 
   onCreate() {
-    console.log(this.props)
+    console.log("props",this.props)
     if (this.props[0] instanceof String) {
       this.routes = [this.props[0]]
     } else {
@@ -18,7 +18,7 @@ export class TurtleRouteComponent extends TurtleComponent {
   }
   
   active() {
-    console.log(this.routes)
+    console.log("routes",this.routes)
     if (this.app.router) {
       let router = this.app.router
       if (router.match(this.routes, router.currentPath()) && !this.matched) {
