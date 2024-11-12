@@ -102,9 +102,9 @@ export class TurtleRouterModule {
           }
         }
       }
-      if (passed) return true
+      if (passed) return [true,route]
     }
-    return false
+    return [false,null]
   }
 
   /**
