@@ -7,40 +7,34 @@ export class TurtleRouteComponent extends TurtleComponent {
   }
 
   onInit() {
-    if ( this.props[0] instanceof Array) {
-      this.routes = {}
-      this.props[0].forEach(route => {
-        
-        let component = route.component
-        if (route.path instanceof Array) {
-          route.path.forEach(path => {
-            console.log()
-            this.routes[path] = component
-          })
+    const [routes] = this.props;
+
+    if (Array.isArray(routes)) {
+      this.routes = {};
+      routes.forEach(({ component, path }) => {
+        if (Array.isArray(path)) {
+          path.forEach(p => this.routes[p] = component);
         } else {
-          this.routes[route.path] = component
+          this.routes[path] = component;
         }
-      })
-      console.log(this.routes)
-      return
+      });
+    } else if (typeof routes === "object") {
+      this.routes = routes;
     }
-    if (typeof this.props[0] == "object") {
-      this.routes = this.props[0]
-    }
+
   }
 
   active() {
     if (this.app.router) {
       let router = this.app.router
       let [status, matched] = router.match(Object.keys(this.routes), router.currentPath())
-      console.log(status,matched)
       if ((status) && !this.matched) {
         this.matched = true
         this.element.appendChild(this.html`
           <${this.routes[matched]}/>
         `)
       }
-      if(!status){
+      if (!status) {
         this.matched = false
         this.element.textContent = ""
       }
