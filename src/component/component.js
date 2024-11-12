@@ -246,7 +246,7 @@ export function createComponent(constructor) {
    * @param {Object} props - The properties to be passed to the component.
    * @returns {TurtleComponent} The instantiated component.
    */
-  function fn(props) {
+  function fn(...props) {
     let component = new constructor(props);
     component.props = props;
     return component;

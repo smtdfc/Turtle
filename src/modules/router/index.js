@@ -70,7 +70,8 @@ export class TurtleRouterModule {
   async match(patterns, url) {
     let u = new URL(url, window.location.origin);
     url = u.pathname;
-    for (let j = 0; j < patterns.length; j++) {
+    if(!patterns ) return
+    for (let i = 0; i < patterns.length; i++) {
       let route = patterns[i]
       let routeSplited = route.split("/");
       let urlSplited = url.split("/");

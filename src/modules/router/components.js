@@ -2,12 +2,12 @@ import { TurtleComponent,createComponent } from '../../component/component.js';
 
 export class TurtleRouteComponent extends TurtleComponent {
   constructor(props) {
+    
     super(props)
     this.matched = false
   }
 
   onCreate() {
-    console.log("props",this.props)
     if (this.props[0] instanceof String) {
       this.routes = [this.props[0]]
     } else {
@@ -18,7 +18,6 @@ export class TurtleRouteComponent extends TurtleComponent {
   }
   
   active() {
-    console.log("routes",this.routes)
     if (this.app.router) {
       let router = this.app.router
       if (router.match(this.routes, router.currentPath()) && !this.matched) {
