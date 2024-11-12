@@ -13,6 +13,7 @@ export class TurtleRouteComponent extends TurtleComponent {
       this.routes = this.props[0]
     }
     this.component = this.props[1]
+    
   }
   
   active() {
