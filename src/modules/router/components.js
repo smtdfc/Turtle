@@ -18,6 +18,7 @@ export class TurtleRouteComponent extends TurtleComponent {
   }
   
   active() {
+    console.log(this.routes)
     if (this.app.router) {
       let router = this.app.router
       if (router.match(this.routes, router.currentPath()) && !this.matched) {
@@ -35,7 +36,7 @@ export class TurtleRouteComponent extends TurtleComponent {
   onRender() {
     this.active()
     if (this.app.router) {
-      this.app.routeron.on("pagechange", this.active.bind(this))
+      this.app.router.on("pagechange", this.active.bind(this))
     }
   }
 
