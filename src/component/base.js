@@ -39,6 +39,7 @@ export class TurtleComponentElement extends HTMLElement {
     this.component.onInit();
     this.component.start();
     this.component.onCreate();
+    this.component.startRender();
   }
 
   /**

@@ -231,6 +231,10 @@ export class TurtleComponent {
     this.forwardRefs = this.setupForwardRef() ?? {};
     this.watchers = this.setupWatcher() ?? {};
     this.initStates(this.setupState() ?? {});
+    
+  }
+  
+  startRender(){
     this.requestRender();
   }
 }

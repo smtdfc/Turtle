@@ -8,13 +8,16 @@ export class TurtleRouteComponent extends TurtleComponent {
 
   }
 
-  onCreate() {
+  onInit() {
+    
     this.routes = this.props[0]
+    
   }
 
   active() {
     if (this.app.router) {
       let router = this.app.router
+      
       let [status, matched] = router.match(Object.keys(this.routes), router.currentPath())
       if ((status) && !this.matched) {
         this.matched = true
