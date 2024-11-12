@@ -5,10 +5,12 @@ export class TurtleRouteComponent extends TurtleComponent {
     
     super(props)
     this.matched = false
+    
   }
 
   onCreate() {
-    if (this.props[0] instanceof String) {
+    
+    if (typeof this.props[0] == "string") {
       this.routes = [this.props[0]]
     } else {
       this.routes = this.props[0]
@@ -17,10 +19,10 @@ export class TurtleRouteComponent extends TurtleComponent {
     
   }
   
-  active() {
+ active() {
     if (this.app.router) {
       let router = this.app.router
-      if (router.match(this.routes, router.currentPath()) && !this.matched) {
+      if ((router.match(this.routes, router.currentPath())) && !this.matched) {
         this.matched = true
         this.element.appendChild(this.html`
           <${this.component}/>
