@@ -39,3 +39,20 @@ export function render(element, template, context = new TurtleRenderData(), app 
 
   return element;
 }
+
+export class TurtleRenderHelper{
+  constructor(app,root,context=new TurtleRenderData()){
+    this.app = app
+    this.context = context 
+    this.root = root
+  }
+  
+  fragment(raw,...values){
+    return render(document.createDocumentFragment(), { raw, values }, this.context, this.app)
+  }
+  
+  render(raws,...values){
+    this.root.textContent = ""
+    this.root.appendChild(render(document.createDocumentFragment(), { raw, values }, this.context, this.app))
+  }
+}
