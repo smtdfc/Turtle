@@ -13,8 +13,8 @@ export class TurtleLazyLoadingComponent extends TurtleComponent {
     this.lazy_fn()
       .then((component) => {
         context.element.appendChild(this.html`
-                 <${component}/>
-                `)
+          <${component}/>
+        `)
       })
   }
 
