@@ -31,7 +31,7 @@ export class TurtleComponent {
   }
 
   id(name) {
-    if (!this._id[name]) this._id[name] = (Math.floor(Math.random() * 99999999) * Date.now()).toString(32)
+    if (!this._id[name]) this._id[name] = `tid_${(Math.floor(Math.random() * 99999999) * Date.now()).toString(32)}`
     return this._id[name]
   }
   /**
