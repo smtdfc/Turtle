@@ -196,7 +196,7 @@ export class TurtleRouterModule {
     let path = window.location.hash;
     if (path.length == 0) {
       path = "/";
-      window.location = "#";
+      
     } else {
       path = path.slice(2);
     }
