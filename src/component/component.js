@@ -24,22 +24,27 @@ export class TurtleComponent {
     this.states = {};
     this.reactive = true;
     this._contexts = {};
+    this._id = {}
     this.contexts = new TurtleContextManagement(this.parent, this);
     this.renderContext = new TurtleRenderData(this);
     emitDevEvent(TURTLE_DEV_EVENTS.COMPONENT_INIT, this);
   }
 
+  id(name) {
+    if (!this._id[name]) this._id[name] = (Math.floor(Math.random() * 99999999) * Date.now()).toString(32)
+    return this._id[name]
+  }
   /**
    * Registers a context for use within the component.
    * @param {string} name - The name of the context.
    * @param {TurtleContext} context - The context instance.
    * @throws {Error} Throws an error if the context is not an instance of TurtleContext.
    */
-  useContext(name, context,isLocal=false) {
+  useContext(name, context, isLocal = false) {
     if (!(context instanceof TurtleContext)) {
       throw new Error('[Turtle Data Error] Context must be an instance of TurtleContext');
     }
-    this.contexts.use(name, context,isLocal);
+    this.contexts.use(name, context, isLocal);
     return context
   }
 
@@ -231,10 +236,10 @@ export class TurtleComponent {
     this.forwardRefs = this.setupForwardRef() ?? {};
     this.watchers = this.setupWatcher() ?? {};
     this.initStates(this.setupState() ?? {});
-    
+
   }
-  
-  startRender(){
+
+  startRender() {
     this.requestRender();
   }
 }
