@@ -37,9 +37,7 @@ export class TurtleRenderData {
    * @private
    */
   addRef(name, element) {
-    if (this.refs[name]) {
-      throw new Error(`[Turtle Render Error] Multiple elements are assigned the same ref, which is not allowed. Each ref must be unique to a single DOM element.`);
-    }
+    
 
     this.refs[name] = element;
   }
