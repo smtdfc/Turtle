@@ -37,8 +37,6 @@ export class TurtleRenderData {
    * @private
    */
   addRef(name, element) {
-    
-
     this.refs[name] = element;
   }
 

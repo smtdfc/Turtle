@@ -264,3 +264,4 @@ export function createComponent(constructor) {
   fn.instance = TurtleComponent;
   return fn;
 }
+
