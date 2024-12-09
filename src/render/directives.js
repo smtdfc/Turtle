@@ -1,14 +1,14 @@
 /**
- * Represents an event directive for adding event listeners to a target element.
+ * Represents a directive for attaching event listeners to a target element.
  */
 export class EventDirective {
   /**
    * Creates an instance of EventDirective.
    * 
-   * @param {HTMLElement} target - The target element to attach the event listener to.
-   * @param {string} name - The name of the event to listen for.
-   * @param {string} value - The name of the method to call on the event.
-   * @param {Object} context - The context in which the event method is defined.
+   * @param {HTMLElement} target - The target element to which the event listener will be attached.
+   * @param {string} name - The name of the event to listen for (e.g., 'click', 'mouseover').
+   * @param {string} value - The name of the method to be called when the event is triggered.
+   * @param {Object} context - The context in which the event handler method is defined.
    */
   constructor(target, name, value, context) {
     this.target = target;
@@ -18,7 +18,7 @@ export class EventDirective {
   }
 
   /**
-   * Applies the event directive by adding the event listener to the target element.
+   * Attaches the event listener to the target element, using the specified method from the context.
    */
   apply() {
     if (this.context.root[this.value]) {
@@ -28,16 +28,16 @@ export class EventDirective {
 }
 
 /**
- * Represents a binding directive for binding attributes to a target element.
+ * Represents a directive for binding attributes to a target element.
  */
 export class BindingDirective {
   /**
    * Creates an instance of BindingDirective.
    * 
    * @param {HTMLElement} target - The target element to bind the attribute to.
-   * @param {string} name - The name of the attribute to bind.
+   * @param {string} name - The name of the attribute to bind (e.g., 'class', 'style').
    * @param {string} value - The state name to bind to the attribute.
-   * @param {Object} context - The context for the binding.
+   * @param {Object} context - The context managing the binding logic.
    */
   constructor(target, name, value, context) {
     this.target = target;
@@ -47,7 +47,7 @@ export class BindingDirective {
   }
 
   /**
-   * Applies the binding directive by adding a binding for the attribute to the target element.
+   * Applies the binding directive by binding the specified attribute to the target element.
    */
   apply() {
     this.context.addBinding(this.value, {
@@ -60,7 +60,7 @@ export class BindingDirective {
 }
 
 /**
- * Represents an HTML directive for binding innerHTML to a target element.
+ * Represents a directive for binding innerHTML to a target element.
  */
 export class HTMLDirective {
   /**
@@ -69,7 +69,7 @@ export class HTMLDirective {
    * @param {HTMLElement} target - The target element to bind innerHTML to.
    * @param {string} name - The name of the property (always 'innerHTML').
    * @param {string} value - The state name to bind to innerHTML.
-   * @param {Object} context - The context for the binding.
+   * @param {Object} context - The context managing the binding logic.
    */
   constructor(target, name, value, context) {
     this.target = target;
@@ -79,7 +79,7 @@ export class HTMLDirective {
   }
 
   /**
-   * Applies the HTML directive by adding a binding for innerHTML to the target element.
+   * Applies the HTML directive by binding innerHTML to the target element.
    */
   apply() {
     this.context.addBinding(this.value, {
@@ -92,7 +92,7 @@ export class HTMLDirective {
 }
 
 /**
- * Represents a text content directive for binding textContent to a target element.
+ * Represents a directive for binding textContent to a target element.
  */
 export class TextContentDirective {
   /**
@@ -101,7 +101,7 @@ export class TextContentDirective {
    * @param {HTMLElement} target - The target element to bind textContent to.
    * @param {string} name - The name of the property (always 'textContent').
    * @param {string} value - The state name to bind to textContent.
-   * @param {Object} context - The context for the binding.
+   * @param {Object} context - The context managing the binding logic.
    */
   constructor(target, name, value, context) {
     this.target = target;
@@ -111,7 +111,7 @@ export class TextContentDirective {
   }
 
   /**
-   * Applies the text content directive by adding a binding for textContent to the target element.
+   * Applies the text content directive by binding textContent to the target element.
    */
   apply() {
     this.context.addBinding(this.value, {
@@ -124,7 +124,7 @@ export class TextContentDirective {
 }
 
 /**
- * Represents a reference directive for adding a reference to a DOM element.
+ * Represents a directive for adding a reference to a DOM element.
  */
 export class RefDirective {
   /**
@@ -132,8 +132,8 @@ export class RefDirective {
    * 
    * @param {HTMLElement} target - The target element to be referenced.
    * @param {string} name - The name of the reference.
-   * @param {string} value - The unique name to assign to the reference.
-   * @param {Object} context - The context for managing references.
+   * @param {string} value - The unique identifier for the reference.
+   * @param {Object} context - The context managing the references.
    */
   constructor(target, name, value, context) {
     this.target = target;
@@ -151,29 +151,28 @@ export class RefDirective {
 }
 
 /**
- * Represents a reference directive for adding a reference to a DOM element.
+ * Represents a directive for adding a model binding to a DOM element.
  */
 export class ModelDirective {
   /**
-   * Creates an instance of RefDirective.
+   * Creates an instance of ModelDirective.
    * 
-   * @param {HTMLElement} target - The target element to be referenced.
-   * @param {string} name - The name of the reference.
-   * @param {string} value - The unique name to assign to the reference.
-   * @param {Object} context - The context for managing references.
+   * @param {HTMLElement} target - The target element to bind the model to.
+   * @param {string} name - The name of the model binding.
+   * @param {string} value - The unique identifier for the model binding.
+   * @param {Object} context - The context managing the model bindings.
    */
-  constructor(target, name,value, context) {
+  constructor(target, name, value, context) {
     this.target = target;
     this.name = name;
-    this.context = context;
     this.value = value;
+    this.context = context;
   }
 
   /**
-   * Applies the reference directive by adding a reference to the target element.
+   * Applies the model directive by adding a model binding to the target element.
    */
   apply() {
     this.context.addModel(this.value, this.target);
   }
 }
-
