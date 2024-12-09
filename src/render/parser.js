@@ -7,9 +7,9 @@
  */
 export function parseHTML(content) {
   let parser = new DOMParser();
-  let doc = parser.parseFromString(`<root>${content}</root>`, "text/xml");
+  let doc = parser.parseFromString(`<root>${content}</root>`, "application/xhtml+xml");
   let parserError = doc.getElementsByTagName("parsererror");
-
+  
   if (parserError.length > 0) {
     const errorMessage = "Rendering error: " + parserError[0].textContent;
     console.log(errorMessage);

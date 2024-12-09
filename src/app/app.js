@@ -15,6 +15,7 @@ export class TurtleApp {
    * @param {Object} [configs={}] - Configuration options for the app.
    */
   constructor(configs = {}) {
+    this.is_app = true
     this.root = null;
     this.configs = configs;
     this._contexts = {};

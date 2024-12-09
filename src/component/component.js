@@ -19,11 +19,6 @@ export class TurtleComponent {
     this.app = null;
     this.element = null;
     this.props = props;
-    this.watchers = {};
-    this.forwardRefs = {};
-    this.states = {};
-    this.reactive = true;
-    this._contexts = {};
     this._id = {}
     this.contexts = new TurtleContextManagement(this.parent, this);
     this.renderContext = new TurtleRenderData(this);
@@ -132,7 +127,7 @@ export class TurtleComponent {
    * Should be overridden by subclasses.
    * @returns {Object} An object containing watcher functions.
    */
-  setupWatcher() {
+  watchers() {
     return {};
   }
 
@@ -141,7 +136,7 @@ export class TurtleComponent {
    * Should be overridden by subclasses.
    * @returns {Object} An object containing forward references.
    */
-  setupForwardRef() {
+  forwardRefs() {
     return {};
   }
 
@@ -233,8 +228,8 @@ export class TurtleComponent {
    * Starts the component by setting up forward references, watchers, and states, then requests a render.
    */
   start() {
-    this.forwardRefs = this.setupForwardRef() ?? {};
-    this.watchers = this.setupWatcher() ?? {};
+    this._forwardRefs = this.forwardRefs() ?? {};
+    this._watchers = this.watchers() ?? {};
     this.initStates(this.setupState() ?? {});
 
   }

@@ -1,4 +1,4 @@
-import { EventDirective, BindingDirective, HTMLDirective, TextContentDirective, RefDirective } from './directives.js';
+import { EventDirective, BindingDirective, HTMLDirective, TextContentDirective, RefDirective ,ModelDirective} from './directives.js';
 import { TurtleComponentRef } from '../component/ref.js';
 
 /**
@@ -46,6 +46,7 @@ const directives = {
   "tbind-": BindingDirective,
   "thtml": HTMLDirective,
   "ttext": TextContentDirective,
+  "tmodel":ModelDirective,
   "ref": RefDirective
 };
 

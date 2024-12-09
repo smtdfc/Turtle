@@ -149,3 +149,31 @@ export class RefDirective {
     this.context.addRef(this.value, this.target);
   }
 }
+
+/**
+ * Represents a reference directive for adding a reference to a DOM element.
+ */
+export class ModelDirective {
+  /**
+   * Creates an instance of RefDirective.
+   * 
+   * @param {HTMLElement} target - The target element to be referenced.
+   * @param {string} name - The name of the reference.
+   * @param {string} value - The unique name to assign to the reference.
+   * @param {Object} context - The context for managing references.
+   */
+  constructor(target, name,value, context) {
+    this.target = target;
+    this.name = name;
+    this.context = context;
+    this.value = value;
+  }
+
+  /**
+   * Applies the reference directive by adding a reference to the target element.
+   */
+  apply() {
+    this.context.addModel(this.value, this.target);
+  }
+}
+

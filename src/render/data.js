@@ -41,6 +41,24 @@ export class TurtleRenderData {
   }
 
   /**
+   * Adds a reference to a DOM element with a unique name.
+   * 
+   * @param {string} name - The unique name for the reference.
+   * @param {HTMLElement} element - The DOM element to be referenced.
+   * @throws {Error} Throws an error if a reference with the same name already exists.
+   * @private
+   */
+  addModel(name, element) {
+    if(["INPUT","SELECT","TEXTAREA"].includes(element.tagName) && !this.root.is_app){
+      element.addEventListener("input",(event)=>{
+        if(["checkbox","radio"].includes(element.type)) this.root.setState(name,element.checked)
+        else this.root.setState(name,element.value)
+      })
+    }
+  }
+
+
+  /**
    * Retrieves a referenced DOM element by its unique name.
    * 
    * @param {string} name - The unique name for the reference.

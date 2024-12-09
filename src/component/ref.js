@@ -24,7 +24,7 @@ export class TurtleComponentRef {
     if (!this.#element.component) {
       throw new Error('[Turtle Component Ref Error] The element does not have an associated component.');
     }
-    return this.#element.component.forwardRefs;
+    return this.#element.component._forwardRefs;
   }
 
   // You can add more methods here to interact with the component or element.

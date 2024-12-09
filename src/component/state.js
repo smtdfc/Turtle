@@ -36,8 +36,8 @@ export class TurtleComponentState {
   set(value) {
     this.value = value;
     // Trigger the watcher if one is defined for this state.
-    if (this.component.watchers[this.name]) {
-      this.component.watchers[this.name](value);
+    if (this.component._watchers[this.name]) {
+      this.component._watchers[this.name](value);
     }
     // Trigger a component update if the component and state are reactive.
     if (this.component.reactive && this.reactive) {
