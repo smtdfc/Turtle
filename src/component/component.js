@@ -20,6 +20,7 @@ export class TurtleComponent {
     this.element = null;
     this.props = props;
     this._id = {}
+    this.states ={}
     this.contexts = new TurtleContextManagement(this.parent, this);
     this.renderContext = new TurtleRenderData(this);
     emitDevEvent(TURTLE_DEV_EVENTS.COMPONENT_INIT, this);
