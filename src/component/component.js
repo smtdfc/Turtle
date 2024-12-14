@@ -1,6 +1,7 @@
 import { TurtleRenderContext } from '../render/context.js';
 import { TurtleContextManager } from '../context/manager.js';
 import { render } from '../render/index.js';
+import {registerComponent} from '../dev/index.js';
 
 export class TurtleComponent {
   static ins = TurtleComponent;
@@ -38,6 +39,7 @@ export class TurtleComponent {
     this.contexts = new TurtleContextManager(this, this._parent)
     const refs = this.forwardRefs();
     this._forwardRefs = refs || {};
+    registerComponent(this)
   }
 
   html(raws, ...values) {
