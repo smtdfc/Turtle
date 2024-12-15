@@ -23,6 +23,9 @@ export function registerComponent(component) {
   if (!isDevMode()) return;
 
   const key = generateKey();
+  component._turtledevdata = {
+    key: generateKey()
+  }
   window.__TURTLE__.devMetaData.components[key] = {
     key,
     name: component.constructor.name,
@@ -36,6 +39,9 @@ export function registerApp(app) {
   if (!isDevMode()) return;
 
   const key = generateKey();
+  app._turtledevdata = {
+    key: generateKey()
+  }
   window.__TURTLE__.devMetaData.apps[key] = {
     key,
     instance: app
@@ -46,7 +52,6 @@ export function registerApp(app) {
 
 export function getComponentByKey(key) {
   if (!isDevMode()) return null;
-
   return window.__TURTLE__.devMetaData.components[key] || null;
 }
 
