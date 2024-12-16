@@ -35,7 +35,8 @@ export function createComponentElementTag(component,parent) {
 
   function cleanUp() {
     if (customElements.get(`turtle-component-${tagName}`)) {
-      window.customElements.define(`turtle-component-${tagName}`, HTMLUnknownElement);
+      
+      //window.customElements.define(`turtle-component-${tagName}`, HTMLUnknownElement);
     }
   }
 

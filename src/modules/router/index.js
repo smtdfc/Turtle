@@ -8,10 +8,44 @@ export class TurtleRouterModule {
     this.query = {};
     this.params = {};
     this.mode = configs.mode || "hash";
+    this.currentPage = null;
+    this.slots = []
+    this.events = {}
+    this.root = configs.root 
   }
 
   static init(app, configs) {
     return new TurtleRouterModule(app, configs);
+  }
+
+  on(name, callback) {
+    if (!this.events[name]) {
+      this.events[name] = []
+    }
+    this.events[name].push(callback)
+  }
+
+  emit(name, data) {
+    if (!this.events[name]) {
+      this.events[name] = []
+    }
+
+    for (let fn of this.events[name]) {
+      fn(data)
+    }
+  }
+
+
+  render(component) {
+    console.log(this.root)
+    if (component && this.root) {
+      
+      this.root.textContent = ""
+     this.root.appendChild(this.app.fragment`
+            <${component}/>
+       `);
+    }
+
   }
 
   addRoute(path, { loader, callback, protect = () => true, component = null }) {
@@ -37,12 +71,14 @@ export class TurtleRouterModule {
       if (this.currentPath !== path) {
         history.pushState({}, "", path);
         this.currentPath = path;
+        this.emit("onnavigate")
         this.resolve();
       }
     } else if (this.mode === "hash") {
       if (this.currentPath !== path) {
         window.location.hash = `#!${path}`;
         this.currentPath = path;
+        this.emit("onnavigate")
         this.resolve();
       }
     }
@@ -57,16 +93,18 @@ export class TurtleRouterModule {
     }
     return [false, null, null];
   }
-  
+
   async resolve() {
     try {
       let [matched, path, extractedData] = this.matchesRoute(this.currentPath);
       if (matched) {
+        this.emit("onpagechange")
         this.query = extractedData.query;
         this.params = extractedData.slugs;
         let routeInfo = this.routes[path];
         let component = await routeInfo?.loader?.();
         await routeInfo?.callback?.();
+        this.emit("onpageloaded")
         if (routeInfo.protect) {
           if (!routeInfo.protect()) {
             this.emit("notallow");
@@ -77,11 +115,15 @@ export class TurtleRouterModule {
         if (!component && routeInfo?.component) {
           component = routeInfo?.component;
         }
-        
-        
+
+        this.render(component)
+        this.emit("onpageready")
+      }
+      else{
+        this.emit("notfound")
       }
     } catch (error) {
-      throw Error("Route resolution failed:", error);
+      throw Error(`Route resolution failed: ${ error.message}`);
     }
   }
 
@@ -98,3 +140,13 @@ export class TurtleRouterModule {
     this.initListener();
   }
 }
+/*
+  <${TurtleRoute(this.router,{
+    "/a/*":Navbar,
+    "/b/*":Sidebar,
+  })/>  
+  
+  
+
+
+*/
