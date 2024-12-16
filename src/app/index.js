@@ -3,7 +3,7 @@ import { TurtleRenderContext } from '../render/context.js';
 import { TurtleContextManager } from '../context/manager.js';
 import { TurtleComponent } from '../component/component.js';
 import { getComponentInstance } from '../component/render.js';
-import {registerApp} from '../dev/index.js';
+import { registerApp } from '../dev/index.js';
 
 export class TurrleApp {
   constructor(configs = {}) {
@@ -16,6 +16,10 @@ export class TurrleApp {
     registerApp(this)
   }
 
+  useModule(module,configs ={}) {
+   this.modules.push(module.init(this,configs))
+  }
+  
   useContext(name, context) {
     this.contexts.use(name, context)
   }
