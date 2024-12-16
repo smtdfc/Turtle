@@ -1,5 +1,7 @@
 export function extractParameters(url, pattern) {
-  const urlObj = new URL(url);
+
+  const urlObj = new URL(url,window.location.origin);
+  
   const pathname = urlObj.pathname;
   const queryString = urlObj.search;
 
@@ -18,13 +20,16 @@ export function extractParameters(url, pattern) {
   const regex = new RegExp(regexPattern);
   const match = pathname.match(regex);
 
-  const params = {};
+  const params = {
+    query:{},
+    slugs:{}
+  };
 
   if (match) {
     let paramIndex = 1;
 
     pattern.replace(/\/:([a-zA-Z0-9_]+)/g, (fullMatch, paramName) => {
-      params[paramName] = match[paramIndex++];
+      params.slugs[paramName] = match[paramIndex++];
     });
 
     if (queryString) {
@@ -37,8 +42,8 @@ export function extractParameters(url, pattern) {
       params.query = queryParams;
     }
 
-    return params;
+    return [true,params];
   }
 
-  return null;
+  return [false,null];
 }

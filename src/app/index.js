@@ -16,10 +16,12 @@ export class TurrleApp {
     registerApp(this)
   }
 
-  useModule(module,configs ={}) {
-   this.modules.push(module.init(this,configs))
+  useModule(module, configs = {}) {
+    let instance = module.init(this, configs)
+    this.modules.push(instance)
+    return instance
   }
-  
+
   useContext(name, context) {
     this.contexts.use(name, context)
   }
