@@ -37,6 +37,12 @@ export class TurrleApp {
   fragment(raws, ...values) {
     return render(this.renderContext, { raws, values })
   }
+  
+  renderFragment(raws,...values){
+    this.root.textContent = ""
+    this.root.appendChild(render(this.renderContext, { raws, values }))
+  }
+  
   render(component) {
     if (getComponentInstance(component)) {
       this.root.appendChild(this.fragment` 

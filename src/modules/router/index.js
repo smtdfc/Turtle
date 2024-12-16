@@ -57,7 +57,7 @@ export class TurtleRouterModule {
     }
     return [false, null, null];
   }
-
+  
   async resolve() {
     try {
       let [matched, path, extractedData] = this.matchesRoute(this.currentPath);
@@ -77,6 +77,8 @@ export class TurtleRouterModule {
         if (!component && routeInfo?.component) {
           component = routeInfo?.component;
         }
+        
+        
       }
     } catch (error) {
       throw Error("Route resolution failed:", error);
