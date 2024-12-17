@@ -1,7 +1,7 @@
 import { TurtleRenderContext } from '../render/context.js';
 import { TurtleContextManager } from '../context/manager.js';
 import { render } from '../render/index.js';
-import {registerComponent} from '../dev/index.js';
+import { registerComponent } from '../dev/index.js';
 
 export class TurtleComponent {
   static ins = TurtleComponent;
@@ -23,8 +23,12 @@ export class TurtleComponent {
   onUpdate() {}
   onDestroy() {}
 
+  get refs() {
+    return this._renderContext.refs
+  }
+  
   getContext(name, traceback = true) {
-    return this.contexts.get(name,traceback)
+    return this.contexts.get(name, traceback)
   }
 
   template() {
@@ -38,7 +42,7 @@ export class TurtleComponent {
   prepare() {
     this.contexts = new TurtleContextManager(this, this._parent)
     const refs = this.forwardRefs();
-    this._forwardRefs = refs || {};
+    this._forwardRefs = refs;
     registerComponent(this)
   }
 

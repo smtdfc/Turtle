@@ -11,7 +11,7 @@ function generateCompoenentElementClass(component,parent) {
     }
 
     get forwardRefs() {
-      return this.#_component?.forwardRefs;
+      return this.#_component?._forwardRefs;
     }
 
     connectedCallback() {
