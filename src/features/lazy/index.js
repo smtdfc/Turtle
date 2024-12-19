@@ -1,6 +1,6 @@
 import { TurtleComponent, createComponent } from "../../component/component.js";
 
-export const TurtleLazy = createComponent(class TurtleLazyComponent extends TurtleComponent {
+export const Lazy = createComponent(class TurtleLazyComponent extends TurtleComponent {
   onRender() {
     let [callback] = this.props;
 
@@ -25,7 +25,7 @@ export const TurtleLazy = createComponent(class TurtleLazyComponent extends Turt
   }
 });
 
-export const TurtleLazyVisible = createComponent(
+export const LazyVisible = createComponent(
   class TurtleLazyVisibleComponent extends TurtleComponent {
     onRender() {
       let [placeholder, component] = this.props;
