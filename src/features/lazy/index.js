@@ -35,7 +35,6 @@ export const TurtleLazyVisible = createComponent(
           if (entry.isIntersecting) {
             try {
               this.clear();
-
               if (component) {
                 this._element.appendChild(
                   this.html`
@@ -57,13 +56,9 @@ export const TurtleLazyVisible = createComponent(
 
     template() {
       let [, placeholder] = this.props;
-      return placeholder ?
-        this.html`
-            <${placeholder}/>
-          ` :
-        this.html`
-            <div>Loading...</div>
-          `;
+      return placeholder 
+        ? this.html`<${placeholder}/>` 
+        : this.html``;
     }
   }
 );
