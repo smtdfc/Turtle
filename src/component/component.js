@@ -23,10 +23,14 @@ export class TurtleComponent {
   onUpdate() {}
   onDestroy() {}
 
+  clear() {
+    this._element.textContent = ""
+  }
+  
   get refs() {
     return this._renderContext.refs
   }
-  
+
   getContext(name, traceback = true) {
     return this.contexts.get(name, traceback)
   }
