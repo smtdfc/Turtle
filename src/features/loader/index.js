@@ -15,6 +15,7 @@ export function loadScript(path, options = {}) {
     script.src = path;
     script.defer = defer;
     script.async = async_;
+    script.type = 'text/javascript';
     if (module) script.type = "module";
 
     script.onload = () => resolve();
