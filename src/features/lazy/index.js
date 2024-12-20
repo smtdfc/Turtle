@@ -5,7 +5,7 @@ export const Lazy = createComponent(class TurtleLazyComponent extends TurtleComp
     let [callback] = this.props;
 
     callback()
-      .then(() => {
+      .then((component) => {
         this.clear()
         this._element.appendChild(this.html`
           <${component}/>
