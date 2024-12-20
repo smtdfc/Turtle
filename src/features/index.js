@@ -1,3 +1,3 @@
-export * from "./loader.js"
-export * from "./performance.js"
-export * from "./lazy.js"
+export * from "./lazy/index.js"
+export * from "./loader/index.js"
+export * from "./performance/index.js"

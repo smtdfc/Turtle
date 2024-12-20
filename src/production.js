@@ -1,3 +1,3 @@
-export * from "./index.js"
+export * from './index.js';
 
-window.__TURTLE__.dev = false
+__TURTLE__.devMode = false;
