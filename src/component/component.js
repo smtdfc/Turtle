@@ -15,6 +15,7 @@ export class TurtleComponent {
     this._element = null;
     this._parent = null;
     this._forwardRefs = {};
+    this._ids={};
     this._renderContext = new TurtleRenderContext(this);
   }
 
@@ -25,10 +26,16 @@ export class TurtleComponent {
   onUpdate() {}
   onDestroy() {}
 
+  id(refName) {
+    if(this._ids[refName]) return this._ids[refName]
+    this._ids[refName] = `tid_${(Math.floor((Math.random() *9000)) * Date.now()).toString(32)}`
+    return this._ids[refName]
+  }
+
   createState(value) {
     return new TurtleState(this, value)
   }
-  
+
   clear() {
     this._element.textContent = ""
   }
