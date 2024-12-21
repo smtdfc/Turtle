@@ -7,7 +7,7 @@ const directiveSelector = directiveNames.map((value) => `[${value}]`).join(",");
 
 export function render(renderContext, template,app) {
   const values = template.values.map((value) => {
-    const componentInstance = getComponentInstance(value);
+    const componentInstance = getComponentInstance(value,app);
     if (componentInstance) {
       if (renderContext.target.constructor === componentInstance.constructor) {
         throw Error(`Render loop detected for component: ${componentInstance.constructor.name}`);

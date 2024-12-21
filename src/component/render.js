@@ -58,7 +58,7 @@ export function getComponentInstance(instance,app) {
     return instance
   }
 
-  if(instance.ins.prototype instanceof TurtleComponent){
+  if(instance.ins && instance.ins.prototype instanceof TurtleComponent){
     return instance()
   }
   
