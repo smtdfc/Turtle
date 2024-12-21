@@ -9,6 +9,7 @@ export class TurtleComponent {
   constructor(...props) {
     this.props = props;
     this.contexts = {}
+    this._app = null
     this._cleanUpFn = [];
     this._element = null;
     this._parent = null;
@@ -51,7 +52,7 @@ export class TurtleComponent {
   }
 
   html(raws, ...values) {
-    return render(this._renderContext, { raws, values });
+    return render(this._renderContext, { raws, values },this._app);
   }
 
   requestRender() {

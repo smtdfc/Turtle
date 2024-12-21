@@ -1,6 +1,6 @@
 import {TurtleComponent} from './component.js';
 
-function generateCompoenentElementClass(component,parent) {
+function generateCompoenentElementClass(component,parent,app) {
   return class extends HTMLElement {
     #_component;
     #_parent;
@@ -15,6 +15,7 @@ function generateCompoenentElementClass(component,parent) {
     }
 
     connectedCallback() {
+      this.#_app = app
       this.#_component._parent = this.#_parent
       this.#_component._element= this
       this.#_component?.onInit?.();
@@ -30,7 +31,7 @@ function generateCompoenentElementClass(component,parent) {
   };
 }
 
-export function createComponentElementTag(component,parent) {
+export function createComponentElementTag(component,parent,app) {
   let tagName = `c${(Math.floor((Math.random() *1000)) * Date.now()).toString(16)}-${component.constructor.name.toLowerCase()}`;
 
   function cleanUp() {
@@ -52,7 +53,7 @@ export function createComponentElementTag(component,parent) {
   return `turtle-component-${tagName}`
 }
 
-export function getComponentInstance(instance) {
+export function getComponentInstance(instance,app) {
   if (instance instanceof TurtleComponent) {
     return instance
   }
