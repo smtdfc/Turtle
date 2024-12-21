@@ -73,6 +73,10 @@ export class TurtleRouterModule {
     }
   }
 
+  redirect(path) {
+    this.navigate(path)
+  }
+  
   navigate(path) {
     if (this.mode === "history") {
       if (this.currentPath !== path) {
