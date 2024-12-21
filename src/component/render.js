@@ -15,7 +15,7 @@ function generateCompoenentElementClass(component,parent,app) {
     }
 
     connectedCallback() {
-      this.#_app = app
+      this.#_component._app = app
       this.#_component._parent = this.#_parent
       this.#_component._element= this
       this.#_component?.onInit?.();

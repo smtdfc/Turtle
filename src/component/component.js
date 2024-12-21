@@ -51,7 +51,7 @@ export class TurtleComponent {
     registerComponent(this)
   }
 
-  html(raws, ...values) {
+  html(raws, ...values) { 
     return render(this._renderContext, { raws, values },this._app);
   }
 
