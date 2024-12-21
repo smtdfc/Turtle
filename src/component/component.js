@@ -1,5 +1,6 @@
 import { TurtleRenderContext } from '../render/context.js';
 import { TurtleContextManager } from '../context/manager.js';
+import { TurtleState } from '../state/index.js';
 import { render } from '../render/index.js';
 import { registerComponent } from '../dev/index.js';
 
@@ -24,10 +25,14 @@ export class TurtleComponent {
   onUpdate() {}
   onDestroy() {}
 
+  createState(value) {
+    return new TurtleState(this, value)
+  }
+  
   clear() {
     this._element.textContent = ""
   }
-  
+
   get refs() {
     return this._renderContext.refs
   }
@@ -51,8 +56,8 @@ export class TurtleComponent {
     registerComponent(this)
   }
 
-  html(raws, ...values) { 
-    return render(this._renderContext, { raws, values },this._app);
+  html(raws, ...values) {
+    return render(this._renderContext, { raws, values }, this._app);
   }
 
   requestRender() {
