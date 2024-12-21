@@ -12,6 +12,7 @@ export class TurtleRouterModule {
     this.slots = []
     this.events = {}
     this.root = configs.root
+    this.app.router = this
   }
 
   static init(app, configs) {
