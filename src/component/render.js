@@ -47,7 +47,7 @@ export function createComponentElementTag(component,parent,app) {
 
   component._cleanUpFn.push(cleanUp);
   if (!customElements.get(`turtle-component-${tagName}`)) {
-    window.customElements.define(`turtle-component-${tagName}`, generateCompoenentElementClass(component,parent));
+    window.customElements.define(`turtle-component-${tagName}`, generateCompoenentElementClass(component,parent,app));
   }
 
   return `turtle-component-${tagName}`
