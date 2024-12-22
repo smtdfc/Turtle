@@ -5,14 +5,16 @@ import { createComponentElementTag, getComponentInstance } from '../component/in
 const directiveNames = Object.keys(directives);
 const directiveSelector = directiveNames.map((value) => `[${value}]`).join(",");
 
-export function render(renderContext, template,app) {
+export function render(renderContext, template, app) {
   const values = template.values.map((value) => {
-    const componentInstance = getComponentInstance(value,app);
-    if (componentInstance) {
-      if (renderContext.target.constructor === componentInstance.constructor) {
-        throw Error(`Render loop detected for component: ${componentInstance.constructor.name}`);
+    if (value) {
+      const componentInstance = getComponentInstance(value, app);
+      if (componentInstance) {
+        if (renderContext.target.constructor === componentInstance.constructor) {
+          throw Error(`Render loop detected for component: ${componentInstance.constructor.name}`);
+        }
+        return createComponentElementTag(componentInstance, renderContext.target, app);
       }
-      return createComponentElementTag(componentInstance, renderContext.target,app);
     }
     return value;
   });
@@ -44,4 +46,3 @@ function applyDirectives(renderContext, element) {
     }
   });
 }
-
