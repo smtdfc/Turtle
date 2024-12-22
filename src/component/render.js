@@ -1,6 +1,6 @@
-import {TurtleComponent} from './component.js';
+import { TurtleComponent } from './component.js';
 
-function generateCompoenentElementClass(component,parent,app) {
+function generateCompoenentElementClass(component, parent, app) {
   return class extends HTMLElement {
     #_component;
     #_parent;
@@ -14,11 +14,11 @@ function generateCompoenentElementClass(component,parent,app) {
       return this.#_component?._forwardRefs;
     }
 
-    connectedCallback() {
+    async connectedCallback() {
       this.#_component._app = app
       this.#_component._parent = this.#_parent
-      this.#_component._element= this
-      this.#_component?.onInit?.();
+      this.#_component._element = this
+      await this.#_component?.onInit?.();
       this.#_component?.prepare?.();
       this.#_component?.onCreate?.();
       this.#_component?.requestRender?.();
@@ -31,12 +31,12 @@ function generateCompoenentElementClass(component,parent,app) {
   };
 }
 
-export function createComponentElementTag(component,parent,app) {
+export function createComponentElementTag(component, parent, app) {
   let tagName = `c${(Math.floor((Math.random() *1000)) * Date.now()).toString(16)}-${component.constructor.name.toLowerCase()}`;
 
   function cleanUp() {
     if (customElements.get(`turtle-component-${tagName}`)) {
-      
+
       //window.customElements.define(`turtle-component-${tagName}`, HTMLUnknownElement);
     }
   }
@@ -47,20 +47,20 @@ export function createComponentElementTag(component,parent,app) {
 
   component._cleanUpFn.push(cleanUp);
   if (!customElements.get(`turtle-component-${tagName}`)) {
-    window.customElements.define(`turtle-component-${tagName}`, generateCompoenentElementClass(component,parent,app));
+    window.customElements.define(`turtle-component-${tagName}`, generateCompoenentElementClass(component, parent, app));
   }
 
   return `turtle-component-${tagName}`
 }
 
-export function getComponentInstance(instance,app) {
+export function getComponentInstance(instance, app) {
   if (instance instanceof TurtleComponent) {
     return instance
   }
 
-  if(instance.ins && instance.ins.prototype instanceof TurtleComponent){
+  if (instance.ins && instance.ins.prototype instanceof TurtleComponent) {
     return instance()
   }
-  
+
   return null
 }
