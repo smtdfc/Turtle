@@ -18,7 +18,7 @@ export function loadScript(path, options = {}) {
     script.type = 'text/javascript';
     if (module) script.type = "module";
 
-    script.onload = () => resolve();
+    script.onload = () =>{resolve()};
     script.onerror = (err) => reject(err);
 
     document.body.appendChild(script);
