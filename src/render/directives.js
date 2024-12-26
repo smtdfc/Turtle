@@ -2,6 +2,12 @@ export const directives = {
   "t-html": (context, element, target, value) => {
     context.addHtmlBind(element, value)
   },
+  
+  "t-show": (context, element, target, value) => {
+    context.addShowBind(element, value)
+  },
+  
+  
   "t-ref": (context, element, target, value) => {
     context.addRef(element, value)
   },

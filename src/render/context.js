@@ -29,11 +29,11 @@ export class TurtleRenderContext {
 
     element.innerHTML = this.target[state].get()
   }
-  
+
   addRef(element, refName) {
     this.refs[refName] = element
   }
-  
+
   addValueBind(element, state) {
 
     if (!this.target[state]) {
@@ -62,6 +62,27 @@ export class TurtleRenderContext {
     })
 
     element.textContent = this.target[state].get()
+  }
+
+  addShowBind(element, state) {
+    const initValue = element.state.display
+
+    function check(element, state) {
+      if (!state) element.style.display = "none"
+      else element.style.display = initValue
+    }
+    
+    if (!this.target[state]) {
+      this.target[state] = new TurtleState(this.target)
+    }
+
+    this.target[state].bindings.push({
+      type: "callback",
+      callback: check,
+      element
+    })
+
+    check(element, this.target[state])
   }
 
   addClassNameBind(element, state) {
