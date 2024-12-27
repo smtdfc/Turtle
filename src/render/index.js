@@ -40,6 +40,7 @@ function applyDirectives(renderContext, element) {
       try {
         directives[directive](renderContext, element, renderContext.target, attrValue);
       } catch (error) {
+        console.log(error)
         console.error(`Error applying directive '${directive}':`, error);
       }
       element.removeAttribute(directive);
