@@ -144,9 +144,7 @@ async  start() {
       this.currentPath = window.location.pathname || "/";
     } else if (this.mode === "hash") {
       this.currentPath = window.location.hash.slice(2) || "/";
-      if (!window.location.hash) {
-        window.location.hash = "!/";
-      }
+      
     }
     await this.resolve();
     this.initListener();
