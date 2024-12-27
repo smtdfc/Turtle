@@ -1,7 +1,7 @@
 import { TurtleReactive } from './reactive.js';
 
 export class TurtleState {
-  constructor(target, value = "") {
+  constructor(target, value = null) {
     this.target = target
     this.value = value
     this.reactive = true
