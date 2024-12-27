@@ -139,7 +139,7 @@ export class TurtleRouterModule {
     }
   }
 
-  start() {
+async  start() {
     if (this.mode === "history") {
       this.currentPath = window.location.pathname || "/";
     } else if (this.mode === "hash") {
@@ -148,7 +148,7 @@ export class TurtleRouterModule {
         window.location.hash = "!/";
       }
     }
-    this.resolve();
+    await this.resolve();
     this.initListener();
   }
 }
