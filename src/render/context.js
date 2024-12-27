@@ -68,7 +68,7 @@ export class TurtleRenderContext {
     const initValue = element.style.display
 
     function check(element, state) {
-      if (!state) element.style.display = "none"
+      if (!state.value) element.style.display = "none"
       else element.style.display = initValue
     }
     
