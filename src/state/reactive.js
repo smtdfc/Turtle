@@ -5,7 +5,8 @@ export class TurtleReactive {
     }
     
     if (binding.type == "callback") {
-      binding.callback(binding.element[binding.name], state)
+      
+      binding.callback(binding.element, state.get())
     }
     
     if (binding.type == "attr") {

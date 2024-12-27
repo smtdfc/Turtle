@@ -68,7 +68,7 @@ export class TurtleRenderContext {
     const initValue = element.style.display
 
     function check(element, state) {
-      if (!state.value) element.style.display = "none"
+      if (!state) element.style.display = "none"
       else element.style.display = initValue
     }
     
@@ -82,7 +82,7 @@ export class TurtleRenderContext {
       element
     })
 
-    check(element, this.target[state])
+    check(element, this.target[state].get())
   }
 
   addClassNameBind(element, state) {
