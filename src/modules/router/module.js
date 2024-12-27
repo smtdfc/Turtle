@@ -73,23 +73,32 @@ export class TurtleRouterModule {
     }
   }
 
-  redirect(path) {
-    this.navigate(path)
+  redirect(path,replace=false) {
+    this.navigate(path,replace)
   }
-  
-  navigate(path) {
+
+  navigate(path, replace = false) {
     if (this.mode === "history") {
       if (this.currentPath !== path) {
-        history.pushState({}, "", path);
+        if (replace) {
+          history.replaceState({}, "", path);
+        } else {
+          history.pushState({}, "", path);
+        }
         this.currentPath = path;
-        this.emit("onnavigate")
+        this.emit("onnavigate");
         this.resolve();
       }
     } else if (this.mode === "hash") {
       if (this.currentPath !== path) {
-        window.location.hash = `#!${path}`;
+        if (replace) {
+          const currentUrl = window.location.href.replace(/(#!.*)?$/, `#!${path}`);
+          window.location.replace(currentUrl);
+        } else {
+          window.location.hash = `#!${path}`;
+        }
         this.currentPath = path;
-        this.emit("onnavigate")
+        this.emit("onnavigate");
         this.resolve();
       }
     }
@@ -139,12 +148,12 @@ export class TurtleRouterModule {
     }
   }
 
-async  start() {
+  async start() {
     if (this.mode === "history") {
       this.currentPath = window.location.pathname || "/";
     } else if (this.mode === "hash") {
       this.currentPath = window.location.hash.slice(2) || "/";
-      
+
     }
     await this.resolve();
     this.initListener();
