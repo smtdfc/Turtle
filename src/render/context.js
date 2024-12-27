@@ -73,7 +73,7 @@ export class TurtleRenderContext {
     }
     
     if (!this.target[state]) {
-      this.target[state] = new TurtleState(this.target)
+      this.target[state] = new TurtleState(this.target,false)
     }
 
     this.target[state].bindings.push({
