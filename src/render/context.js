@@ -65,7 +65,7 @@ export class TurtleRenderContext {
   }
 
   addShowBind(element, state) {
-    const initValue = element.state.display
+    const initValue = element.style.display
 
     function check(element, state) {
       if (!state) element.style.display = "none"
