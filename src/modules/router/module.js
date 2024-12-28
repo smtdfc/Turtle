@@ -78,6 +78,7 @@ export class TurtleRouterModule {
   }
 
   navigate(path, replace = false) {
+    this.root.textContent = ""
     if (this.mode === "history") {
       if (this.currentPath !== path) {
         if (replace) {
