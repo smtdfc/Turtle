@@ -71,9 +71,9 @@ export class TurtleRenderContext {
       if (!state) element.style.display = "none"
       else element.style.display = initValue
     }
-    
+
     if (!this.target[state]) {
-      this.target[state] = new TurtleState(this.target,false)
+      this.target[state] = new TurtleState(this.target, false)
     }
 
     this.target[state].bindings.push({
@@ -123,4 +123,20 @@ export class TurtleRenderContext {
     }
   }
 
+  addAttrsBind(element, value) {
+    let bindings = parseKeyValueString(value)
+    for (let name in bindings) {
+      let state = bindings[name]
+      if (!this.target[state]) {
+        this.target[state] = new TurtleState(this.target)
+      }
+      this.target[state].bindings.push({
+        type: "attr",
+        name,
+        element
+      })
+
+      element.setAttribute(name, this.target[state].get())
+    }
+  }
 }
