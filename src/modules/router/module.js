@@ -13,6 +13,7 @@ export class TurtleRouterModule {
     this.events = {}
     this.root = configs.root
     this.app.router = this
+    this.prevPath = null
   }
 
   static init(app, configs) {
@@ -121,6 +122,7 @@ export class TurtleRouterModule {
       this.emit("onchange")
       if (matched) {
         this.emit("onpagechange")
+        this.prevPath = path
         this.query = extractedData.query;
         this.params = extractedData.slugs;
         let routeInfo = this.routes[path];
