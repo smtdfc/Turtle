@@ -122,7 +122,7 @@ export class TurtleRouterModule {
       this.emit("onchange")
       if (matched) {
         this.emit("onpagechange")
-        this.prevPath = path
+        this.prevPath = this.currentPath
         this.query = extractedData.query;
         this.params = extractedData.slugs;
         let routeInfo = this.routes[path];
