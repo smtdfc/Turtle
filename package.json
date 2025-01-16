@@ -10,7 +10,8 @@
   "author": "smtdfc",
   "license": "MIT",
   "scripts": {
-    "build": "jsdoc -c jsdoc.json && node ./scripts/prepare.mjs && node ./scripts/build.mjs"
+    "publish": "echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > ~/.npmrc && lerna publish",
+    "build": "jsdoc -c jsdoc.json && node ./scripts/prepare.mjs && node ./scripts/build.mjs && npm run publish"
   },
   "private": true,
   "workspaces": [
@@ -22,6 +23,7 @@
     "@rollup/plugin-terser": "^0.4.3",
   	"postcss": "^8.4.30",
   	"rollup-plugin-postcss": "^4.0.2",
-  	"postcss-import": "^15.1.0"
+  	"postcss-import": "^15.1.0",
+  	"lerna":"^8.1.9"
   }
 }

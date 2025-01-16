@@ -27,12 +27,12 @@ function createBuildConfig(packageName, sourceName) {
   return {
     input: inputDevelopment,
     outputs: [
-      { file: path.resolve(packageDistFolder, `development.min.cjs`), format: "cjs" },
-      { file: path.resolve(packageDistFolder, `production.min.cjs`), format: "cjs" },
-      { file: path.resolve(packageDistFolder, `development.min.js`), format: "umd", name: globalNames[sourceName] },
-      { file: path.resolve(packageDistFolder, `production.min.js`), format: "umd", name: globalNames[sourceName] },
-      { file: path.resolve(packageDistFolder, `development.min.mjs`), format: "esm" },
-      { file: path.resolve(packageDistFolder,  `production.min.mjs`), format: "esm" },
+      { file: path.resolve(packageDistFolder, "dist", `development.min.cjs`), format: "cjs" },
+      { file: path.resolve(packageDistFolder, "dist", `production.min.cjs`), format: "cjs" },
+      { file: path.resolve(packageDistFolder, "dist", `development.min.js`), format: "umd", name: globalNames[sourceName] },
+      { file: path.resolve(packageDistFolder, "dist", `production.min.js`), format: "umd", name: globalNames[sourceName] },
+      { file: path.resolve(packageDistFolder, "dist", `development.min.mjs`), format: "esm" },
+      { file: path.resolve(packageDistFolder, "dist", `production.min.mjs`), format: "esm" },
     ],
     plugins: [
       postcss({
@@ -53,9 +53,9 @@ async function createIndexFile(packageDistFolder, packageName) {
     const isProduction = process.env.NODE_ENV === 'production';
 
     if (isProduction) {
-      Object.assign(exports, require("./production.min.cjs"));
+      Object.assign(exports, require("./dist/production.min.cjs"));
     } else {
-      Object.assign(exports, require("./development.min.cjs"));
+      Object.assign(exports, require("./dist/development.min.cjs"));
     }
 
     module.exports = exports;
