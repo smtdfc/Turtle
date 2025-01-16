@@ -5,17 +5,20 @@ import fs from "fs/promises";
 import postcss from 'rollup-plugin-postcss';
 import postcssImport from 'postcss-import';
 
-
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
-const packages = ["core"];
+const packages = {
+  "turtle-core": "core",
+};
+
 const globalNames = {
   "core": "Turtle"
 };
+
 const distFolder = path.resolve(__dirname, "../dist");
 
-function createBuildConfig(packageName) {
-  const packageJsonPath = path.resolve(__dirname, "../packages", packageName);
+function createBuildConfig(packageName, sourceName) {
+  const packageJsonPath = path.resolve(__dirname, "../packages", sourceName);
   const inputDevelopment = path.resolve(packageJsonPath, "development.js");
   const inputProduction = path.resolve(packageJsonPath, "production.js");
 
@@ -24,12 +27,12 @@ function createBuildConfig(packageName) {
   return {
     input: inputDevelopment,
     outputs: [
-      { file: path.resolve(packageDistFolder, "development", `${packageName}.development.min.cjs`), format: "cjs" },
-      { file: path.resolve(packageDistFolder, "production", `${packageName}.production.min.cjs`), format: "cjs" },
-      { file: path.resolve(packageDistFolder, "development", `${packageName}.development.min.js`), format: "umd", name: globalNames[packageName] },
-      { file: path.resolve(packageDistFolder, "production", `${packageName}.production.min.js`), format: "umd", name: globalNames[packageName] },
-      { file: path.resolve(packageDistFolder, "development", `${packageName}.development.min.mjs`), format: "esm" },
-      { file: path.resolve(packageDistFolder, "production", `${packageName}.production.min.mjs`), format: "esm" },
+      { file: path.resolve(packageDistFolder, `development.min.cjs`), format: "cjs" },
+      { file: path.resolve(packageDistFolder, `production.min.cjs`), format: "cjs" },
+      { file: path.resolve(packageDistFolder, `development.min.js`), format: "umd", name: globalNames[sourceName] },
+      { file: path.resolve(packageDistFolder, `production.min.js`), format: "umd", name: globalNames[sourceName] },
+      { file: path.resolve(packageDistFolder, `development.min.mjs`), format: "esm" },
+      { file: path.resolve(packageDistFolder,  `production.min.mjs`), format: "esm" },
     ],
     plugins: [
       postcss({
@@ -50,9 +53,9 @@ async function createIndexFile(packageDistFolder, packageName) {
     const isProduction = process.env.NODE_ENV === 'production';
 
     if (isProduction) {
-      Object.assign(exports, require("./production/${packageName}.production.min.cjs"));
+      Object.assign(exports, require("./production.min.cjs"));
     } else {
-      Object.assign(exports, require("./development/${packageName}.development.min.cjs"));
+      Object.assign(exports, require("./development.min.cjs"));
     }
 
     module.exports = exports;
@@ -67,8 +70,8 @@ async function createIndexFile(packageDistFolder, packageName) {
   }
 }
 
-async function buildPackage(packageName) {
-  const config = createBuildConfig(packageName);
+async function buildPackage(packageName, sourceName) {
+  const config = createBuildConfig(packageName, sourceName);
 
   const packageDistFolder = path.resolve(distFolder, packageName);
 
@@ -78,9 +81,6 @@ async function buildPackage(packageName) {
       plugins: config.plugins,
     });
 
-    // Create directories for development and production folders
-    await fs.mkdir(path.resolve(packageDistFolder, "development"), { recursive: true });
-    await fs.mkdir(path.resolve(packageDistFolder, "production"), { recursive: true });
 
     for (const output of config.outputs) {
       await bundle.write({ ...output, sourcemap: true });
@@ -103,14 +103,14 @@ async function buildAllPackages() {
     console.error("❌ Error creating dist folder:", err);
   }
 
-  for (const packageName of packages) {
+  for (const [packageName, sourceName] of Object.entries(packages)) {
     const packageDistFolder = path.resolve(distFolder, packageName);
     try {
       await fs.mkdir(packageDistFolder, { recursive: true });
     } catch (err) {
       console.error(`❌ Error creating folder for ${packageName}:`, err);
     }
-    await buildPackage(packageName);
+    await buildPackage(packageName, sourceName);
   }
 }
 

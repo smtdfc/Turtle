@@ -3,11 +3,14 @@ import path from "path";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
-const packages = ["core"];
-const distFolder = path.resolve(__dirname, "../dist"); 
+const packages = {
+  "turtle-core": "core", 
+};
 
-async function copyPackageJson(packageName) {
-  const packageJsonPath = path.resolve(__dirname, "../packages", packageName, "package.json"); 
+const distFolder = path.resolve(__dirname, "../dist");
+
+async function copyPackageJson(packageName, sourceFolder) {
+  const packageJsonPath = path.resolve(__dirname, "../packages", sourceFolder, "package.json");
   const distPackageFolder = path.resolve(distFolder, packageName);
 
   try {
@@ -20,8 +23,8 @@ async function copyPackageJson(packageName) {
 }
 
 async function copyAllPackageJsons() {
-  for (const packageName of packages) {
-    await copyPackageJson(packageName);
+  for (const [packageName, sourceFolder] of Object.entries(packages)) {
+    await copyPackageJson(packageName, sourceFolder);
   }
 }
 
