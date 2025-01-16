@@ -19,6 +19,9 @@
   "dependencies": {
     "jsdoc": "4.0.3",
     "rollup": "^3.28.1",
-    "@rollup/plugin-terser": "^0.4.3"
+    "@rollup/plugin-terser": "^0.4.3",
+  	"postcss": "^8.4.30",
+  	"rollup-plugin-postcss": "^4.0.2",
+  	"postcss-import": "^15.1.0"
   }
 }
