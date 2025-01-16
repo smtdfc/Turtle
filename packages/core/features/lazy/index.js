@@ -28,7 +28,7 @@ export const Lazy = new TurtleComponent({
   }
 });
 
-export const LazyVisible = createComponent({
+export const LazyVisible = new TurtleComponent({
   onRender: function() {
     let [placeholder, component] = this.props;
 

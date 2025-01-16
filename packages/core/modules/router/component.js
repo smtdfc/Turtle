@@ -1,4 +1,4 @@
-import { TurtleComponent, createComponent } from "../../component/base.js"
+import { TurtleComponent } from "../../component/base.js"
 import { extractParameters } from './extract.js';
 
 export const TurtleRouteComponent = new TurtleComponent({
