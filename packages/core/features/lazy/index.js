@@ -18,7 +18,7 @@ export const Lazy = createComponent(class TurtleLazyComponent extends TurtleComp
     if (placeholder) {
       return this.html`
         <${placeholder}/>
-    `;
+      `;
     } else {
       return this.html``;
     }

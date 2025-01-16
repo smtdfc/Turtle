@@ -1,24 +1,24 @@
-import { TurtleComponent, createComponent } from "../../component/component.js"
+import { TurtleComponent, createComponent } from "../../component/base.js"
 import { extractParameters } from './extract.js';
 
-export class TurtleRouteComponent extends TurtleComponent {
-  onInit() {
+export const TurtleRouteComponent = new TurtleComponent({
+  onInit: function() {
     let [router, routes] = this.props
     this.router = router
     this.routes = routes
     this.component = null
-  }
+  },
 
-  render(component) {
+  render: function(component) {
     if (component && this._element) {
       this._element.textContent = ""
       this._element.appendChild(this.router.app.fragment`
             <${component}/>
        `);
     }
-  }
-  
-  matchesRoute(route) {
+  },
+
+  matchesRoute: function(route) {
     for (let pattern in this.routes) {
       let [matched, extractedData] = extractParameters(route, pattern);
       if (matched) {
@@ -26,10 +26,10 @@ export class TurtleRouteComponent extends TurtleComponent {
       }
     }
     return [false, null, null];
-  }
+  },
 
-  async resolve() {
-    
+  resolve: async function() {
+
     try {
       let [matched, path, extractedData] = this.matchesRoute(this.router.getCurrentPath());
       if (matched) {
@@ -39,7 +39,7 @@ export class TurtleRouteComponent extends TurtleComponent {
         let routeInfo = this.routes[path];
         if (routeInfo instanceof Function) component = await routeInfo()
         else component = routeInfo
-        if(this.component !== component){
+        if (this.component !== component) {
           this.component = component
         }
         this.render(component)
@@ -47,19 +47,17 @@ export class TurtleRouteComponent extends TurtleComponent {
     } catch (error) {
       throw Error(`Route resolution failed: ${ error.message}`);
     }
-  }
+  },
 
-  onRender() {
+  onRender: function() {
     let [router, routes] = this.props
     this.resolve()
-    router.on("onchange",()=>{
+    router.on("onchange", () => {
       this.resolve()
     })
-  }
-  
-  template() {
+  },
+
+  template: function() {
     return this.html``
   }
-}
-
-export const TurtleRoute = createComponent(TurtleRouteComponent)
+})

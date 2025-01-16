@@ -1,4 +1,4 @@
-import { TurtleComponent } from './component.js';
+import { TurtleComponent } from './base.js';
 
 function generateCompoenentElementClass(component, parent, app) {
   return class extends HTMLElement {
@@ -15,9 +15,9 @@ function generateCompoenentElementClass(component, parent, app) {
     }
 
     async connectedCallback() {
-      this.#_component._app = app
-      this.#_component._parent = this.#_parent
-      this.#_component._element = this
+      this.#_component.app = app
+      this.#_component.parent = this.#_parent
+      this.#_component.element = this
       await this.#_component?.onInit?.();
       this.#_component?.prepare?.();
       this.#_component?.onCreate?.();
@@ -32,7 +32,7 @@ function generateCompoenentElementClass(component, parent, app) {
 }
 
 export function createComponentElementTag(component, parent, app) {
-  let tagName = `c${(Math.floor((Math.random() *1000)) * Date.now()).toString(16)}-${component.constructor.name.toLowerCase()}`;
+  let tagName = `c${(Math.floor((Math.random() *1000)) * Date.now()).toString(16)}-${component.key}`;
 
   function cleanUp() {
     if (customElements.get(`turtle-component-${tagName}`)) {
@@ -41,11 +41,11 @@ export function createComponentElementTag(component, parent, app) {
     }
   }
 
-  if (!component._cleanUpFn) {
-    component._cleanUpFn = [];
+  if (!component.cleanUpFn) {
+    component.cleanUpFn = [];
   }
 
-  component._cleanUpFn.push(cleanUp);
+  component.cleanUpFn.push(cleanUp);
   if (!customElements.get(`turtle-component-${tagName}`)) {
     window.customElements.define(`turtle-component-${tagName}`, generateCompoenentElementClass(component, parent, app));
   }
@@ -54,12 +54,14 @@ export function createComponentElementTag(component, parent, app) {
 }
 
 export function getComponentInstance(instance, app) {
+  
   if (instance instanceof TurtleComponent) {
     return instance
   }
 
-  if (instance.ins && instance.ins.prototype instanceof TurtleComponent) {
-    return instance()
+  if (instance.component === TurtleComponent) {
+    
+    return new instance()
   }
 
   return null

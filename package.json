@@ -1,6 +1,6 @@
 {
-  "name": "turtle",
-  "version": "3.0.p",
+  "name": "turtle-source",
+  "version": "3.0.0",
   "description": "The simple library for build UI",
   "keywords": [
     "turtle",
@@ -10,17 +10,15 @@
   "author": "smtdfc",
   "license": "MIT",
   "scripts": {
-    "build": "jsdoc -c jsdoc.json && rollup -c ./rollup.config.mjs"
+    "build": "jsdoc -c jsdoc.json && node ./script/prepare.mjs && node ./scripts/build.mjs"
   },
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "dependencies": {
-    "jsdoc":"4.0.3",
-    "localforage": "^1.10.0",
+    "jsdoc": "4.0.3",
     "rollup": "^3.28.1",
-    "@rollup/plugin-terser": "^0.4.3",
-    "minami":"1.2.3"
-  },
-  "files": [
-    "dist/bundles",
-    "dist/index.js"
-  ]
+    "@rollup/plugin-terser": "^0.4.3"
+  }
 }

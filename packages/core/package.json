@@ -1,0 +1,16 @@
+{
+  "name": "@smtdfcteam/turtle",
+  "version": "3.0.0",
+  "description": "The simple library for build UI",
+  "keywords": [
+    "turtle",
+    "turtleUI",
+    "smtdfc"
+  ],
+  "author": "smtdfc",
+  "license": "MIT",
+  "files": [
+    "dist/bundles",
+    "dist/index.js"
+  ]
+}

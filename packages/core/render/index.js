@@ -1,20 +1,21 @@
-import { parseContent } from './parse.js';
-import { directives } from './directives.js';
-import { createComponentElementTag, getComponentInstance } from '../component/index.js';
+import { parseContent } from './parser.js';
+import { TurtleRenderDirectives } from './directives.js';
+import {getComponentInstance,createComponentElementTag} from '../component/render.js';
 
-const directiveNames = Object.keys(directives);
+const directiveNames = Object.keys(TurtleRenderDirectives);
 const directiveSelector = directiveNames.map((value) => `[${value}]`).join(",");
 
-export function render(renderContext, template, app) {
+export function render(template, context) {
   const values = template.values.map((value) => {
     if (value) {
-      const componentInstance = getComponentInstance(value, app);
-      if (componentInstance) {
-        if (renderContext.target.constructor === componentInstance.constructor) {
-          throw Error(`Render loop detected for component: ${componentInstance.constructor.name}`);
-        }
-        return createComponentElementTag(componentInstance, renderContext.target, app);
-      }
+      
+      const componentInstance = getComponentInstance(value, null);
+       if (componentInstance) {
+         if (context.target.constructor === componentInstance.constructor) {
+           throw Error(`Render loop detected for component: ${componentInstance.constructor.name}`);
+         }
+         return createComponentElementTag(componentInstance, context.target, context.target.app);
+       }
     }
     return value;
   });
@@ -22,10 +23,11 @@ export function render(renderContext, template, app) {
   const content = String.raw(template.raws, ...values);
   const parsedContent = parseContent(content);
 
+
   const elementsWithDirectives = parsedContent.querySelectorAll(directiveSelector);
 
   for (const element of elementsWithDirectives) {
-    applyDirectives(renderContext, element);
+    applyDirectives(context, element);
   }
 
   const fragment = document.createDocumentFragment();
@@ -38,7 +40,7 @@ function applyDirectives(renderContext, element) {
     if (element.hasAttribute(directive)) {
       const attrValue = element.getAttribute(directive);
       try {
-        directives[directive](renderContext, element, renderContext.target, attrValue);
+        TurtleRenderDirectives[directive]?.init(renderContext,attrValue, element);
       } catch (error) {
         console.log(error)
         console.error(`Error applying directive '${directive}':`, error);
