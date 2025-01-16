@@ -10,7 +10,8 @@
   "author": "smtdfc",
   "license": "MIT",
   "files": [
-    "dist/bundles",
-    "dist/index.js"
+    "development/*",
+    "production/*",
+    "index.js"
   ]
 }
