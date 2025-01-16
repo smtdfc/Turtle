@@ -1,20 +1,23 @@
-import { TurtleComponent, createComponent } from "../../component/component.js";
+import { TurtleComponent } from "../../component/base.js";
 
-export const Lazy = createComponent(class TurtleLazyComponent extends TurtleComponent {
-  onRender() {
+export const Lazy = new TurtleComponent({
+  onRender: function() {
     let [callback] = this.props;
 
     callback()
-      .then((component) => {
-        this.clear()
+      .then(function(component) {
+        this.clear();
         this._element.appendChild(this.html`
           <${component}/>
         `);
-      })
-  }
+      }.bind(this))
+      .catch(function(error) {
+        console.error("Error in Lazy:", error);
+      });
+  },
 
-  template() {
-    let [, placeholder] = this.props
+  template: function() {
+    let [, placeholder] = this.props;
     if (placeholder) {
       return this.html`
         <${placeholder}/>
@@ -25,40 +28,38 @@ export const Lazy = createComponent(class TurtleLazyComponent extends TurtleComp
   }
 });
 
-export const LazyVisible = createComponent(
-  class TurtleLazyVisibleComponent extends TurtleComponent {
-    onRender() {
-      let [placeholder, component] = this.props;
+export const LazyVisible = createComponent({
+  onRender: function() {
+    let [placeholder, component] = this.props;
 
-      const observer = new IntersectionObserver((entries, obs) => {
-        entries.forEach(async (entry) => {
-          if (entry.isIntersecting) {
-            try {
-              this.clear();
-              if (component) {
-                this._element.appendChild(
-                  this.html`
-                    <${component}/>
-                  `
-                );
-              }
-              obs.disconnect();
-            } catch (error) {
-              console.error("Error in TurtleLazyVisible:", error);
-              this.clear();
+    const observer = new IntersectionObserver(function(entries, obs) {
+      entries.forEach(async function(entry) {
+        if (entry.isIntersecting) {
+          try {
+            this.clear();
+            if (component) {
+              this._element.appendChild(
+                this.html`
+                  <${component}/>
+                `
+              );
             }
+            obs.disconnect();
+          } catch (error) {
+            console.error("Error in TurtleLazyVisible:", error);
+            this.clear();
           }
-        });
-      });
+        }
+      }.bind(this));
+    }.bind(this));
 
-      observer.observe(this._element);
-    }
+    observer.observe(this._element);
+  },
 
-    template() {
-      let [, placeholder] = this.props;
-      return placeholder 
-        ? this.html`<${placeholder}/>` 
-        : this.html``;
-    }
+  template: function() {
+    let [, placeholder] = this.props;
+    return placeholder ?
+      this.html`<${placeholder}/>` :
+      this.html``;
   }
-);
+});
