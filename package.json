@@ -10,7 +10,7 @@
   "author": "smtdfc",
   "license": "MIT",
   "scripts": {
-    "build": "jsdoc -c jsdoc.json && node ./script/prepare.mjs && node ./scripts/build.mjs"
+    "build": "jsdoc -c jsdoc.json && node ./scripts/prepare.mjs && node ./scripts/build.mjs"
   },
   "private": true,
   "workspaces": [
