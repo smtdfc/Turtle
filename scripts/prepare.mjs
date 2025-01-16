@@ -1,6 +1,8 @@
 import fs from "fs/promises";
 import path from "path";
 
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
 const packages = ["core"];
 const distFolder = path.resolve(__dirname, "../dist"); 
 

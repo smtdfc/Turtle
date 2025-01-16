@@ -4,6 +4,9 @@ import path from "path";
 import fs from "fs/promises";
 import postcss from "@rollup/plugin-postcss";
 
+
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
 const packages = ["core"];
 const globalNames = {
   "core": "Turtle"
