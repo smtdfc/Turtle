@@ -2,7 +2,8 @@ import { rollup } from "rollup";
 import terser from "@rollup/plugin-terser";
 import path from "path";
 import fs from "fs/promises";
-import postcss from "@rollup/plugin-postcss";
+import postcss from 'rollup-plugin-postcss';
+import postcssImport from 'postcss-import';
 
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
@@ -32,9 +33,10 @@ function createBuildConfig(packageName) {
     ],
     plugins: [
       postcss({
-        extract: true,
+        extensions: ['.css', '.less'],
+        plugins: [postcssImport()],
+        extract: 'index.css',
         minimize: true,
-        sourceMap: true
       }),
       terser(),
     ],
