@@ -1,0 +1,49 @@
+name: Prepare Release and Sync to Production
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Check commit message
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          echo "Commit message: $COMMIT_MESSAGE"
+          if [[ "$COMMIT_MESSAGE" != *"prepare release"* ]]; then
+            echo "❌ Commit message doesn't contain 'prepare release', aborting."
+            exit 1
+          fi
+
+      - name: Setup Git
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+
+      - name: Checkout production branch
+        run: |
+          git fetch origin
+          git checkout prod
+
+      - name: Merge main into prod
+        run: |
+          git merge main --no-ff -m "Merge main into prod for release preparation"
+          
+      - name: Push changes to prod branch
+        run: |
+          git push origin prod
+
+      - name: Create Pull Request from main to prod
+        uses: peter-evans/create-pull-request@v3
+        with:
+          title: "Prepare Release: Merge main into prod"
+          body: "This PR merges changes from main into prod to prepare for the next release."
+          base: prod
+          head: main
+          draft: true
+          commit-message: "Merge main into prod for release preparation"
