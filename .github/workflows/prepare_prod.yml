@@ -37,7 +37,7 @@ jobs:
       - name: Merge main into prod
         if: env.skip != 'true'
         run: |
-          git merge main --no-ff -m "Merge main into prod for release preparation"
+          git merge main --no-ff -m "Merge main into prod for release preparation" --allow-unrelated-histories
           
       - name: Push changes to prod branch
         if: env.skip != 'true'
