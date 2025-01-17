@@ -1,0 +1,53 @@
+name: Create Pull Request from main to prod on "prepare release"
+
+on:
+  push:
+    branches:
+      - main  # Trigger on push to the 'main' branch
+
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Check commit message
+        id: commit_message_check
+        run: |
+          # Get the commit message of the latest commit
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          echo "Commit message: $COMMIT_MESSAGE"
+
+          # Check if the commit message contains 'prepare release'
+          if [[ "$COMMIT_MESSAGE" != *"prepare release"* ]]; then
+            echo "❌ Commit message does not contain 'prepare release'. Skipping PR creation."
+            echo "skip=true" >> $GITHUB_ENV  # Set an environment variable to skip PR creation
+          fi
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Authenticate with GitHub CLI
+        run: |
+          echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
+
+      - name: Create Pull Request from main to prod
+        if: env.skip != 'true'  # Only run this step if commit message is correct
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}  # Use GitHub's built-in token
+        run: |
+          # Fetch the latest changes from the remote
+          git fetch origin
+
+          # Create a pull request using GitHub CLI
+          pr_title="Prepare release: Merge main into prod"
+          pr_body="This pull request merges the latest changes from main to prod. Please review before merging."
+
+          # Create pull request using GitHub CLI with label 'release'
+          gh pr create --base prod --head main --title "$pr_title" --body "$pr_body" --label "release"
+
+          echo "✅ Pull request created successfully!"
