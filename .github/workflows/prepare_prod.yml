@@ -1,56 +1,36 @@
-name: Prepare Release and Sync to Prod
+name: Create Pull Request from main to prod on "prepare release"
 
 on:
   push:
     branches:
       - main
+    # Only trigger when commit message contains 'prepare release'
+    # The regex checks for the keyword 'prepare release' in the commit message.
+    commit-message: '.*prepare release.*'
 
 jobs:
-  create-pr:
+  create-pull-request:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
-      - name: Check commit message
-        id: check_message
+      - name: Set up Git
         run: |
-          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
-          echo "Commit message: $COMMIT_MESSAGE"
-          if [[ "$COMMIT_MESSAGE" != *"prepare release"* ]]; then
-            echo "❌ Commit message doesn't contain 'prepare release', skipping the process."
-            echo "skip=true" >> $GITHUB_ENV
-          fi
-
-      - name: Setup Git
-        if: env.skip != 'true'  # Chỉ chạy nếu không có flag skip
-        run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
-
-      - name: Checkout production branch
-        if: env.skip != 'true'
-        run: |
-          git fetch origin
-          git checkout prod
-
-      - name: Merge main into prod
-        if: env.skip != 'true'
-        run: |
-          git merge main --no-ff -m "Merge main into prod for release preparation" --allow-unrelated-histories
-          
-      - name: Push changes to prod branch
-        if: env.skip != 'true'
-        run: |
-          git push origin prod
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
 
       - name: Create Pull Request from main to prod
-        if: env.skip != 'true'
-        uses: peter-evans/create-pull-request@v3
-        with:
-          title: "Prepare Release: Merge main into prod"
-          body: "This PR merges changes from main into prod to prepare for the next release."
-          base: prod
-          head: main
-          draft: true
-          commit-message: "Merge main into prod for release preparation"
+        run: |
+          # Fetch the latest changes from the remote
+          git fetch origin
+
+          # Create a pull request using GitHub CLI
+          pr_title="Prepare release: Merge main into prod"
+          pr_body="This pull request merges the latest changes from main to prod. Please review before merging."
+
+          # Create pull request using GitHub CLI
+          gh pr create --base prod --head main --title "$pr_title" --body "$pr_body" --label "auto-merge"
+
+          echo "✅ Pull request created successfully!"
