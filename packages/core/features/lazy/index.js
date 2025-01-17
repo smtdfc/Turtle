@@ -1,6 +1,6 @@
-import { TurtleComponent } from "../../component/base.js";
+import { createComponent } from "../../component/base.js";
 
-export const Lazy = new TurtleComponent({
+export const Lazy = createComponent({
   onRender: function() {
     let [callback] = this.props;
 
@@ -28,7 +28,7 @@ export const Lazy = new TurtleComponent({
   }
 });
 
-export const LazyVisible = new TurtleComponent({
+export const LazyVisible = createComponent({
   onRender: function() {
     let [placeholder, component] = this.props;
 

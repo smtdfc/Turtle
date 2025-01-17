@@ -1,7 +1,7 @@
-import { TurtleComponent } from "../../component/base.js"
+import { createComponent } from "../../component/base.js"
 import { extractParameters } from './extract.js';
 
-export const TurtleRouteComponent = new TurtleComponent({
+export const TurtleRouteComponent = createComponent({
   onInit: function() {
     let [router, routes] = this.props
     this.router = router
