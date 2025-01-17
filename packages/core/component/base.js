@@ -44,7 +44,7 @@ export class TurtleComponent {
   }
   
   clear(){
-    this.root.textContent = ""
+    this.element.textContent = ""
   }
   
   prepare() {
