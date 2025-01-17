@@ -32,5 +32,8 @@ export class TurtleApp{
     this.root.appendChild(fragment)
   }
   
-  
+}
+
+export function createApp(root,configs={}){
+  return new TurtleApp(root,configs)
 }
