@@ -1,9 +1,10 @@
-name: Prepare Release and Sync to Production
+name: Prepare Release and Sync to Prod
 
 on:
   push:
     branches:
       - main
+
 jobs:
   create-pr:
     runs-on: ubuntu-latest
@@ -12,33 +13,39 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Check commit message
+        id: check_message
         run: |
           COMMIT_MESSAGE=$(git log -1 --pretty=%B)
           echo "Commit message: $COMMIT_MESSAGE"
           if [[ "$COMMIT_MESSAGE" != *"prepare release"* ]]; then
-            echo "❌ Commit message doesn't contain 'prepare release', aborting."
-            exit 1
+            echo "❌ Commit message doesn't contain 'prepare release', skipping the process."
+            echo "skip=true" >> $GITHUB_ENV
           fi
 
       - name: Setup Git
+        if: env.skip != 'true'  # Chỉ chạy nếu không có flag skip
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
 
       - name: Checkout production branch
+        if: env.skip != 'true'
         run: |
           git fetch origin
           git checkout prod
 
       - name: Merge main into prod
+        if: env.skip != 'true'
         run: |
           git merge main --no-ff -m "Merge main into prod for release preparation"
           
       - name: Push changes to prod branch
+        if: env.skip != 'true'
         run: |
           git push origin prod
 
       - name: Create Pull Request from main to prod
+        if: env.skip != 'true'
         uses: peter-evans/create-pull-request@v3
         with:
           title: "Prepare Release: Merge main into prod"
