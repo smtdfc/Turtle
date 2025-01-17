@@ -43,6 +43,10 @@ export class TurtleComponent {
     return this.renderContext.refs
   }
   
+  clear(){
+    this.root.textContent = ""
+  }
+  
   prepare() {
     this.statesManager = new TurtleStateManager(
       this.configures.states ?? {},
