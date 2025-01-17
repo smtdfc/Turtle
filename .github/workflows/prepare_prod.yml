@@ -3,10 +3,7 @@ name: Create Pull Request from main to prod on "prepare release"
 on:
   push:
     branches:
-      - main
-    # Only trigger when commit message contains 'prepare release'
-    # The regex checks for the keyword 'prepare release' in the commit message.
-    commit-message: '.*prepare release.*'
+      - main  # Trigger on push to the 'main' branch
 
 jobs:
   create-pull-request:
@@ -16,15 +13,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Check commit message
+        id: commit_message_check
+        run: |
+          # Get the commit message of the latest commit
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          echo "Commit message: $COMMIT_MESSAGE"
+
+          # Check if the commit message contains 'prepare release'
+          if [[ "$COMMIT_MESSAGE" != *"prepare release"* ]]; then
+            echo "❌ Commit message does not contain 'prepare release'. Skipping PR creation."
+            exit 0  # Skip the PR creation step if message does not match
+          fi
+
       - name: Set up Git
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
       - name: Create Pull Request from main to prod
+        env:
+          GH_TOKEN: ${{ secrets.TOKEN }}  # Use GitHub's built-in token
         run: |
           # Fetch the latest changes from the remote
           git fetch origin
+
+          # Set GitHub CLI authentication
+          gh auth login --with-token <<< "${GH_TOKEN}"
 
           # Create a pull request using GitHub CLI
           pr_title="Prepare release: Merge main into prod"
