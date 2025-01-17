@@ -241,14 +241,14 @@ export const TurtleEventsDirective = {
 
 
 export const TurtleRenderDirectives = {
-  "a-ref": TurtleReferenceDirective,
-  "a-html": TurtleHTMLBindingDirective,
-  "a-text": TurtleTextBindingDirective,
-  "a-show": TurtleShowBindingDirective,
-  "a-disabled": TurtleDisableStateBindingDirective,
-  "a-style": TurtleStyleBindingDirective,
-  "a-class": TurtleClassBindingDirective,
-  "a-model": TurtleModelDirective,
-  "a-binds": TurtleAttrsBindingDirective,
-  "a-events": TurtleEventsDirective
+  "t-ref": TurtleReferenceDirective,
+  "t-html": TurtleHTMLBindingDirective,
+  "t-text": TurtleTextBindingDirective,
+  "t-show": TurtleShowBindingDirective,
+  "t-disabled": TurtleDisableStateBindingDirective,
+  "t-style": TurtleStyleBindingDirective,
+  "t-class": TurtleClassBindingDirective,
+  "t-model": TurtleModelDirective,
+  "t-binds": TurtleAttrsBindingDirective,
+  "t-events": TurtleEventsDirective
 };
