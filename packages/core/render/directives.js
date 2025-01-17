@@ -223,8 +223,10 @@ export const TurtleEventsDirective = {
     for (let eventName of Object.keys(pairs)) {
       let callbackFunctionName = pairs[eventName]
       let eventInfo = parseEventName(eventName)
-      let callback = context.target.configures[callbackFunctionName]
-
+      let callback = context.target[callbackFunctionName]
+      if(!callback){
+        console.warn(`[Turtle Event Callback Missing] Callback for event ${eventInfo.name} is not defined !`)
+      }
       const eventListener = function(event) {
         if (eventInfo.modifiers.includes("prevent")) event.preventDefault();
         if (eventInfo.modifiers.includes("stop")) event.stopPropagation();

@@ -2,18 +2,18 @@ import { generateKey } from '../utils/generate.js';
 import { render } from '../render/index.js';
 import { TurtleRenderContext } from '../render/context.js';
 import { TurtleStateManager } from './state.js';
-import {TurtleComponentReactive} from "./reactive.js"
+import { TurtleComponentReactive } from "./reactive.js"
 
 export class TurtleComponent {
   constructor(configures, props) {
     this.props = props
     this.configures = configures
-    this.onRender = configures.onRender?.bind(this) ?? new Function();
-    this.onInit = configures.onInit?.bind(this) ?? new Function();
-    this.onCreate = configures.onCreate?.bind(this) ?? new Function();
-    this.onDestroy = configures.onDestroy?.bind(this) ?? new Function();
-    this.observers = configures.observers ?? {};
-    this.forwardRef = configures.forwardRef ?? {};
+    this.onRender = new Function();
+    this.onInit = new Function();
+    this.onCreate = new Function();
+    this.onDestroy = new Function();
+    this.observers = {};
+    this.forwardRef = {};
     this.app = null;
     this.element = null;
     this.parent = null;
@@ -32,21 +32,25 @@ export class TurtleComponent {
     this.onStateChange = (state, action, key, oldValue, newValue) => {
       if (action === "updated") {
         this.observers[state]?.bind(this)(newValue, oldValue);
-        this.requestUpdate(state,newValue);
+        this.requestUpdate(state, newValue);
       }
     };
 
+    Object.entries(configures).forEach(([key, value]) => {
+      this[key] = typeof value === "function" ? value.bind(this) : value;
+    });
+    
     this.prepare();
   }
 
-  get refs(){
+  get refs() {
     return this.renderContext.refs
   }
-  
-  clear(){
+
+  clear() {
     this.element.textContent = ""
   }
-  
+
   prepare() {
     this.statesManager = new TurtleStateManager(
       this.configures.states ?? {},
@@ -61,10 +65,10 @@ export class TurtleComponent {
     this.onRender();
   }
 
-  requestUpdate(state,newValue) {
-    if(!this.reactive) return
-    let bindings= this.renderContext.getBinding(state)
-    if(bindings.length > 0) TurtleComponentReactive.react(state,this,bindings,newValue)
+  requestUpdate(state, newValue) {
+    if (!this.reactive) return
+    let bindings = this.renderContext.getBinding(state)
+    if (bindings.length > 0) TurtleComponentReactive.react(state, this, bindings, newValue)
   }
 
   requestCleanUp() {
@@ -73,8 +77,8 @@ export class TurtleComponent {
 }
 
 export function createComponent(configures) {
-  const Caller = function(...props){
-      return new TurtleComponent(configures, props);
+  const Caller = function(...props) {
+    return new TurtleComponent(configures, props);
   }
 
   Caller.component = TurtleComponent;
