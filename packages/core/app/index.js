@@ -22,7 +22,7 @@ export class TurtleApp{
     this.root = element
   }
   
-  fragment(raws,...value){
+  fragment(raws,...values){
     return  render({raws,values},this.renderContext)
   }
   
