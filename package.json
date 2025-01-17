@@ -22,7 +22,6 @@
     "@rollup/plugin-terser": "^0.4.3",
   	"postcss": "^8.4.30",
   	"rollup-plugin-postcss": "^4.0.2",
-  	"postcss-import": "^15.1.0",
-  	"lerna":"^8.1.9"
+  	"postcss-import": "^15.1.0"
   }
 }
