@@ -11,9 +11,6 @@ export function render(template, context) {
       
       const componentInstance = getComponentInstance(value, null);
        if (componentInstance) {
-         if (context.target.constructor === componentInstance.constructor) {
-           throw Error(`Render loop detected for component: ${componentInstance.constructor.name}`);
-         }
          return createComponentElementTag(componentInstance, context.target, context.target.app);
        }
     }
