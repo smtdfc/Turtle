@@ -7,7 +7,7 @@ export const Lazy = createComponent({
     callback()
       .then(function(component) {
         this.clear();
-        this._element.appendChild(this.html`
+        this.element.appendChild(this.html`
           <${component}/>
         `);
       }.bind(this))
@@ -38,7 +38,7 @@ export const LazyVisible = createComponent({
           try {
             this.clear();
             if (component) {
-              this._element.appendChild(
+              this.element.appendChild(
                 this.html`
                   <${component}/>
                 `
