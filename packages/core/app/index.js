@@ -13,7 +13,7 @@ export class TurtleApp{
   
   useModule(module,configs={}){
     let res = module.init(this,configs)
-    this.module.push(res)
+    this.modules.push(res)
     return res
   }
   
