@@ -30,7 +30,7 @@ export class TurtleComponent {
     };
 
     this.onStateChange = (state, action, key, oldValue, newValue) => {
-      if (action === "updated") {
+      if (action === "updated" || action ==="created") {
         this.observers[state]?.bind(this)(newValue, oldValue);
         this.requestUpdate(state, newValue);
       }
