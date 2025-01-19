@@ -87,9 +87,7 @@ export class TurtleRouterModule {
         } else {
           history.pushState({}, "", path);
         }
-        this.currentPath = path;
         this.emit("onnavigate");
-        this.resolve();
       }
     } else if (this.mode === "hash") {
       if (this.currentPath !== path) {
@@ -97,11 +95,9 @@ export class TurtleRouterModule {
           const currentUrl = window.location.href.replace(/(#!.*)?$/, `#!${path}`);
           window.location.replace(currentUrl);
         } else {
-          window.location.hash = `#!${path}`;
+          window.location = `#!${path}`;
         }
-        this.currentPath = path;
         this.emit("onnavigate");
-        this.resolve();
       }
     }
   }
