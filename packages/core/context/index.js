@@ -127,6 +127,6 @@ export class TurtleContext {
 }
 
 export function createContext(globalName,initValues){
-  if(!window.__TURTLE__._contexts) window.__TURTLE__._contexts[globalName] = new TurtleContext(globalName,initValues)
+  if(!window.__TURTLE__._contexts[globalName]) window.__TURTLE__._contexts[globalName] = new TurtleContext(globalName,initValues)
   return window.__TURTLE__._contexts[globalName]
 }
