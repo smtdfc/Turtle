@@ -40,6 +40,10 @@ export class TurtleComponent {
       this[key] = typeof value === "function" ? value.bind(this) : value;
     });
 
+    Object.entries(this.forwardRef).forEach(([key, value]) => {
+      this.forwardRef[key] = typeof value === "function" ? value.bind(this) : value;
+    });
+    
     this.prepare();
     this._alias = {}
   }
