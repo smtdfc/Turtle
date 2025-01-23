@@ -30,7 +30,7 @@ export class TurtleComponent {
     };
 
     this.onStateChange = (state, action, key, oldValue, newValue) => {
-      if (action === "updated" || action ==="created") {
+      if (action === "updated" || action === "created") {
         this.observers[state]?.bind(this)(newValue, oldValue);
         this.requestUpdate(state, newValue);
       }
@@ -39,8 +39,14 @@ export class TurtleComponent {
     Object.entries(configures).forEach(([key, value]) => {
       this[key] = typeof value === "function" ? value.bind(this) : value;
     });
-    
+
     this.prepare();
+    this._alias = {}
+  }
+
+  id(alias) {
+    if (this._alias[alias]) this._alias[alias] = generateKey()
+    return this._alias[alias]
   }
 
   get refs() {
