@@ -18,7 +18,8 @@ function generateCompoenentElementClass(component, parent, app) {
       this.#_component.app = app
       this.#_component.parent = this.#_parent
       this.#_component.element = this
-      await this.#_component?.onInit?.();
+      if(this.#_component.isSynchronous) this.#_component?.onInit?.();
+      else await this.#_component?.onInit?.();
       this.#_component?.prepare?.();
       this.#_component?.onCreate?.();
       this.#_component?.requestRender?.();
