@@ -1,6 +1,6 @@
 import { parseContent } from './parser.js';
 import { TurtleRenderDirectives } from './directives.js';
-import {getComponentInstance,createComponentElementTag} from '../component/render.js';
+import { getComponentInstance, createComponentElementTag } from '../component/render.js';
 
 const directiveNames = Object.keys(TurtleRenderDirectives);
 const directiveSelector = directiveNames.map((value) => `[${value}]`).join(",");
@@ -8,27 +8,25 @@ const directiveSelector = directiveNames.map((value) => `[${value}]`).join(",");
 export function render(template, context) {
   const values = template.values.map((value) => {
     if (value) {
-      
+
       const componentInstance = getComponentInstance(value, null);
-       if (componentInstance) {
-         return createComponentElementTag(componentInstance, context.target, context.target.app);
-       }
+      if (componentInstance) {
+        return createComponentElementTag(componentInstance, context.target, context.target.app);
+      }
     }
     return value;
   });
 
   const content = String.raw(template.raws, ...values);
   const parsedContent = parseContent(content);
-
-
-  const elementsWithDirectives = parsedContent.querySelectorAll(directiveSelector);
+  const fragment = document.createRange().createContextualFragment(parsedContent.textContent);
+  
+  const elementsWithDirectives = fragment.querySelectorAll(directiveSelector);
 
   for (const element of elementsWithDirectives) {
     applyDirectives(context, element);
   }
 
-  const fragment = document.createDocumentFragment();
-  fragment.append(...parsedContent.childNodes);
   return fragment;
 }
 
@@ -37,7 +35,7 @@ function applyDirectives(renderContext, element) {
     if (element.hasAttribute(directive)) {
       const attrValue = element.getAttribute(directive);
       try {
-        TurtleRenderDirectives[directive]?.init(renderContext,attrValue, element);
+        TurtleRenderDirectives[directive]?.init(renderContext, attrValue, element);
       } catch (error) {
         console.log(error)
         console.error(`Error applying directive '${directive}':`, error);
