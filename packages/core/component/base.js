@@ -45,7 +45,7 @@ export class TurtleComponent {
   }
 
   id(alias) {
-    if (this._alias[alias]) this._alias[alias] = generateKey()
+    if (!this._alias[alias]) this._alias[alias] = generateKey()
     return this._alias[alias]
   }
 
