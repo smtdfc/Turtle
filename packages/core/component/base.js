@@ -13,7 +13,7 @@ export class TurtleComponent {
     this.onCreate = new Function();
     this.onDestroy = new Function();
     this.observers = {};
-    this.forwardRef = {};
+    this.forwardRefs = {};
     this.app = null;
     this.element = null;
     this.parent = null;
@@ -40,8 +40,8 @@ export class TurtleComponent {
       this[key] = typeof value === "function" ? value.bind(this) : value;
     });
 
-    Object.entries(this.forwardRef).forEach(([key, value]) => {
-      this.forwardRef[key] = typeof value === "function" ? value.bind(this) : value;
+    Object.entries(this.forwardRefs).forEach(([key, value]) => {
+      this.forwardRefs[key] = typeof value === "function" ? value.bind(this) : value;
     });
     
     this.prepare();
