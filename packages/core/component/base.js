@@ -53,6 +53,10 @@ export class TurtleComponent {
     return this.renderContext.refs
   }
 
+  destroy(){
+    this.element.remove()
+  }
+  
   clear() {
     this.element.textContent = ""
   }
