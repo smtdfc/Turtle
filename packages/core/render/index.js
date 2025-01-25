@@ -19,6 +19,7 @@ export function render(template, context) {
 
   const content = String.raw(template.raws, ...values);
   const parsedContent = parseContent(content);
+  
   const fragment = document.createRange().createContextualFragment(parsedContent.innerHTML);
   const elementsWithDirectives = fragment.querySelectorAll(directiveSelector);
 

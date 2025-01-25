@@ -8,6 +8,10 @@ function generateCompoenentElementClass(component, parent, app) {
       super();
       this.#_component = component;
       this.#_parent = parent
+      this.#_component.app = app
+      this.#_component.parent = this.#_parent
+      this.#_component.element = this
+      this.comp = this.#_component
     }
 
     get forwardRefs() {
@@ -15,14 +19,13 @@ function generateCompoenentElementClass(component, parent, app) {
     }
 
     async connectedCallback() {
-      this.#_component.app = app
-      this.#_component.parent = this.#_parent
-      this.#_component.element = this
-      if(this.#_component.isSynchronous) this.#_component?.onInit?.();
+
+      if (this.#_component.isSynchronous) this.#_component?.onInit?.();
       else await this.#_component?.onInit?.();
       this.#_component?.prepare?.();
       this.#_component?.onCreate?.();
       this.#_component?.requestRender?.();
+      
     }
 
     disconnectedCallback() {
@@ -55,13 +58,13 @@ export function createComponentElementTag(component, parent, app) {
 }
 
 export function getComponentInstance(instance, app) {
-  
+
   if (instance instanceof TurtleComponent) {
     return instance
   }
 
   if (instance.component === TurtleComponent) {
-    
+
     return new instance()
   }
 

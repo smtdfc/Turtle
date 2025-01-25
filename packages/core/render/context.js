@@ -1,3 +1,5 @@
+import { TurtleComponent } from '../component/base.js';
+
 export class TurtleRenderContext {
   constructor(target) {
     this.target = target
@@ -16,6 +18,11 @@ export class TurtleRenderContext {
   }
 
   addRef(name, element) {
+
+    if (this.refs[name]) {
+      this.refs[name] = null
+      console.warn("Element ref exist")
+    }
     this.refs[name] = element
   }
 }

@@ -50,6 +50,26 @@ export const TurtleHTMLBindingDirective = {
   }
 };
 
+export const TurtleValueBindingDirective = {
+  init: function(context, expr, target) {
+    let stateName = context.target.statesManager.getStateNameFromPath(expr);
+    if (!context.target.statesManager.has(stateName)) context.target.statesManager.set(stateName, "");
+    let currentValue = context.target.statesManager.get(expr);
+    target.innerHTML = currentValue;
+
+    context.addBinding(stateName, {
+      state: stateName,
+      expr: expr,
+      target: target,
+      bind: {
+        type: "property",
+        name: "value"
+      }
+    });
+  }
+};
+
+
 export const TurtleDisableStateBindingDirective = {
   init: function(context, expr, target) {
     let stateName = context.target.statesManager.getStateNameFromPath(expr);
@@ -241,7 +261,6 @@ export const TurtleEventsDirective = {
   }
 }
 
-
 export const TurtleRenderDirectives = {
   "t-ref": TurtleReferenceDirective,
   "t-html": TurtleHTMLBindingDirective,
@@ -252,5 +271,6 @@ export const TurtleRenderDirectives = {
   "t-class": TurtleClassBindingDirective,
   "t-model": TurtleModelDirective,
   "t-binds": TurtleAttrsBindingDirective,
-  "t-events": TurtleEventsDirective
+  "t-events": TurtleEventsDirective,
+  "t-value":TurtleValueBindingDirective,
 };
