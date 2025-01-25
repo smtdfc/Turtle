@@ -178,16 +178,52 @@ export const TurtleModelDirective = {
     }
     let currentValue = context.target.statesManager.get(expr);
 
-    if (target.tagName === "input") {
+    if (target.tagName.toUpperCase() === "INPUT") {
       if (target.type === "checkbox" || target.type === "radio") {
         target.checked = currentValue;
+        context.addBinding(stateName, {
+          state: stateName,
+          expr: expr,
+          target: target,
+          bind: {
+            type: "property",
+            name: "checked"
+          }
+        });
       } else if (target.type === "file") {} else {
         target.value = currentValue;
+        context.addBinding(stateName, {
+          state: stateName,
+          expr: expr,
+          target: target,
+          bind: {
+            type: "property",
+            name: "value"
+          }
+        });
       }
-    } else if (target.tagName === "textarea") {
+    } else if (target.tagName.toUpperCase() === "TEXTAREA") {
       target.value = currentValue;
-    } else if (target.tagName === "select") {
+      context.addBinding(stateName, {
+        state: stateName,
+        expr: expr,
+        target: target,
+        bind: {
+          type: "property",
+          name: "value"
+        }
+      });
+    } else if (target.tagName.toUpperCase() === "SELECT") {
       target.value = currentValue;
+      context.addBinding(stateName, {
+        state: stateName,
+        expr: expr,
+        target: target,
+        bind: {
+          type: "property",
+          name: "value"
+        }
+      });
     } else {
       target.textContent = currentValue;
     }
@@ -195,7 +231,7 @@ export const TurtleModelDirective = {
     target.addEventListener("input", function() {
       let newValue;
 
-      if (target.tagName === "INPUT") {
+      if (target.tagName.toUpperCase() === "INPUT") {
         if (target.type === "checkbox" || target.type === "radio") {
           newValue = target.checked;
         } else if (target.type === "file") {
@@ -203,7 +239,7 @@ export const TurtleModelDirective = {
         } else {
           newValue = target.value;
         }
-      } else if (target.tagName === "TEXTAREA" || target.tagName === "SELECT") {
+      } else if (target.tagName.toUpperCase() === "TEXTAREA" || target.tagName.toUpperCase() === "SELECT") {
         newValue = target.value;
       } else {
         newValue = target.textContent;
@@ -244,7 +280,7 @@ export const TurtleEventsDirective = {
       let callbackFunctionName = pairs[eventName]
       let eventInfo = parseEventName(eventName)
       let callback = context.target[callbackFunctionName]
-      if(!callback){
+      if (!callback) {
         console.warn(`[Turtle Event Callback Missing] Callback for event ${eventInfo.name} is not defined !`)
       }
       const eventListener = function(event) {
@@ -272,5 +308,5 @@ export const TurtleRenderDirectives = {
   "t-model": TurtleModelDirective,
   "t-binds": TurtleAttrsBindingDirective,
   "t-events": TurtleEventsDirective,
-  "t-value":TurtleValueBindingDirective,
+  "t-value": TurtleValueBindingDirective,
 };
