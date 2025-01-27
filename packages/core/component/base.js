@@ -86,6 +86,7 @@ export class TurtleComponent {
   }
 
   requestCleanUp() {
+    this.states = null
     this.cleanUpFn.forEach((fn) => fn())
   }
 }
