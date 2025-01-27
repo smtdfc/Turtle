@@ -1,30 +1,22 @@
 export function deepClone(obj) {
-  if (obj === null || typeof obj !== "object") return obj;
-
-  const stack = [{ src: obj, target: Array.isArray(obj) ? [] : {} }];
-  const seen = new WeakMap();
-
-  while (stack.length) {
-    const { src, target } = stack.pop();
-    seen.set(src, target);
-
-    for (const key in src) {
-      if (Object.hasOwnProperty.call(src, key)) {
-        const value = src[key];
-        if (value && typeof value === "object") {
-          if (seen.has(value)) {
-            target[key] = seen.get(value); // Handle circular references
-          } else {
-            const newTarget = Array.isArray(value) ? [] : {};
-            target[key] = newTarget;
-            stack.push({ src: value, target: newTarget });
-          }
-        } else {
-          target[key] = value;
-        }
-      }
-    }
+  if (obj === null || typeof obj !== 'object') {
+    return obj; 
   }
 
-  return stack[0]?.target || {};
+  if (Array.isArray(obj)) {
+    const arrCopy = [];
+    for (let i = 0; i < obj.length; i++) {
+      arrCopy[i] = deepClone(obj[i]); 
+    }
+    return arrCopy;
+  }
+
+  const objCopy = {};
+  for (let key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      objCopy[key] = deepClone(obj[key]); 
+    }
+  }
+  return objCopy;
 }
+

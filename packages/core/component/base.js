@@ -8,7 +8,7 @@ import { TurtleComponentReactive } from "./reactive.js"
 export class TurtleComponent {
   constructor(configures, props) {
     this.props = props
-    this.configures = {...configures}
+    this.configures = { ...configures }
     this.onRender = new Function();
     this.onInit = new Function();
     this.onCreate = new Function();
@@ -47,8 +47,8 @@ export class TurtleComponent {
     this.prepare();
     this._alias = {}
   }
-  
-  forwardRef(name){
+
+  forwardRef(name) {
     let ref = Object.create({})
     this.refs[name] = ref
     return this.renderContext.refs[name]
@@ -63,17 +63,17 @@ export class TurtleComponent {
     return this.renderContext.refs
   }
 
-  destroy(){
+  destroy() {
     this.element.remove()
   }
-  
+
   clear() {
     this.element.textContent = ""
   }
 
   prepare() {
     this.statesManager = new TurtleStateManager(
-      deepClone(this.configures.states) ?? {},
+      Object.assign({}, this.configures.states) ?? {},
       this.onStateChange
     );
     this.states = this.statesManager.proxyState;
@@ -87,19 +87,27 @@ export class TurtleComponent {
 
   requestUpdate(state, newValue) {
     if (!this.reactive) return
-    let bindings = this.renderContext.getBinding(state)
+    let bindings = this.renderContext.getBinding(state) ?? []
     if (bindings.length > 0) TurtleComponentReactive.react(state, this, bindings, newValue)
   }
 
   requestCleanUp() {
-    this.states = null
-    this.cleanUpFn.forEach((fn) => fn())
+    this.states = null;
+    this.cleanUpFn.forEach(fn => fn());
+    this.cleanUpFn = [];
+    if (this.element?.remove) {
+      this.element.remove();
+    }
+    this.element = null;
+    Object.keys(this).forEach(key => {
+      this[key] = null;
+    });
   }
 }
 
 export function createComponent(configures) {
   const Caller = function(...props) {
-    return new TurtleComponent(Object.assign({},configures), props);
+    return new TurtleComponent(Object.assign({}, configures), props);
   }
 
   Caller.component = TurtleComponent;

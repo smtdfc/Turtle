@@ -29,8 +29,8 @@ function generateCompoenentElementClass(component, parent, app) {
     }
 
     disconnectedCallback() {
-      this.#_component?.requestCleanUp?.();
       this.#_component?.onDestroy?.();
+      this.#_component?.requestCleanUp?.();
     }
   };
 }
