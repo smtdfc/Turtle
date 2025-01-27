@@ -44,9 +44,14 @@ export class TurtleComponent {
     Object.entries(this.forwardRefs).forEach(([key, value]) => {
       this.forwardRefs[key] = typeof value === "function" ? value.bind(this) : value;
     });
-    
     this.prepare();
     this._alias = {}
+  }
+  
+  forwardRef(name){
+    let ref = Object.create({})
+    this.refs[name] = ref
+    return this.renderContext.refs[name]
   }
 
   id(alias) {
