@@ -1,4 +1,5 @@
 import { generateKey } from '../utils/generate.js';
+import { deepClone } from '../utils/clone.js';
 import { render } from '../render/index.js';
 import { TurtleRenderContext } from '../render/context.js';
 import { TurtleStateManager } from './state.js';
@@ -7,7 +8,7 @@ import { TurtleComponentReactive } from "./reactive.js"
 export class TurtleComponent {
   constructor(configures, props) {
     this.props = props
-    this.configures = Object.create(...configures)
+    this.configures = {...configures}
     this.onRender = new Function();
     this.onInit = new Function();
     this.onCreate = new Function();
@@ -67,7 +68,7 @@ export class TurtleComponent {
 
   prepare() {
     this.statesManager = new TurtleStateManager(
-      this.configures.states ?? {},
+      deepClone(this.configures.states) ?? {},
       this.onStateChange
     );
     this.states = this.statesManager.proxyState;
@@ -93,7 +94,7 @@ export class TurtleComponent {
 
 export function createComponent(configures) {
   const Caller = function(...props) {
-    return new TurtleComponent(configures, props);
+    return new TurtleComponent(Object.assign({},configures), props);
   }
 
   Caller.component = TurtleComponent;
