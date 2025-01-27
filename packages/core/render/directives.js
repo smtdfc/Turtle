@@ -140,7 +140,7 @@ export const TurtleVisibleBindingDirective = {
     }
     let currentValue = context.target.statesManager.get(expr);
 
-    target.style.display = currentValue ? "block" : "none";
+    target.style.visibility = currentValue ? "visible" : "hidden";
     context.addBinding(stateName, {
       state: stateName,
       expr: expr,
