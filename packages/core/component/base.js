@@ -68,7 +68,7 @@ export class TurtleComponent {
 
   prepare() {
     this.statesManager = new TurtleStateManager(
-      deepClone(this.configures.states) ?? {},
+      this.configures.states ?? {},
       this.onStateChange
     );
     this.states = this.statesManager.proxyState;
