@@ -7,7 +7,7 @@ import { TurtleComponentReactive } from "./reactive.js"
 export class TurtleComponent {
   constructor(configures, props) {
     this.props = props
-    this.configures = configures
+    this.configures = {...configures}
     this.onRender = new Function();
     this.onInit = new Function();
     this.onCreate = new Function();
