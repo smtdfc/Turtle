@@ -131,6 +131,28 @@ export const TurtleShowBindingDirective = {
     });
   }
 };
+export const TurtleHideBindingDirective = {
+  init: function(context, expr, target) {
+    let stateName = context.target.statesManager.getStateNameFromPath(expr);
+    if (!context.target.statesManager.has(stateName)) {
+      context.target.statesManager.set(stateName, true);
+    }
+    let currentValue = context.target.statesManager.get(expr);
+
+    target.style.display = currentValue ? "none" : "block";
+    context.addBinding(stateName, {
+      state: stateName,
+      expr: expr,
+      target: target,
+      bind: {
+        type: "function",
+        fn: function(element, value) {
+          element.style.display = value ? "none" : "block";
+        }
+      }
+    });
+  }
+};
 
 export const TurtleVisibleBindingDirective = {
   init: function(context, expr, target) {
@@ -326,6 +348,7 @@ export const TurtleRenderDirectives = {
   "t-html": TurtleHTMLBindingDirective,
   "t-text": TurtleTextBindingDirective,
   "t-show": TurtleShowBindingDirective,
+  "t-hide": TurtleHideBindingDirective,
   "t-visible":TurtleVisibleBindingDirective,
   "t-disabled": TurtleDisableStateBindingDirective,
   "t-style": TurtleStyleBindingDirective,
