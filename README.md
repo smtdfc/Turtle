@@ -15,7 +15,7 @@ Instead of continuing Turtle’s development, we have decided to focus our effor
 ## 💡 Moving Forward Together
 We understand that this is a significant change, but we believe that Rumious will bring much greater value. Join us on this journey!
 
-🔗 [Learn more about Rumious](#) _(Coming soon)_
+🔗 [Learn more about Rumious](https://github.com/smtdfc/rumious) 
 
 Thank you for your continued support throughout the years!
 
